@@ -1,0 +1,14 @@
+/**
+ * Alipay.com Inc.
+ * Copyright (c) 2004-2018 All Rights Reserved.
+ */
+package com.asyncmd.model;
+
+/**
+ * 历史异步命令
+ *
+ * @author wangwendi
+ * @version $Id: HistoryAsynCmdDO.java, v 0.1 2018年09月20日 下午5:53 wangwendi Exp $
+ */
+public class HistoryAsynCmdDO extends AsynCmdDO {
+}
