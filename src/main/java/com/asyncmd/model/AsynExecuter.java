@@ -5,6 +5,7 @@
 package com.asyncmd.model;
 
 import com.asyncmd.enums.DispatchMode;
+import com.asyncmd.utils.CountException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -36,11 +37,11 @@ public abstract class AsynExecuter implements InitializingBean {
     private void pseudoAsy(AsynCmd asynCmd){
 
         try {
-            CountDownLatch countDownLatch = new CountDownLatch(1);
+            CountException countException = new CountException();
 
-            poolAsynExecuter(asynCmd,countDownLatch);
+            poolAsynExecuter(asynCmd,countException);
             //如果120秒以后异步执行还是没有完 则直接结束等待
-            countDownLatch.await(120,TimeUnit.SECONDS);
+            countException.await(120);
         }catch (Exception e){
 
         }
@@ -74,10 +75,10 @@ public abstract class AsynExecuter implements InitializingBean {
     /**
      * 线程池中执行异步命令
      * @param asynCmd
-     * @param countDownLatch
+     * @param countException
      */
-    private void poolAsynExecuter(AsynCmd asynCmd,CountDownLatch countDownLatch){
-        poolTaskExecutor.execute(new AsynRunnable(asynCmd,countDownLatch));
+    private void poolAsynExecuter(AsynCmd asynCmd,CountException countException){
+        poolTaskExecutor.execute(new AsynRunnable(asynCmd,countException));
 
     }
 
@@ -88,16 +89,14 @@ public abstract class AsynExecuter implements InitializingBean {
     class AsynRunnable implements Runnable{
 
         private AsynCmd asynCmd;
-        private CountDownLatch countDownLatch;
+        private CountException countException;
 
-        AsynRunnable(AsynCmd asynCmd,CountDownLatch countDownLatch){
+        public  AsynRunnable(AsynCmd asynCmd,CountException countException){
             this.asynCmd = asynCmd;
-            this.countDownLatch = countDownLatch;
+            this.countException = countException;
         }
 
         public void run() {
-
-
         }
     }
 
@@ -116,6 +115,7 @@ public abstract class AsynExecuter implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
 
     }
+
 
 
 
