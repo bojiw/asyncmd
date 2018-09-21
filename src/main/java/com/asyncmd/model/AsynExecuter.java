@@ -4,8 +4,12 @@
  */
 package com.asyncmd.model;
 
+import com.asyncmd.enums.DispatchMode;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -20,12 +24,43 @@ public abstract class AsynExecuter implements InitializingBean {
      */
     private ThreadPoolTaskExecutor poolTaskExecutor;
 
+    /**
+     * 调度模式 默认由调度中心进行调度
+     */
+    private DispatchMode dispatchMode = DispatchMode.DEFAULT;
+
+    /**
+     * 异步执行 使用CountDownLatch实现伪同步
+     * @param asynCmd
+     */
+    private void pseudoAsy(AsynCmd asynCmd){
+
+        try {
+            CountDownLatch countDownLatch = new CountDownLatch(1);
+
+            poolAsynExecuter(asynCmd,countDownLatch);
+            //如果120秒以后异步执行还是没有完 则直接结束等待
+            countDownLatch.await(120,TimeUnit.SECONDS);
+        }catch (Exception e){
+
+        }
+
+
+    }
 
     /**
      * 同步执行
-     *
+     * @param asynCmd
+     * @param isTransaction 是否在事务的回调中
      */
-    public void asyExecuter(AsynCmd asynCmd){
+    public void asyExecuter(AsynCmd asynCmd,boolean isTransaction){
+        if (isTransaction){
+            //如果业务代码存在事务 在事务回调中再存在事务会有问题 所以使用伪同步来处理
+
+
+        }else {
+            new AsynRunnable(asynCmd,null).run();
+        }
 
     }
 
@@ -33,13 +68,31 @@ public abstract class AsynExecuter implements InitializingBean {
      * 异步执行
      */
     public void asynExecuter(AsynCmd asynCmd){
-        poolTaskExecutor.execute(new AsynRunnable(asynCmd));
+        poolAsynExecuter(asynCmd,null);
+    }
+
+    /**
+     * 线程池中执行异步命令
+     * @param asynCmd
+     * @param countDownLatch
+     */
+    private void poolAsynExecuter(AsynCmd asynCmd,CountDownLatch countDownLatch){
+        poolTaskExecutor.execute(new AsynRunnable(asynCmd,countDownLatch));
+
     }
 
 
+    /**
+     * 执行线程
+     */
     class AsynRunnable implements Runnable{
-        AsynRunnable(AsynCmd asynCmd){
 
+        private AsynCmd asynCmd;
+        private CountDownLatch countDownLatch;
+
+        AsynRunnable(AsynCmd asynCmd,CountDownLatch countDownLatch){
+            this.asynCmd = asynCmd;
+            this.countDownLatch = countDownLatch;
         }
 
         public void run() {
@@ -63,6 +116,8 @@ public abstract class AsynExecuter implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
 
     }
+
+
 
 }
 
