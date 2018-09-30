@@ -8,7 +8,7 @@ package com.asyncmd.exception;
  *
  * 异常code
  * @author wangwendi
- * @version $Id: AsynExCode.java, v 0.1 2018年09月30日 上午11:39 wangwendi Exp $
+ * @version $Id: AsynExCode.java, v 0.1 2018年09月30日 wangwendi Exp $
  */
 public enum AsynExCode {
 

@@ -8,7 +8,7 @@ package com.asyncmd.enums;
  *
  * 异步命令状态枚举
  * @author wangwendi
- * @version $Id: AsynStatus.java, v 0.1 2018年09月20日 下午5:54 wangwendi Exp $
+ * @version $Id: AsynStatus.java, v 0.1 2018年09月20日  wangwendi Exp $
  */
 public enum AsynStatus {
 

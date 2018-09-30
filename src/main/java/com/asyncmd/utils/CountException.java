@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  *
  * 线程异常管理类
  * @author wangwendi
- * @version $Id: CountException.java, v 0.1 2018年09月21日 下午5:29 wangwendi Exp $
+ * @version $Id: CountException.java, v 0.1 2018年09月21日 wangwendi Exp $
  */
 public class CountException {
 

@@ -8,7 +8,7 @@ package com.asyncmd.enums;
  *
  * 调度模式
  * @author wangwendi
- * @version $Id: DispatchMode.java, v 0.1 2018年09月21日 上午11:53 wangwendi Exp $
+ * @version $Id: DispatchMode.java, v 0.1 2018年09月21日 wangwendi Exp $
  */
 public enum DispatchMode {
 

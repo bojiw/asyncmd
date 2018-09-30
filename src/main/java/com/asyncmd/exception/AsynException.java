@@ -7,7 +7,7 @@ package com.asyncmd.exception;
 /**
  *
  * @author wangwendi
- * @version $Id: AsynException.java, v 0.1 2018年09月30日 上午11:35 wangwendi Exp $
+ * @version $Id: AsynException.java, v 0.1 2018年09月30日 wangwendi Exp $
  */
 public class AsynException extends Exception {
 

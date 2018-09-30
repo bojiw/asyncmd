@@ -11,7 +11,7 @@ import java.util.Date;
  *
  * 异步命令DO对象
  * @author wangwendi
- * @version $Id: AsynCmdDO.java, v 0.1 2018年09月20日 下午5:09 wangwendi Exp $
+ * @version $Id: AsynCmdDO.java, v 0.1 2018年09月20日 wangwendi Exp $
  */
 public class AsynCmdDO implements Serializable {
     private static final long serialVersionUID = -6139216780036677940L;
