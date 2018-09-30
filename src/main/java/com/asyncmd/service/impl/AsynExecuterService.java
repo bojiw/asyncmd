@@ -20,7 +20,14 @@ public class AsynExecuterService {
     private Map<Class<? extends AsynCmd>,AsynExecuter<? extends AsynCmd>> asynExecuterMap = new ConcurrentHashMap<Class<? extends
             AsynCmd>, AsynExecuter<? extends AsynCmd>>();
 
+    /**
+     * 插入异步命令
+     * @param asynCmd
+     * @return
+     */
+    public boolean saveCmd(AsynCmd asynCmd){
 
+    }
 
     public Map<Class<? extends AsynCmd>, AsynExecuter<? extends AsynCmd>> getAsynExecuterMap() {
         return asynExecuterMap;

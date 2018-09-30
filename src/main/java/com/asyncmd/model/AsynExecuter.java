@@ -34,7 +34,7 @@ public abstract class AsynExecuter<T extends AsynCmd> implements InitializingBea
      */
     protected DispatchMode dispatchMode = DispatchMode.DEFAULT;
 
-    protected ThreadLocal<AsynException> localException = new ThreadLocal<AsynException>();
+    protected static ThreadLocal<AsynException> localException = new ThreadLocal<AsynException>();
 
     /**
      * 是否自动注册
@@ -70,14 +70,15 @@ public abstract class AsynExecuter<T extends AsynCmd> implements InitializingBea
      * @param asynCmd
      * @param isTransaction 是否在事务的回调中
      */
-    public void asyExecuter(T asynCmd,boolean isTransaction){
+    public void asyExecuter(AsynCmd asynCmd,boolean isTransaction){
+        T t = (T)asynCmd;
         if (isTransaction){
             //如果业务代码存在事务 在事务回调中再存在事务会有问题 所以使用伪同步来处理
-            pseudoAsy(asynCmd);
+            pseudoAsy(t);
         }else {
             CountException countException = new CountException();
             //执行run方法是同步执行的
-            new AsynRunnable(asynCmd,countException).run();
+            new AsynRunnable(t,countException).run();
             //把异常放入到本地线程中 方便其他地方获取
             localException.set(countException.getException());
         }
@@ -87,8 +88,9 @@ public abstract class AsynExecuter<T extends AsynCmd> implements InitializingBea
     /**
      * 异步执行
      */
-    public void asynExecuter(T asynCmd){
-        poolAsynExecuter(asynCmd,null);
+    public void asynExecuter(AsynCmd asynCmd){
+        T t = (T)asynCmd;
+        poolAsynExecuter(t,null);
     }
 
     /**
@@ -163,6 +165,10 @@ public abstract class AsynExecuter<T extends AsynCmd> implements InitializingBea
 
     public void setDispatchMode(DispatchMode dispatchMode) {
         this.dispatchMode = dispatchMode;
+    }
+
+    public DispatchMode getDispatchMode() {
+        return dispatchMode;
     }
 }
 

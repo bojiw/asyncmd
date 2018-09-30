@@ -22,4 +22,10 @@ public interface AsynExecuterFacade {
      * @param asynExecuter
      */
     void registerAsynExecuter(AsynExecuter<? extends AsynCmd> asynExecuter);
+
+    /**
+     * 保存执行异步命令
+     * @param asynCmd
+     */
+    void saveExecuterAsynCmd(AsynCmd asynCmd);
 }
