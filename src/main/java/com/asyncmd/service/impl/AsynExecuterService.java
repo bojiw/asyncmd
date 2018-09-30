@@ -6,7 +6,6 @@ package com.asyncmd.service.impl;
 
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynExecuter;
-import com.asyncmd.service.AsynExecuterService;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,9 +13,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  *
  * @author wangwendi
- * @version $Id: AsynExecuterServiceImpl.java, v 0.1 2018年09月30日 下午2:38 wangwendi Exp $
+ * @version $Id: AsynExecuterService.java, v 0.1 2018年09月30日 下午2:38 wangwendi Exp $
  */
-public class AsynExecuterServiceImpl implements AsynExecuterService {
+public class AsynExecuterService {
 
     private Map<Class<? extends AsynCmd>,AsynExecuter<? extends AsynCmd>> asynExecuterMap = new ConcurrentHashMap<Class<? extends
             AsynCmd>, AsynExecuter<? extends AsynCmd>>();

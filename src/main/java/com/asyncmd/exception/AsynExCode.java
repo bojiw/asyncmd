@@ -12,7 +12,9 @@ package com.asyncmd.exception;
  */
 public enum AsynExCode {
 
-    SYS_ERROR(1000,"系统异常");
+    SYS_ERROR(1000,"系统异常"),
+    ILLEGAL(1001,"参数异常"),
+    ;
 
     private Integer code;
     private String message;
