@@ -29,7 +29,7 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
     private AsynExecuterService asynExecuterService;
 
 
-    AsynExecuterFacadeImpl(){
+    public AsynExecuterFacadeImpl(){
         asynExecuterService = new AsynExecuterService();
     }
 

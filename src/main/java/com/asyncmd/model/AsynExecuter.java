@@ -7,6 +7,7 @@ package com.asyncmd.model;
 import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
+import com.asyncmd.manager.AsynExecuterFacade;
 import com.asyncmd.utils.CountException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,9 +32,17 @@ public abstract class AsynExecuter<T extends AsynCmd> implements InitializingBea
     /**
      * 调度模式 默认由调度中心进行调度
      */
-    private DispatchMode dispatchMode = DispatchMode.DEFAULT;
+    protected DispatchMode dispatchMode = DispatchMode.DEFAULT;
 
-    private ThreadLocal<AsynException> localException = new ThreadLocal<AsynException>();
+    protected ThreadLocal<AsynException> localException = new ThreadLocal<AsynException>();
+
+    /**
+     * 是否自动注册
+     */
+    protected boolean autoRegister = true;
+
+    private AsynExecuterFacade asynExecuterFacade;
+
 
     /**
      * 异步执行 使用CountDownLatch实现伪同步
@@ -138,11 +147,22 @@ public abstract class AsynExecuter<T extends AsynCmd> implements InitializingBea
      * @throws Exception
      */
     public void afterPropertiesSet() throws Exception {
-
+        //如果是自动注册 直接在初始化的时候注册
+        if (autoRegister){
+            asynExecuterFacade.registerAsynExecuter(this);
+        }
     }
 
+    public void setAutoRegister(boolean autoRegister) {
+        this.autoRegister = autoRegister;
+    }
 
+    public void setAsynExecuterFacade(AsynExecuterFacade asynExecuterFacade) {
+        this.asynExecuterFacade = asynExecuterFacade;
+    }
 
-
+    public void setDispatchMode(DispatchMode dispatchMode) {
+        this.dispatchMode = dispatchMode;
+    }
 }
 
