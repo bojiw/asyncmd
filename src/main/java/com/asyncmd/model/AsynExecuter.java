@@ -5,20 +5,23 @@
 package com.asyncmd.model;
 
 import com.asyncmd.enums.DispatchMode;
+import com.asyncmd.exception.AsynExCode;
+import com.asyncmd.exception.AsynException;
 import com.asyncmd.utils.CountException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 /**
- *
  * 异步命令执行器
+ *
  * @author wangwendi
  * @version $Id: AsynExecuter.java, v 0.1 2018年09月20日 下午8:13 wangwendi Exp $
  */
 public abstract class AsynExecuter implements InitializingBean {
+
+    private  Log log = LogFactory.getLog(this.getClass());
 
     /**
      * 线程池
@@ -30,21 +33,25 @@ public abstract class AsynExecuter implements InitializingBean {
      */
     private DispatchMode dispatchMode = DispatchMode.DEFAULT;
 
+    private ThreadLocal<AsynException> localException = new ThreadLocal<AsynException>();
+
     /**
      * 异步执行 使用CountDownLatch实现伪同步
      * @param asynCmd
      */
     private void pseudoAsy(AsynCmd asynCmd){
 
-        try {
-            CountException countException = new CountException();
-
-            poolAsynExecuter(asynCmd,countException);
-            //如果120秒以后异步执行还是没有完 则直接结束等待
-            countException.await(120);
-        }catch (Exception e){
-
+        CountException countException = new CountException();
+        poolAsynExecuter(asynCmd,countException);
+        //如果120秒以后异步执行还是没有完 则直接结束等待
+        boolean await = countException.await(120);
+        //如果返回的是false代表不是正常执行结束 把异常放入进去
+        if (!await){
+            log.error("同步执行异常");
+            localException.set(new AsynException(AsynExCode.SYS_ERROR));
         }
+        //把异常放入到本地线程中 方便其他地方获取
+        localException.set(countException.getException());
 
 
     }
@@ -57,10 +64,12 @@ public abstract class AsynExecuter implements InitializingBean {
     public void asyExecuter(AsynCmd asynCmd,boolean isTransaction){
         if (isTransaction){
             //如果业务代码存在事务 在事务回调中再存在事务会有问题 所以使用伪同步来处理
-
-
+            pseudoAsy(asynCmd);
         }else {
-            new AsynRunnable(asynCmd,null).run();
+            CountException countException = new CountException();
+            new AsynRunnable(asynCmd,countException).run();
+            //把异常放入到本地线程中 方便其他地方获取
+            localException.set(countException.getException());
         }
 
     }
@@ -97,6 +106,21 @@ public abstract class AsynExecuter implements InitializingBean {
         }
 
         public void run() {
+            try {
+                executer(asynCmd);
+            }catch (Exception e){
+                if (countNotNull()){
+                    countException.setException(new AsynException(AsynExCode.SYS_ERROR,e));
+                }
+            }finally {
+                if (countNotNull()){
+                    countException.countDown();
+                }
+            }
+        }
+
+        private boolean countNotNull(){
+            return countException != null;
         }
     }
 
