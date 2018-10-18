@@ -89,6 +89,9 @@ public class AsynCmdDO implements Serializable {
     private String updateIp;
 
 
+    public AsynCmdDO(){
+
+    }
     public AsynCmdDO(AsynCmd asynCmd){
         this.setBizId(asynCmd.getBizId());
         this.setCmdId(asynCmd.getCmdId());

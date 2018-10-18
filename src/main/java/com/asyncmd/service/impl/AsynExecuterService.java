@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  *
  * @author wangwendi
- * @version $Id: AsynExecuterService.java, v 0.1 2018年09月30日 下午2:38 wangwendi Exp $
+ * @version $Id: AsynExecuterService.java, v 0.1 2018年09月30日 wangwendi Exp $
  */
 public class AsynExecuterService {
 

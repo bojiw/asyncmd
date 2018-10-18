@@ -11,4 +11,6 @@ package com.asyncmd.model;
  * @version $Id: HistoryAsynCmdDO.java, v 0.1 2018年09月20日  wangwendi Exp $
  */
 public class HistoryAsynCmdDO extends AsynCmdDO {
+
+    private static final long serialVersionUID = 5933451300569104424L;
 }
