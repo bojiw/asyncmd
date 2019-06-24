@@ -52,7 +52,7 @@ public abstract class AsynExecuter<T extends AsynCmd> implements InitializingBea
 
         CountException countException = new CountException();
         poolAsynExecuter(asynCmd,countException);
-        //如果120秒以后异步执行还是没有完 则直接结束等待
+        //如果360秒以后异步执行还是没有完 则直接结束等待
         boolean await = countException.await(360);
         //如果返回的是false代表不是正常执行结束 把异常放入进去
         if (!await){
