@@ -19,9 +19,9 @@ public class AsynCmd implements Serializable {
 
 
     /**
-     * 唯一id 直接使用uuid
+     * 唯一id 需要唯一 如果业务没有好的唯一算法 可以使用SnowflakeIdWorkerUtil工具类生成
      */
-    private String cmdId = UUID.randomUUID().toString().replaceAll("-","");
+    private String cmdId;
 
     /**
      * 命令类型
@@ -46,7 +46,7 @@ public class AsynCmd implements Serializable {
     /**
      * 修改时间
      */
-    private Date gmtMobile;
+    private Date gmtModify;
 
     /**
      * 执行次数
@@ -130,14 +130,6 @@ public class AsynCmd implements Serializable {
         this.gmtCreate = gmtCreate;
     }
 
-    public Date getGmtMobile() {
-        return gmtMobile;
-    }
-
-    public void setGmtMobile(Date gmtMobile) {
-        this.gmtMobile = gmtMobile;
-    }
-
     public Integer getExecuteNum() {
         return executeNum;
     }
@@ -202,6 +194,11 @@ public class AsynCmd implements Serializable {
         this.updateIp = updateIp;
     }
 
+    public Date getGmtModify() {
+        return gmtModify;
+    }
 
-
+    public void setGmtModify(Date gmtModify) {
+        this.gmtModify = gmtModify;
+    }
 }

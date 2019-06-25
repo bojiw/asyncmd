@@ -66,7 +66,7 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
         try {
             asynExecuterService.saveCmd(asynCmd);
         }catch (DataIntegrityViolationException e){
-            //为了支持多个数据源 不直接转换为MySQLIntegrityConstraintViolationException
+            //TODO 需要修改为code MySQLIntegrityConstraintViolationException
             if (e.getLocalizedMessage().contains("Duplicate")){
                 //如果是因为唯一性索引导致插入命令失败 代表是重复插入 则直接返回 不抛异常
                 return;
@@ -93,6 +93,9 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
         switch (asynExecuter.getDispatchMode()){
             case ASYN :
                 asynExecuter.asynExecuter(asynCmd);
+                break;
+            case ASY:
+                asyExecuter(asynExecuter,asynCmd);
                 break;
             default:
         }

@@ -44,7 +44,7 @@ public class AsynCmdDO implements Serializable {
     /**
      * 修改时间
      */
-    private Date gmtMobile;
+    private Date gmtModify;
 
     /**
      * 执行次数
@@ -102,7 +102,7 @@ public class AsynCmdDO implements Serializable {
         this.setCreateName(asynCmd.getCreateName());
         this.setExecuteNum(asynCmd.getExecuteNum());
         this.setGmtCreate(asynCmd.getGmtCreate());
-        this.setGmtMobile(asynCmd.getGmtMobile());
+        this.setGmtModify(asynCmd.getGmtModify());
         this.setNextTime(asynCmd.getNextTime());
         this.setStatus(asynCmd.getStatus());
         this.setUpdateHostname(asynCmd.getUpdateHostname());
@@ -150,12 +150,12 @@ public class AsynCmdDO implements Serializable {
         this.gmtCreate = gmtCreate;
     }
 
-    public Date getGmtMobile() {
-        return gmtMobile;
+    public Date getGmtModify() {
+        return gmtModify;
     }
 
-    public void setGmtMobile(Date gmtMobile) {
-        this.gmtMobile = gmtMobile;
+    public void setGmtModify(Date gmtModify) {
+        this.gmtModify = gmtModify;
     }
 
     public Integer getExecuteNum() {
