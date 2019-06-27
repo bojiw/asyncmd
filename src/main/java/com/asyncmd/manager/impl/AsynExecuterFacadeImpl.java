@@ -4,6 +4,7 @@
  */
 package com.asyncmd.manager.impl;
 
+import com.asyncmd.dao.AsynCmdDAO;
 import com.asyncmd.enums.AsynStatus;
 import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.exception.AsynExCode;
@@ -194,5 +195,9 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
         log.error("获取执行器上的asynCmd异常:" + asynExecuter.getClass().getName());
         throw new AsynException(AsynExCode.ILLEGAL);
 
+    }
+
+    public void setAsynCmdDAO(AsynCmdDAO asynCmdDAO) {
+        this.asynExecuterService.setAsynCmdDAO(asynCmdDAO);
     }
 }
