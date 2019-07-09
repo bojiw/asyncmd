@@ -96,7 +96,7 @@ public class AsynCmdDO implements Serializable {
         this.setBizId(asynCmd.getBizId());
         this.setCmdId(asynCmd.getCmdId());
         this.setCmdType(asynCmd.getCmdType());
-        this.setContent(asynCmd.getContent());
+        this.setContent(asynCmd.objectToJson(asynCmd.getContent()));
         this.setCreateHostname(asynCmd.getCreateHostname());
         this.setCreateIp(asynCmd.getCreateIp());
         this.setCreateName(asynCmd.getCreateName());

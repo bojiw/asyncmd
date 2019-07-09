@@ -6,7 +6,6 @@ package com.asyncmd.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  *
@@ -14,7 +13,7 @@ import java.util.UUID;
  * @author wangwendi
  * @version $Id: AsynCmd.java, v 0.1 2018年09月20日 下午7:36 wangwendi Exp $
  */
-public abstract class AsynCmd implements Serializable{
+public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
     private static final long serialVersionUID = 2362119134833203155L;
 
 
@@ -33,10 +32,6 @@ public abstract class AsynCmd implements Serializable{
      */
     private String bizId;
 
-    /**
-     * 业务上下文
-     */
-    private String content;
 
     /**
      * 创建时间
@@ -90,6 +85,16 @@ public abstract class AsynCmd implements Serializable{
      */
     private String updateIp;
 
+    /**
+     * 上下文对象
+     */
+    private E content;
+
+    public abstract E jsonToObject(String content);
+
+    public abstract String objectToJson(E content);
+
+
 
     public String getCmdId() {
         return cmdId;
@@ -113,14 +118,6 @@ public abstract class AsynCmd implements Serializable{
 
     public void setBizId(String bizId) {
         this.bizId = bizId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
     }
 
     public Date getGmtCreate() {
@@ -203,4 +200,11 @@ public abstract class AsynCmd implements Serializable{
         this.gmtModify = gmtModify;
     }
 
+    public E getContent() {
+        return content;
+    }
+
+    public void setContent(E content) {
+        this.content = content;
+    }
 }

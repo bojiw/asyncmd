@@ -30,7 +30,7 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
     private ThreadPoolTaskExecutor poolTaskExecutor;
 
     /**
-     * 调度模式 默认由调度中心进行调度
+     * 调度模式 默认为异步调度
      */
     protected DispatchMode dispatchMode = DispatchMode.ASYN;
 
