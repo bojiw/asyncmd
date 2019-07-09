@@ -4,6 +4,8 @@
  */
 package com.asyncmd.model;
 
+import com.alibaba.fastjson.JSON;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -90,9 +92,29 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
      */
     private E content;
 
-    public abstract E jsonToObject(String content);
+    /**
+     * 获取范型类型 由子类返回
+     * @return
+     */
+    protected abstract Class<E> getObject();
 
-    public abstract String objectToJson(E content);
+    /**
+     * json转对象 有需要子类可以重写
+     * @param content
+     * @return
+     */
+    public E jsonToObject(String content){
+        return JSON.parseObject(content,getObject());
+    }
+
+    /**
+     * 对象转json 有需要子类可以重写
+     * @param content
+     * @return
+     */
+    public String objectToJson(E content){
+        return JSON.toJSONString(content);
+    }
 
 
 
