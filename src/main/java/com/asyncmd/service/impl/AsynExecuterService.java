@@ -5,9 +5,9 @@
 package com.asyncmd.service.impl;
 
 import com.asyncmd.dao.AsynCmdDAO;
+import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynCmdDO;
-import com.asyncmd.model.AsynExecuter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,8 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class AsynExecuterService {
 
-    private Map<Class<? extends AsynCmd>,AsynExecuter<? extends AsynCmd>> asynExecuterMap = new ConcurrentHashMap<Class<? extends
-            AsynCmd>, AsynExecuter<? extends AsynCmd>>();
+    private Map<Class<? extends AsynCmd>,AbstractAsynExecuter<? extends AsynCmd>> asynExecuterMap = new ConcurrentHashMap<Class<? extends
+            AsynCmd>, AbstractAsynExecuter<? extends AsynCmd>>();
 
     private AsynCmdDAO asynCmdDAO;
 
@@ -34,12 +34,12 @@ public class AsynExecuterService {
         return asynCmdDAO.saveCmd(asynCmdDO);
     }
 
-    public Map<Class<? extends AsynCmd>, AsynExecuter<? extends AsynCmd>> getAsynExecuterMap() {
+    public Map<Class<? extends AsynCmd>, AbstractAsynExecuter<? extends AsynCmd>> getAsynExecuterMap() {
         return asynExecuterMap;
     }
 
     public void setAsynExecuterMap(
-            Map<Class<? extends AsynCmd>, AsynExecuter<? extends AsynCmd>> asynExecuterMap) {
+            Map<Class<? extends AsynCmd>, AbstractAsynExecuter<? extends AsynCmd>> asynExecuterMap) {
         this.asynExecuterMap = asynExecuterMap;
     }
 

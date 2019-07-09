@@ -4,8 +4,8 @@
  */
 package com.asyncmd.manager;
 
+import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
-import com.asyncmd.model.AsynExecuter;
 
 /**
  *
@@ -21,7 +21,7 @@ public interface AsynExecuterFacade {
      *
      * @param asynExecuter
      */
-    void registerAsynExecuter(AsynExecuter<? extends AsynCmd> asynExecuter);
+    void registerAsynExecuter(AbstractAsynExecuter<? extends AsynCmd> asynExecuter);
 
     /**
      * 保存执行异步命令

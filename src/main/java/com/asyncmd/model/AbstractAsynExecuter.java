@@ -18,9 +18,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * 异步命令执行器
  *
  * @author wangwendi
- * @version $Id: AsynExecuter.java, v 0.1 2018年09月20日 wangwendi Exp $
+ * @version $Id: AbstractAsynExecuter.java, v 0.1 2018年09月20日 wangwendi Exp $
  */
-public abstract class AsynExecuter<T extends AsynCmd> implements InitializingBean {
+public abstract class AbstractAsynExecuter<T extends AsynCmd> implements InitializingBean {
 
     private  Log log = LogFactory.getLog(this.getClass());
 
@@ -32,7 +32,7 @@ public abstract class AsynExecuter<T extends AsynCmd> implements InitializingBea
     /**
      * 调度模式 默认由调度中心进行调度
      */
-    protected DispatchMode dispatchMode = DispatchMode.DEFAULT;
+    protected DispatchMode dispatchMode = DispatchMode.ASYN;
 
     protected static ThreadLocal<AsynException> localException = new ThreadLocal<AsynException>();
 

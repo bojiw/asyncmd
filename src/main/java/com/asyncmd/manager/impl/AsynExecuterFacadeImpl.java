@@ -10,17 +10,16 @@ import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
 import com.asyncmd.manager.AsynExecuterFacade;
+import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
-import com.asyncmd.model.AsynExecuter;
 import com.asyncmd.service.impl.AsynExecuterService;
+import com.asyncmd.utils.ParadigmUtil;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 /**
  *
@@ -30,6 +29,10 @@ import java.lang.reflect.Type;
  */
 public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
 
+    /**
+     * 唯一索引冲突code
+     */
+    private static final int DUPLICATE_CODE = 1062;
     private static Log log = LogFactory.getLog(AsynExecuterFacadeImpl.class);
 
     private AsynExecuterService asynExecuterService;
@@ -40,9 +43,9 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
     }
 
 
-    public void registerAsynExecuter(AsynExecuter<? extends AsynCmd> asynExecuter) {
+    public void registerAsynExecuter(AbstractAsynExecuter<? extends AsynCmd> asynExecuter) {
 
-        Class<? extends AsynCmd> classCmd = getAsynCmd(asynExecuter);
+        Class classCmd = getAsynCmdObject(asynExecuter);
         //效验
         vaildAsynCmd(classCmd,asynExecuter);
         //注册
@@ -51,7 +54,7 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
     }
 
     public void saveExecuterAsynCmd(AsynCmd asynCmd) {
-        AsynExecuter<? extends AsynCmd> asynExecuter = asynExecuterService.getAsynExecuterMap()
+        AbstractAsynExecuter<? extends AsynCmd> asynExecuter = asynExecuterService.getAsynExecuterMap()
                 .get(asynCmd.getClass());
         if (asynExecuter == null){
             log.error("根据asynCmd获取不到对应的执行器,检查执行器是否有注册:" + asynCmd.getClass().getName());
@@ -67,10 +70,13 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
         try {
             asynExecuterService.saveCmd(asynCmd);
         }catch (DataIntegrityViolationException e){
-            //TODO 需要修改为code MySQLIntegrityConstraintViolationException
-            if (e.getLocalizedMessage().contains("Duplicate")){
-                //如果是因为唯一性索引导致插入命令失败 代表是重复插入 则直接返回 不抛异常
-                return;
+            Throwable cause = e.getCause();
+            if (cause instanceof MySQLIntegrityConstraintViolationException){
+                MySQLIntegrityConstraintViolationException exception = (MySQLIntegrityConstraintViolationException)cause;
+                if (DUPLICATE_CODE == exception.getErrorCode()){
+                    //如果是因为唯一性索引导致插入命令失败 代表是重复插入 则直接返回 不抛异常
+                    return;
+                }
             }
             throw e;
 
@@ -89,7 +95,7 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
      * @param asynExecuter
      * @param asynCmd
      */
-    private void executer(AsynExecuter<? extends AsynCmd> asynExecuter,AsynCmd asynCmd){
+    private void executer(AbstractAsynExecuter<? extends AsynCmd> asynExecuter, AsynCmd asynCmd){
 
         switch (asynExecuter.getDispatchMode()){
             case ASYN :
@@ -107,7 +113,7 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
      * @param asynExecuter
      * @param asynCmd
      */
-    private void asyExecuter(AsynExecuter<? extends AsynCmd> asynExecuter,AsynCmd asynCmd){
+    private void asyExecuter(AbstractAsynExecuter<? extends AsynCmd> asynExecuter, AsynCmd asynCmd){
         if (TransactionSynchronizationManager.isActualTransactionActive()){
             //如果在事务内 则在事务的回调中执行 防止执行器中也有事务导致嵌套事务
             TransactionSynchronizationManager
@@ -121,10 +127,10 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
 
     class AsyTransactionSynchronization implements TransactionSynchronization{
 
-        private AsynCmd asynCmd;
-        private AsynExecuter asynExecuter;
+        private AsynCmd              asynCmd;
+        private AbstractAsynExecuter asynExecuter;
 
-        AsyTransactionSynchronization(AsynCmd asynCmd,AsynExecuter asynExecuter){
+        AsyTransactionSynchronization(AsynCmd asynCmd,AbstractAsynExecuter asynExecuter){
             this.asynCmd = asynCmd;
             this.asynExecuter = asynExecuter;
         }
@@ -166,7 +172,7 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
      * 效验异步命令对象是否能正常初始化
      * @param classCmd
      */
-    private void vaildAsynCmd(Class<? extends AsynCmd> classCmd,AsynExecuter<? extends AsynCmd> asynExecuter){
+    private void vaildAsynCmd(Class classCmd,AbstractAsynExecuter<? extends AsynCmd> asynExecuter){
 
         try {
             classCmd.newInstance();
@@ -183,16 +189,27 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
      * @param asynExecuter
      * @return
      */
-    private Class<? extends AsynCmd> getAsynCmd(AsynExecuter<? extends AsynCmd> asynExecuter){
-        Type type = asynExecuter.getClass().getGenericSuperclass();
-        if( type instanceof ParameterizedType){
-            ParameterizedType pType = (ParameterizedType)type;
-            Type claz = pType.getActualTypeArguments()[0];
-            if( claz instanceof Class ){
-                return (Class<? extends AsynCmd>) claz;
-            }
+    private Class getAsynCmdObject(AbstractAsynExecuter<? extends AsynCmd> asynExecuter){
+        Class paradigmClass = ParadigmUtil.getParadigmClass(asynExecuter);
+        if (paradigmClass != null){
+            return paradigmClass;
         }
         log.error("获取执行器上的asynCmd异常:" + asynExecuter.getClass().getName());
+        throw new AsynException(AsynExCode.ILLEGAL);
+
+    }
+
+    /**
+     * 获取异步命令对象上的范型类
+     * @param asynCmd
+     * @return
+     */
+    private Class getAsynCmdObject(AsynCmd asynCmd){
+        Class asynObject = ParadigmUtil.getParadigmClass(asynCmd);
+        if (asynObject != null){
+            return asynObject;
+        }
+        log.error("获取执行器上的asynCmd异常:" + asynCmd.getClass().getName());
         throw new AsynException(AsynExCode.ILLEGAL);
 
     }

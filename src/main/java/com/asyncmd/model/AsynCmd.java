@@ -14,7 +14,7 @@ import java.util.UUID;
  * @author wangwendi
  * @version $Id: AsynCmd.java, v 0.1 2018年09月20日 下午7:36 wangwendi Exp $
  */
-public class AsynCmd implements Serializable {
+public abstract class AsynCmd implements Serializable{
     private static final long serialVersionUID = 2362119134833203155L;
 
 
@@ -89,6 +89,7 @@ public class AsynCmd implements Serializable {
      * 更新任务的ip
      */
     private String updateIp;
+
 
     public String getCmdId() {
         return cmdId;
@@ -201,4 +202,5 @@ public class AsynCmd implements Serializable {
     public void setGmtModify(Date gmtModify) {
         this.gmtModify = gmtModify;
     }
+
 }
