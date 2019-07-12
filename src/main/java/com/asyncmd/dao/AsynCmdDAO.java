@@ -15,5 +15,19 @@ import com.asyncmd.model.AsynCmdDO;
  */
 public interface AsynCmdDAO {
 
-    boolean saveCmd(AsynCmdDO asynCmdDO);
+    /**
+     * 保存异步命令
+     * @param asynCmdDO
+     * @return
+     */
+    long saveCmd(AsynCmdDO asynCmdDO);
+
+    /**
+     * 删除异步命令
+     * @param cmdId
+     * @return
+     */
+    long delCmd(String cmdId);
+
+
 }

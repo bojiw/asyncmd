@@ -4,7 +4,6 @@
  */
 package com.asyncmd.manager.impl;
 
-import com.asyncmd.dao.AsynCmdDAO;
 import com.asyncmd.enums.AsynStatus;
 import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.exception.AsynExCode;
@@ -12,14 +11,17 @@ import com.asyncmd.exception.AsynException;
 import com.asyncmd.manager.AsynExecuterFacade;
 import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
-import com.asyncmd.service.impl.AsynExecuterService;
+import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.utils.ParadigmUtil;
+import com.asyncmd.utils.TransactionTemplateUtil;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  *
@@ -35,11 +37,12 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
     private static final int DUPLICATE_CODE = 1062;
     private static Log log = LogFactory.getLog(AsynExecuterFacadeImpl.class);
 
+    @Autowired
     private AsynExecuterService asynExecuterService;
 
+    public AsynExecuterFacadeImpl(TransactionTemplate template){
+        TransactionTemplateUtil.newInstance().setTransactionTemplate(template);
 
-    public AsynExecuterFacadeImpl(){
-        asynExecuterService = new AsynExecuterService();
     }
 
 
@@ -214,7 +217,4 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
 
     }
 
-    public void setAsynCmdDAO(AsynCmdDAO asynCmdDAO) {
-        this.asynExecuterService.setAsynCmdDAO(asynCmdDAO);
-    }
 }

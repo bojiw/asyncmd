@@ -31,5 +31,8 @@
 
     </insert>
 
+    <delete id="delCmd" parameterType="string">
+        DELETE FROM asyn_cmd WHERE cmd_id=#{cmdId}
+    </delete>
 
 </mapper>

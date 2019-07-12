@@ -4,10 +4,14 @@
  */
 package com.asyncmd.convert;
 
+import com.asyncmd.enums.AsynStatus;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynCmdDO;
+import com.asyncmd.model.AsynCmdHistoryDO;
+
+import java.util.Date;
 
 /**
  * @author wangwendi
@@ -55,5 +59,25 @@ public class AsynCmdConvert {
             throw new AsynException(AsynExCode.ILLEGAL);
         }
     }
+    public static AsynCmdHistoryDO toHistoryCmd(AsynCmd asynCmd){
+        AsynCmdHistoryDO asynCmdHistoryDO = new AsynCmdHistoryDO();
+        asynCmdHistoryDO.setCmdId(asynCmd.getCmdId());
+        asynCmdHistoryDO.setCmdType(asynCmd.getCmdType());
+        asynCmdHistoryDO.setBizId(asynCmd.getBizId());
+        asynCmdHistoryDO.setContent(String.valueOf(asynCmd.getContent()));
+        asynCmdHistoryDO.setGmtCreate(new Date());
+        asynCmdHistoryDO.setGmtModify(new Date());
+        asynCmdHistoryDO.setExecuteNum(asynCmd.getExecuteNum());
+        asynCmdHistoryDO.setNextTime(asynCmd.getNextTime());
+        asynCmdHistoryDO.setStatus(AsynStatus.SUCCESS.getStatus());
+        asynCmdHistoryDO.setCreateHostname(asynCmd.getCreateHostname());
+        asynCmdHistoryDO.setCreateIp(asynCmd.getCreateIp());
+        asynCmdHistoryDO.setCreateName(asynCmd.getCreateName());
+        asynCmdHistoryDO.setUpdateHostname(asynCmd.getUpdateHostname());
+        asynCmdHistoryDO.setUpdateIp(asynCmd.getUpdateIp());
+        return asynCmdHistoryDO;
+
+    }
+
 
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.asyncmd.dao.AsynCmdDAO">
+<mapper namespace="com.asyncmd.dao.AsynCmdHistoryDAO">
 
-    <resultMap type="com.asyncmd.model.AsynCmdDO" id="asynResultMap">
+    <resultMap type="com.asyncmd.model.AsynCmdHistoryDO" id="asynHistoryResultMap">
         <result property="cmdId" column="cmd_id" />
         <result property="cmdType" column="cmd_type"/>
         <result property="content" column="content"/>
@@ -23,8 +23,8 @@
 
     
     
-    <insert id="saveCmd" parameterType="com.asyncmd.model.AsynCmdDO">
-        INSERT INTO asyn_cmd(cmd_id, cmd_type, content,
+    <insert id="saveCmd" parameterType="com.asyncmd.model.AsynCmdHistoryDO">
+        INSERT INTO asyn_cmd_history(cmd_id, cmd_type, content,
           biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,gmt_create,gmt_modify)
         VALUES ( #{cmdId}, #{cmdType}, #{content}, #{bizId},
           #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},now(),now())

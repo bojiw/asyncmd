@@ -8,10 +8,12 @@ import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
 import com.asyncmd.manager.AsynExecuterFacade;
+import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.utils.CountException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
@@ -41,7 +43,12 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
      */
     protected boolean autoRegister = true;
 
+    @Autowired
     private AsynExecuterFacade asynExecuterFacade;
+
+    @Autowired
+    private AsynExecuterService asynExecuterService;
+
 
 
     /**
@@ -120,6 +127,7 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
         public void run() {
             try {
                 executer(asynCmd);
+                asynExecuterService.backupCmd(asynCmd);
             }catch (Exception e){
                 if (countNotNull()){
                     countException.setException(new AsynException(AsynExCode.SYS_ERROR,e));
