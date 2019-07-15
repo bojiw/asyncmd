@@ -20,7 +20,7 @@ public class AsynCmdHistoryDO implements Serializable {
     /**
      * 唯一id
      */
-    private String cmdId;
+    private Long cmdId;
 
     /**
      * 命令类型
@@ -89,11 +89,11 @@ public class AsynCmdHistoryDO implements Serializable {
      */
     private String updateIp;
 
-    public String getCmdId() {
+    public Long getCmdId() {
         return cmdId;
     }
 
-    public void setCmdId(String cmdId) {
+    public void setCmdId(Long cmdId) {
         this.cmdId = cmdId;
     }
 

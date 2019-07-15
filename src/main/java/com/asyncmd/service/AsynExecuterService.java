@@ -55,7 +55,7 @@ public class AsynExecuterService {
         TransactionTemplateUtil.newInstance().getTemplate().execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                asynCmdDAO.delCmd(asynCmd.getCmdId());
+                asynCmdDAO.delCmd(asynCmd.getBizId());
                 asynCmdHistoryDAO.saveCmd(AsynCmdConvert.toHistoryCmd(asynCmd));
             }
         });

@@ -4,6 +4,8 @@
  */
 package com.asyncmd.manager.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.asyncmd.config.AsynConfig;
 import com.asyncmd.enums.AsynStatus;
 import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.exception.AsynExCode;
@@ -14,11 +16,9 @@ import com.asyncmd.model.AsynCmd;
 import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.utils.ParadigmUtil;
 import com.asyncmd.utils.TransactionTemplateUtil;
-import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -40,8 +40,9 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
     @Autowired
     private AsynExecuterService asynExecuterService;
 
-    public AsynExecuterFacadeImpl(TransactionTemplate template){
+    public AsynExecuterFacadeImpl(TransactionTemplate template,int tableNum,String executerFrequency){
         TransactionTemplateUtil.newInstance().setTransactionTemplate(template);
+        AsynConfig.initConfig(tableNum,executerFrequency);
 
     }
 
@@ -72,17 +73,10 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
         }
         try {
             asynExecuterService.saveCmd(asynCmd);
-        }catch (DataIntegrityViolationException e){
-            Throwable cause = e.getCause();
-            if (cause instanceof MySQLIntegrityConstraintViolationException){
-                MySQLIntegrityConstraintViolationException exception = (MySQLIntegrityConstraintViolationException)cause;
-                if (DUPLICATE_CODE == exception.getErrorCode()){
-                    //如果是因为唯一性索引导致插入命令失败 代表是重复插入 则直接返回 不抛异常
-                    return;
-                }
-            }
-            throw e;
-
+        }catch (org.springframework.dao.DuplicateKeyException e){
+            //代表是重复插入 不抛异常
+            log.warn("保存异步命令幂等异常bizId=" + asynCmd.getBizId());
+            return;
         }
         //如果不需要立刻执行 直接返回
         if (!executer){

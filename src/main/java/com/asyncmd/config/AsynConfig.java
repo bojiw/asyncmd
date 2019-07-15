@@ -1,0 +1,55 @@
+/**
+ * Alipay.com Inc.
+ * Copyright (c) 2004-2019 All Rights Reserved.
+ */
+package com.asyncmd.config;
+
+import com.asyncmd.exception.AsynExCode;
+import com.asyncmd.exception.AsynException;
+import com.asyncmd.model.Frequency;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author wangwendi
+ * @version $Id: AsynConfig.java, v 0.1 2019年07月12日 下午5:16 wangwendi Exp $
+ */
+public class AsynConfig {
+
+    /**
+     * 分表数量
+     */
+    private static int tableNum;
+
+    /**
+     * 如果调度模式为异步或者同步调度 则第一次无论设置多少都是立即执行
+     * 执行频率 5s,10s,1m,1h
+     * 代表第一次5秒以后执行 第二次10秒以后执行 第三次1分钟以后执行 第四次1小时以后执行 之后都是间隔1小时执行
+     * 执行频率 5s,10s,20s
+     * 代表第一次5秒以后执行 第二次10秒以后执行 第三次20秒以后执行
+     */
+    private static List<Frequency> executerFrequencyList = new ArrayList<Frequency>();
+
+    public static void initConfig(int tableNumValue,String executerFrequencys){
+        tableNum = tableNumValue;
+        if (StringUtils.isEmpty(executerFrequencyList)){
+            throw new AsynException(AsynExCode.EXECUTER_FREQUENCY_ILLEGAL);
+        }
+        String[] frequencys = executerFrequencys.split(",");
+        for (String frequency : frequencys){
+            executerFrequencyList.add(new Frequency(frequency));
+        }
+    }
+
+    public static int getTableNum() {
+        return tableNum;
+    }
+
+    public static List<Frequency> getExecuterFrequency() {
+        return executerFrequencyList;
+    }
+
+
+}

@@ -24,10 +24,10 @@ public interface AsynCmdDAO {
 
     /**
      * 删除异步命令
-     * @param cmdId
+     * @param bizId
      * @return
      */
-    long delCmd(String cmdId);
+    long delCmd(String bizId);
 
 
 }

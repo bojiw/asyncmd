@@ -22,7 +22,7 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
     /**
      * 唯一id 需要唯一 如果业务没有好的唯一算法 可以使用SnowflakeIdWorkerUtil工具类生成
      */
-    private String cmdId;
+    private Long cmdId;
 
     /**
      * 命令类型
@@ -117,12 +117,11 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
     }
 
 
-
-    public String getCmdId() {
+    public Long getCmdId() {
         return cmdId;
     }
 
-    public void setCmdId(String cmdId) {
+    public void setCmdId(Long cmdId) {
         this.cmdId = cmdId;
     }
 
