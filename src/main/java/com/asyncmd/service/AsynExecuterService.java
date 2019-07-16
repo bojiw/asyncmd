@@ -4,18 +4,16 @@
  */
 package com.asyncmd.service;
 
-import com.asyncmd.convert.AsynCmdConvert;
+import com.asyncmd.utils.convert.AsynCmdConvert;
 import com.asyncmd.dao.AsynCmdDAO;
 import com.asyncmd.dao.AsynCmdHistoryDAO;
 import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynCmdDO;
-import com.asyncmd.model.AsynCmdHistoryDO;
 import com.asyncmd.utils.TransactionTemplateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import java.util.Map;

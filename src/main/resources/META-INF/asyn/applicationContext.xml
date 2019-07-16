@@ -23,5 +23,6 @@
         <property name="basePackage" value="com.asyncmd.dao"/>
     </bean>
 
+    <bean id="asynExecuterFacade" class="com.asyncmd.manager.impl.AsynExecuterFacadeImpl"/>
 
 </beans>

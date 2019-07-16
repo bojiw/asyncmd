@@ -4,8 +4,7 @@
  */
 package com.asyncmd.manager.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.asyncmd.config.AsynConfig;
+import com.asyncmd.config.GroupConfig;
 import com.asyncmd.enums.AsynStatus;
 import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.exception.AsynExCode;
@@ -15,13 +14,12 @@ import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.utils.ParadigmUtil;
-import com.asyncmd.utils.TransactionTemplateUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  *
@@ -29,7 +27,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author wangwendi
  * @version $Id: AsynExecuterFacadeImpl.java, v 0.1 2018年09月30日 wangwendi Exp $
  */
-public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
+public class AsynExecuterFacadeImpl implements AsynExecuterFacade,InitializingBean {
 
     /**
      * 唯一索引冲突code
@@ -40,13 +38,17 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
     @Autowired
     private AsynExecuterService asynExecuterService;
 
-    public AsynExecuterFacadeImpl(TransactionTemplate template,int tableNum,String executerFrequency){
-        TransactionTemplateUtil.newInstance().setTransactionTemplate(template);
-        AsynConfig.initConfig(tableNum,executerFrequency);
+    @Autowired
+    private GroupConfig groupConfig;
 
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        groupConfig.init();
     }
 
 
+    @Override
     public void registerAsynExecuter(AbstractAsynExecuter<? extends AsynCmd> asynExecuter) {
 
         Class classCmd = getAsynCmdObject(asynExecuter);
@@ -57,6 +59,7 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
 
     }
 
+    @Override
     public void saveExecuterAsynCmd(AsynCmd asynCmd) {
         AbstractAsynExecuter<? extends AsynCmd> asynExecuter = asynExecuterService.getAsynExecuterMap()
                 .get(asynCmd.getClass());
@@ -132,33 +135,34 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
             this.asynExecuter = asynExecuter;
         }
 
+        @Override
         public void afterCompletion(int i) {
             //如果事务已经提交 则同步执行命令
             if (TransactionSynchronization.STATUS_COMMITTED == i){
                 asynExecuter.asyExecuter(asynCmd,true);
             }
         }
-
+        @Override
         public void suspend() {
 
         }
-
+        @Override
         public void resume() {
 
         }
-
+        @Override
         public void flush() {
 
         }
-
+        @Override
         public void beforeCommit(boolean b) {
 
         }
-
+        @Override
         public void beforeCompletion() {
 
         }
-
+        @Override
         public void afterCommit() {
 
         }
@@ -210,5 +214,7 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
         throw new AsynException(AsynExCode.ILLEGAL);
 
     }
+
+
 
 }

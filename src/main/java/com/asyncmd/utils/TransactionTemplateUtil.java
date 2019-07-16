@@ -5,7 +5,6 @@
 package com.asyncmd.utils;
 
 import com.asyncmd.exception.AsynExCode;
-import com.asyncmd.exception.AsynException;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**

@@ -16,6 +16,8 @@ public enum AsynExCode {
     ILLEGAL(1001,"参数异常"),
     TEMPLATE_NULL(2001,"事务模板方法为空"),
     EXECUTER_FREQUENCY_ILLEGAL(2002,"executerFrequency调度频率参数异常,标准格式为:5s,10s,1m,2h"),
+    CRON_ILLEGAL(2002,"cron格式异常,请检测是否为正确的cron表达式"),
+
     ;
 
     private Integer code;

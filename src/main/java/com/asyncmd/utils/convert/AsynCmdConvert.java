@@ -2,7 +2,7 @@
  * Alipay.com Inc.
  * Copyright (c) 2004-2019 All Rights Reserved.
  */
-package com.asyncmd.convert;
+package com.asyncmd.utils.convert;
 
 import com.asyncmd.enums.AsynStatus;
 import com.asyncmd.exception.AsynExCode;

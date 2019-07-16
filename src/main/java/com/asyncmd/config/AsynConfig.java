@@ -21,7 +21,7 @@ public class AsynConfig {
     /**
      * 分表数量
      */
-    private static int tableNum;
+    private int tableNum;
 
     /**
      * 如果调度模式为异步或者同步调度 则第一次无论设置多少都是立即执行
@@ -30,10 +30,14 @@ public class AsynConfig {
      * 执行频率 5s,10s,20s
      * 代表第一次5秒以后执行 第二次10秒以后执行 第三次20秒以后执行
      */
-    private static List<Frequency> executerFrequencyList = new ArrayList<Frequency>();
+    private List<Frequency> executerFrequencyList = new ArrayList<Frequency>();
 
-    public static void initConfig(int tableNumValue,String executerFrequencys){
-        tableNum = tableNumValue;
+    private String executerFrequencys;
+
+    private AsynJobConfig asynJobConfig = new AsynJobConfig();
+
+
+    public void initConfig(){
         if (StringUtils.isEmpty(executerFrequencyList)){
             throw new AsynException(AsynExCode.EXECUTER_FREQUENCY_ILLEGAL);
         }
@@ -41,15 +45,26 @@ public class AsynConfig {
         for (String frequency : frequencys){
             executerFrequencyList.add(new Frequency(frequency));
         }
+        asynJobConfig.init(tableNum);
     }
 
-    public static int getTableNum() {
+    public int getTableNum() {
         return tableNum;
     }
 
-    public static List<Frequency> getExecuterFrequency() {
+    public List<Frequency> getExecuterFrequency() {
         return executerFrequencyList;
     }
 
+    public void setTableNum(int tableNum) {
+        this.tableNum = tableNum;
+    }
 
+    public void setExecuterFrequencys(String executerFrequencys) {
+        this.executerFrequencys = executerFrequencys;
+    }
+
+    public AsynJobConfig getAsynJobConfig() {
+        return asynJobConfig;
+    }
 }
