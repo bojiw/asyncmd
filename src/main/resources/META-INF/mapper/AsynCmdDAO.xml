@@ -20,6 +20,10 @@
         <result property="updateIp" column="update_ip"/>
     </resultMap>
 
+    <sql id="BASE_LIST">
+        cmd_id,cmd_type,content,biz_id,create_hostname,create_ip,create_name,
+        execute_num,gmt_create,gmt_modify,next_time,status,update_hostname,update_ip
+    </sql>
 
     
     
@@ -34,5 +38,25 @@
     <delete id="delCmd" parameterType="string">
         DELETE FROM asyn_cmd WHERE biz_id=#{bizId}
     </delete>
+
+    <update id="batchUpdateStatus" >
+        UPDATE asyn_cmd
+        <set>
+            status = #{status}
+        </set>
+        where
+        biz_id IN
+        <foreach collection="bizIds" index="index" item="bizId" open="(" separator="," close=")">
+            #{bizId}
+        </foreach>
+    </update>
+    <select id="queryAsynCmd" resultMap="asynResultMap">
+        select
+          <include refid="BASE_LIST"/>
+        from asyn_cmd
+        where
+        status = 'INIT' and next_time &lt;= #{executerTime}
+        limit #{limit}
+    </select>
 
 </mapper>

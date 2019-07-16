@@ -5,6 +5,10 @@
 package com.asyncmd.dao;
 
 import com.asyncmd.model.AsynCmdDO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -28,6 +32,25 @@ public interface AsynCmdDAO {
      * @return
      */
     long delCmd(String bizId);
+
+
+    /**
+     * 根据业务id集合批量更新状态
+     * @param bizIds
+     * @param status
+     * @return
+     */
+    long batchUpdateStatus(@Param("bizIds") List<String> bizIds,@Param("status") String status);
+
+
+    /**
+     * 查询异步命令
+     * @param limit
+     * @param executerTime
+     * @return
+     */
+    List<AsynCmdDO> queryAsynCmd(@Param("limit") int limit,@Param("executerTime") Date executerTime);
+
 
 
 }

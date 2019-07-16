@@ -31,28 +31,26 @@ public class AsynJobConfig {
      */
     private String jobName;
     /**
-     * 任务执行频率
+     * 任务执行频率 默认每隔3秒执行一次
      */
-    private String cron;
+    private String cron = "0/3 * * * * ?";
 
 
-    public void init(int tableNumValue){
-        if (StringUtils.isEmpty(cron)){
-            //默认每隔5秒执行一次
-            cron = "0/5 * * * * ?";
-        }else {
-            try {
-                CronExpression.validateExpression(cron);
-            }catch (Exception e){
-                throw new AsynException(AsynExCode.CRON_ILLEGAL);
-            }
+    public void init(int tableNum){
 
+        try {
+            //效验cron表达式是否正确
+            CronExpression.validateExpression(cron);
+        }catch (Exception e){
+            throw new AsynException(AsynExCode.CRON_ILLEGAL);
         }
-        if (tableNumValue == 0){
-            tableNumValue = 1;
+
+        //如果没有分表 则设置1个分片
+        if (tableNum == 0){
+            tableNum = 1;
         }
         // 定义作业核心配置
-        JobCoreConfiguration simpleCoreConfig = JobCoreConfiguration.newBuilder(jobName, cron, tableNumValue).build();
+        JobCoreConfiguration simpleCoreConfig = JobCoreConfiguration.newBuilder(jobName, cron, tableNum).build();
         SimpleJobConfiguration simpleJobConfig = new SimpleJobConfiguration(simpleCoreConfig, DispatchExecuterJob.class.getCanonicalName());
         // 定义Lite作业根配置
         LiteJobConfiguration simpleJobRootConfig = LiteJobConfiguration.newBuilder(simpleJobConfig).overwrite(true).build();

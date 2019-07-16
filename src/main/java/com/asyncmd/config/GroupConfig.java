@@ -4,7 +4,9 @@
  */
 package com.asyncmd.config;
 
+import com.asyncmd.utils.ThreadPoolTaskExecutorUtil;
 import com.asyncmd.utils.TransactionTemplateUtil;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -13,6 +15,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class GroupConfig {
     private AsynConfig asynConfig;
+
 
     public GroupConfig(){
         asynConfig = new AsynConfig();
@@ -27,9 +30,15 @@ public class GroupConfig {
         return asynConfig;
     }
 
+
     public void setTemplate(TransactionTemplate template){
         TransactionTemplateUtil.newInstance().setTransactionTemplate(template);
     }
+
+    public void setPoolTaskExecutor(ThreadPoolTaskExecutor poolTaskExecutor) {
+        ThreadPoolTaskExecutorUtil.newInstance().setPoolTaskExecutor(poolTaskExecutor);
+    }
+
     public void setExecuterFrequencys(String executerFrequencys) {
         asynConfig.setExecuterFrequencys(executerFrequencys);
     }
@@ -50,4 +59,7 @@ public class GroupConfig {
         asynConfig.getAsynJobConfig().setCron(cron);
     }
 
+    public void setLimit(int limit) {
+        asynConfig.setLimit(limit);
+    }
 }

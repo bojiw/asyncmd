@@ -10,8 +10,12 @@ import com.asyncmd.exception.AsynException;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynCmdDO;
 import com.asyncmd.model.AsynCmdHistoryDO;
+import com.asyncmd.utils.AsynExecuterUtil;
+import com.google.common.collect.Lists;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author wangwendi
@@ -37,7 +41,19 @@ public class AsynCmdConvert {
         asynCmdDO.setUpdateIp(asynCmd.getUpdateIp());
         return asynCmdDO;
     }
-    public static AsynCmd toCmd(AsynCmdDO asynCmdDO,Class<AsynCmd> asynCmdClass){
+    public static List<AsynCmd> toCmdList(List<AsynCmdDO> asynCmdDOs){
+        if (CollectionUtils.isEmpty(asynCmdDOs)){
+            return Lists.newArrayList();
+        }
+        List<AsynCmd> asynCmdList = Lists.newArrayList();
+        for (AsynCmdDO asynCmdDO : asynCmdDOs){
+            Class<? extends AsynCmd> asynClass = AsynExecuterUtil.getAsynCmdNameMapping().get(asynCmdDO.getCmdType());
+            asynCmdList.add(toCmd(asynCmdDO, asynClass));
+        }
+        return asynCmdList;
+
+    }
+    public static AsynCmd toCmd(AsynCmdDO asynCmdDO,Class<? extends AsynCmd>asynCmdClass){
         try {
             AsynCmd asynCmd = asynCmdClass.newInstance();
             asynCmd.setCmdId(asynCmdDO.getCmdId());

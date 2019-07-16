@@ -21,7 +21,12 @@ public class AsynConfig {
     /**
      * 分表数量
      */
-    private int tableNum;
+    private int tableNum = 0;
+
+    /**
+     * 一次从表中捞取命令数量
+     */
+    private int limit = 20;
 
     /**
      * 如果调度模式为异步或者同步调度 则第一次无论设置多少都是立即执行
@@ -66,5 +71,13 @@ public class AsynConfig {
 
     public AsynJobConfig getAsynJobConfig() {
         return asynJobConfig;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public int getLimit() {
+        return limit;
     }
 }

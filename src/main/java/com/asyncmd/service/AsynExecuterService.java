@@ -4,6 +4,7 @@
  */
 package com.asyncmd.service;
 
+import com.asyncmd.enums.AsynStatus;
 import com.asyncmd.utils.convert.AsynCmdConvert;
 import com.asyncmd.dao.AsynCmdDAO;
 import com.asyncmd.dao.AsynCmdHistoryDAO;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,49 +26,37 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author wangwendi
  * @version $Id: AsynExecuterService.java, v 0.1 2018年09月30日 wangwendi Exp $
  */
-@Service
-public class AsynExecuterService {
+public interface AsynExecuterService {
 
-    private Map<Class<? extends AsynCmd>,AbstractAsynExecuter<? extends AsynCmd>> asynExecuterMap = new ConcurrentHashMap<Class<? extends
-            AsynCmd>, AbstractAsynExecuter<? extends AsynCmd>>();
-
-    @Autowired
-    private AsynCmdDAO asynCmdDAO;
-
-    @Autowired
-    private AsynCmdHistoryDAO asynCmdHistoryDAO;
     /**
      * 插入异步命令
      * @param asynCmd
      * @return
      */
-    public long saveCmd(AsynCmd asynCmd){
-        AsynCmdDO asynCmdDO = new AsynCmdDO(asynCmd);
-        return asynCmdDAO.saveCmd(asynCmdDO);
-    }
+    long saveCmd(AsynCmd asynCmd);
 
     /**
      * 备份异步命令
      * @param asynCmd
      */
-    public void backupCmd(final AsynCmd asynCmd){
-        TransactionTemplateUtil.newInstance().getTemplate().execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                asynCmdDAO.delCmd(asynCmd.getBizId());
-                asynCmdHistoryDAO.saveCmd(AsynCmdConvert.toHistoryCmd(asynCmd));
-            }
-        });
-    }
+    void backupCmd(final AsynCmd asynCmd);
 
+    /**
+     * 获取异步命令
+     * @return
+     */
+    List<AsynCmd> queryAsynCmd(int limit);
 
-    public Map<Class<? extends AsynCmd>, AbstractAsynExecuter<? extends AsynCmd>> getAsynExecuterMap() {
-        return asynExecuterMap;
-    }
+    /**
+     * 根据业务id修改状态
+     * @param bizIds
+     */
+    boolean updateStatus(List<String> bizIds, AsynStatus asynStatus);
 
-    public void setAsynExecuterMap(
-            Map<Class<? extends AsynCmd>, AbstractAsynExecuter<? extends AsynCmd>> asynExecuterMap) {
-        this.asynExecuterMap = asynExecuterMap;
-    }
+    /**
+     * 获取分表的异步命令
+     * @return
+     */
+    List<AsynCmd> querySubTableAsynCmd(int limit,int tableIndex);
 
 }

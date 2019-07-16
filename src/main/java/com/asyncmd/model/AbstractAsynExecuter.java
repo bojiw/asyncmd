@@ -4,17 +4,18 @@
  */
 package com.asyncmd.model;
 
+import com.asyncmd.config.GroupConfig;
 import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
 import com.asyncmd.manager.AsynExecuterFacade;
 import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.utils.CountException;
+import com.asyncmd.utils.ThreadPoolTaskExecutorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * 异步命令执行器
@@ -26,10 +27,6 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
 
     private  Log log = LogFactory.getLog(this.getClass());
 
-    /**
-     * 线程池
-     */
-    private ThreadPoolTaskExecutor poolTaskExecutor;
 
     /**
      * 调度模式 默认为异步调度
@@ -49,6 +46,8 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
     @Autowired
     private AsynExecuterService asynExecuterService;
 
+    @Autowired
+    private GroupConfig groupConfig;
 
 
     /**
@@ -95,9 +94,9 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
     /**
      * 异步执行
      */
-    public void asynExecuter(AsynCmd asynCmd){
+    public boolean asynExecuter(AsynCmd asynCmd){
         T t = (T)asynCmd;
-        poolAsynExecuter(t,null);
+        return poolAsynExecuter(t,null);
     }
 
     /**
@@ -105,8 +104,14 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
      * @param asynCmd
      * @param countException
      */
-    private void poolAsynExecuter(T asynCmd,CountException countException){
-        poolTaskExecutor.execute(new AsynRunnable(asynCmd,countException));
+    public boolean poolAsynExecuter(T asynCmd,CountException countException){
+        try {
+            ThreadPoolTaskExecutorUtil.newInstance().getPoolTaskExecutor().execute(new AsynRunnable(asynCmd,countException));
+        }catch (Exception e){
+            log.warn("asyn线程池已满,请关注是否需要调整线程池大小");
+            return false;
+        }
+        return true;
 
     }
 

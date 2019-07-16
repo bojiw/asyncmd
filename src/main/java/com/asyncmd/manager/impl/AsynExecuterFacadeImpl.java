@@ -13,6 +13,7 @@ import com.asyncmd.manager.AsynExecuterFacade;
 import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.service.AsynExecuterService;
+import com.asyncmd.utils.AsynExecuterUtil;
 import com.asyncmd.utils.ParadigmUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,18 +52,18 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade,InitializingBe
     @Override
     public void registerAsynExecuter(AbstractAsynExecuter<? extends AsynCmd> asynExecuter) {
 
-        Class classCmd = getAsynCmdObject(asynExecuter);
+        Class<? extends AsynCmd> classCmd = getAsynCmdObject(asynExecuter);
         //效验
         vaildAsynCmd(classCmd,asynExecuter);
         //注册
-        asynExecuterService.getAsynExecuterMap().put(classCmd,asynExecuter);
+        AsynExecuterUtil.getAsynExecuterMap().put(classCmd,asynExecuter);
+        AsynExecuterUtil.getAsynCmdNameMapping().put(classCmd.getName(),classCmd);
 
     }
 
     @Override
     public void saveExecuterAsynCmd(AsynCmd asynCmd) {
-        AbstractAsynExecuter<? extends AsynCmd> asynExecuter = asynExecuterService.getAsynExecuterMap()
-                .get(asynCmd.getClass());
+        AbstractAsynExecuter<? extends AsynCmd> asynExecuter = AsynExecuterUtil.getAsynExecuterMap().get(asynCmd.getClass());
         if (asynExecuter == null){
             log.error("根据asynCmd获取不到对应的执行器,检查执行器是否有注册:" + asynCmd.getClass().getName());
             throw new AsynException(AsynExCode.ILLEGAL);
