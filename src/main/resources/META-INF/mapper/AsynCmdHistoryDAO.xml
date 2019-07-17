@@ -31,5 +31,12 @@
 
     </insert>
 
+    <insert id="saveCmdSubTable" parameterType="com.asyncmd.model.AsynCmdHistoryDO">
+        INSERT INTO asyn_cmd_history_#{tableIndex} (cmd_id, cmd_type, content,
+          biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,gmt_create,gmt_modify)
+        VALUES ( #{cmdId}, #{cmdType}, #{content}, #{bizId},
+          #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},now(),now())
+
+    </insert>
 
 </mapper>

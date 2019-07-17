@@ -20,4 +20,11 @@ public interface AsynCmdHistoryDAO {
      */
     long saveCmd(AsynCmdHistoryDO asynCmdHistoryDO);
 
+    /**
+     * 分表保存历史异步命令
+     * @param asynCmdHistoryDO
+     * @return
+     */
+    long saveCmdSubTable(String tableIndex,AsynCmdHistoryDO asynCmdHistoryDO);
+
 }

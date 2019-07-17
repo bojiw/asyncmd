@@ -28,11 +28,27 @@ public interface AsynCmdDAO {
     long saveCmd(AsynCmdDO asynCmdDO);
 
     /**
+     * 分表保存异步命令
+     * @param asynCmdDO
+     * @return
+     */
+    long saveCmdSubTable(String tableIndex,AsynCmdDO asynCmdDO);
+
+
+    /**
      * 删除异步命令
      * @param bizId
      * @return
      */
     long delCmd(String bizId);
+
+
+    /**
+     * 删除异步命令
+     * @param bizId
+     * @return
+     */
+    long delCmdSubTable(String tableIndex,String bizId);
 
 
     /**

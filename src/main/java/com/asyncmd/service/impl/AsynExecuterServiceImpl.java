@@ -47,8 +47,30 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
      */
     public long saveCmd(AsynCmd asynCmd){
         AsynCmdDO asynCmdDO = new AsynCmdDO(asynCmd);
-        return asynCmdDAO.saveCmd(asynCmdDO);
+
+        if (asynGroupConfig.getAsynConfig().isSubTable()){
+            int index = getIndex(asynCmd);
+            return asynCmdDAO.saveCmdSubTable(getTableIndex(index),asynCmdDO);
+        }else {
+            return asynCmdDAO.saveCmd(asynCmdDO);
+        }
     }
+
+
+    /**
+     * 根据业务id计算分配到哪个表中
+     * @param asynCmd
+     * @return
+     */
+    private int getIndex(AsynCmd asynCmd){
+        return (asynGroupConfig.getAsynConfig().getTableNum() - 1) & hash(asynCmd.getBizId());
+    }
+
+    private int hash(String bizId){
+        int h;
+        return (h = bizId.hashCode()) ^ (h >>> 16);
+    }
+
 
     /**
      * 备份异步命令
@@ -58,8 +80,15 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
         TransactionTemplateUtil.newInstance().getTemplate().execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                asynCmdDAO.delCmd(asynCmd.getBizId());
-                asynCmdHistoryDAO.saveCmd(AsynCmdConvert.toHistoryCmd(asynCmd));
+                if (asynGroupConfig.getAsynConfig().isSubTable()){
+                    int index = getIndex(asynCmd);
+                    asynCmdDAO.delCmdSubTable(getTableIndex(index),asynCmd.getBizId());
+                    asynCmdHistoryDAO.saveCmdSubTable(getTableIndex(index),AsynCmdConvert.toHistoryCmd(asynCmd));
+                }else {
+                    asynCmdDAO.delCmd(asynCmd.getBizId());
+                    asynCmdHistoryDAO.saveCmd(AsynCmdConvert.toHistoryCmd(asynCmd));
+                }
+
             }
         });
     }

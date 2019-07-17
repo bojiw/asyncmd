@@ -34,9 +34,21 @@
           #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},now(),now())
 
     </insert>
+    <insert id="saveCmdSubTable" parameterType="com.asyncmd.model.AsynCmdDO">
+        INSERT INTO asyn_cmd_#{tableIndex} (cmd_id, cmd_type, content,
+          biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,gmt_create,gmt_modify)
+        VALUES ( #{cmdId}, #{cmdType}, #{content}, #{bizId},
+          #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},now(),now())
+
+    </insert>
+
 
     <delete id="delCmd" parameterType="string">
         DELETE FROM asyn_cmd WHERE biz_id=#{bizId}
+    </delete>
+
+    <delete id="delCmdSubTable" parameterType="string">
+        DELETE FROM asyn_cmd_#{tableIndex} WHERE biz_id=#{bizId}
     </delete>
 
     <update id="batchUpdateStatus" >
