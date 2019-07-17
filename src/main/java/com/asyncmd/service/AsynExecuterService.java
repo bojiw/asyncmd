@@ -49,11 +49,13 @@ public interface AsynExecuterService {
     List<AsynCmd> queryAsynCmd(int limit,int tableIndex,AsynStatus status);
 
 
+    boolean updateStatus(AsynUpdateParam param);
+
     /**
      * 根据业务id修改状态
      * @param param
      */
-    boolean batchUpdateStatus(AsynUpdateParam param, int tableIndex);
+    boolean batchUpdateStatus(AsynUpdateParam param, Integer tableIndex);
 
 
 }

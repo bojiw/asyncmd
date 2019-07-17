@@ -49,7 +49,7 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
         AsynCmdDO asynCmdDO = new AsynCmdDO(asynCmd);
 
         if (asynGroupConfig.getAsynConfig().isSubTable()){
-            int index = getIndex(asynCmd);
+            int index = getIndex(asynCmd.getBizId());
             return asynCmdDAO.saveCmdSubTable(getTableIndex(index),asynCmdDO);
         }else {
             return asynCmdDAO.saveCmd(asynCmdDO);
@@ -59,11 +59,11 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
 
     /**
      * 根据业务id计算分配到哪个表中
-     * @param asynCmd
+     * @param bizId
      * @return
      */
-    private int getIndex(AsynCmd asynCmd){
-        return (asynGroupConfig.getAsynConfig().getTableNum() - 1) & hash(asynCmd.getBizId());
+    private int getIndex(String bizId){
+        return (asynGroupConfig.getAsynConfig().getTableNum() - 1) & hash(bizId);
     }
 
     private int hash(String bizId){
@@ -81,7 +81,7 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
                 if (asynGroupConfig.getAsynConfig().isSubTable()){
-                    int index = getIndex(asynCmd);
+                    int index = getIndex(asynCmd.getBizId());
                     asynCmdDAO.delCmdSubTable(getTableIndex(index),asynCmd.getBizId());
                     asynCmdHistoryDAO.saveCmdSubTable(getTableIndex(index),AsynCmdConvert.toHistoryCmd(asynCmd));
                 }else {
@@ -93,7 +93,20 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
         });
     }
 
-    public boolean batchUpdateStatus(AsynUpdateParam param,int tableIndex) {
+    public boolean updateStatus(AsynUpdateParam param) {
+        Long sum;
+        if (asynGroupConfig.getAsynConfig().getTableNum() == 0){
+            sum = asynCmdDAO.updateStatus(param);
+        }else {
+            sum = asynCmdDAO.updateStatusSubTable(getTableIndex(getIndex(param.getBizId())),param);
+        }
+        if (sum > 0){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean batchUpdateStatus(AsynUpdateParam param, Integer tableIndex) {
         Long sum;
 
         if (asynGroupConfig.getAsynConfig().getTableNum() == 0){

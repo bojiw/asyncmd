@@ -52,6 +52,20 @@ public interface AsynCmdDAO {
 
 
     /**
+     * 根据业务id集合更新状态
+     * @param asynUpdateParam
+     * @return
+     */
+    long updateStatus(AsynUpdateParam asynUpdateParam);
+
+    /**
+     * 分表根据业务id集合更新状态
+     * @param asynUpdateParam
+     * @return
+     */
+    long updateStatusSubTable(String tableIndex,AsynUpdateParam asynUpdateParam);
+
+    /**
      * 根据业务id集合批量更新状态
      * @param asynUpdateParam
      * @return

@@ -5,6 +5,7 @@
 package com.asyncmd.model;
 
 import com.asyncmd.config.AsynGroupConfig;
+import com.asyncmd.enums.AsynStatus;
 import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
@@ -12,6 +13,7 @@ import com.asyncmd.manager.AsynExecuterFacade;
 import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.utils.CountException;
 import com.asyncmd.utils.ThreadPoolTaskExecutorUtil;
+import com.google.common.collect.Lists;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -134,6 +136,12 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
                 executer(asynCmd);
                 asynExecuterService.backupCmd(asynCmd);
             }catch (Exception e){
+                //失败更新状态为初始化 由调度中心调度
+                AsynUpdateParam asynUpdateParam = new AsynUpdateParam();
+                asynUpdateParam.setBizId(asynCmd.getBizId());
+                asynUpdateParam.setStatus(AsynStatus.INIT.getStatus());
+                asynUpdateParam.setWhereAsynStatus(AsynStatus.EXECUTE.getStatus());
+                asynExecuterService.updateStatus(asynUpdateParam);
                 if (countNotNull()){
                     countException.setException(new AsynException(AsynExCode.SYS_ERROR,e));
                 }

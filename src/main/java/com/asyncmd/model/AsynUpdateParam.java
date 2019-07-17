@@ -12,6 +12,8 @@ import java.util.List;
  * @version $Id: AsynUpdateParam.java, v 0.1 2019年07月17日 下午6:39 wangwendi Exp $
  */
 public class AsynUpdateParam {
+
+    private String bizId;
     /**
      * 业务id
      */
@@ -78,5 +80,13 @@ public class AsynUpdateParam {
 
     public void setReset(Boolean reset) {
         this.reset = reset;
+    }
+
+    public String getBizId() {
+        return bizId;
+    }
+
+    public void setBizId(String bizId) {
+        this.bizId = bizId;
     }
 }

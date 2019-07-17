@@ -51,6 +51,22 @@
         DELETE FROM asyn_cmd_#{tableIndex} WHERE biz_id=#{bizId}
     </delete>
 
+    <update id="updateStatus">
+        UPDATE asyn_cmd
+        <set>
+            status = #{status},
+            <if test="executer != null and executer ">
+                execute_num = execute_num + 1
+            </if>
+            <if test="reset != null and reset">
+                execute_num = execute_num - 1
+            </if>
+
+        </set>
+        where
+        status = #{whereAsynStatus} and
+        biz_id = #{bizId}
+    </update>
     <update id="batchUpdateStatus" >
         UPDATE asyn_cmd
         <set>
@@ -69,6 +85,16 @@
         <foreach collection="bizIds" index="index" item="bizId" open="(" separator="," close=")">
             #{bizId}
         </foreach>
+    </update>
+    <update id="updateStatusSubTable">
+        UPDATE asyn_cmd_#{tableIndex}
+        <set>
+            status = #{status},
+            execute_num = execute_num + 1
+        </set>
+        where
+        status = #{whereAsynStatus} and
+        biz_id = #{bizId}
     </update>
 
     <update id="batchupdateStatusSubTable">
