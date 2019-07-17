@@ -4,7 +4,7 @@
  */
 package com.asyncmd.manager.impl;
 
-import com.asyncmd.config.GroupConfig;
+import com.asyncmd.config.AsynGroupConfig;
 import com.asyncmd.enums.AsynStatus;
 import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.exception.AsynExCode;
@@ -21,6 +21,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.util.Date;
 
 /**
  *
@@ -40,7 +42,7 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade,InitializingBe
     private AsynExecuterService asynExecuterService;
 
     @Autowired
-    private GroupConfig groupConfig;
+    private AsynGroupConfig groupConfig;
 
 
     @Override
@@ -57,7 +59,7 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade,InitializingBe
         vaildAsynCmd(classCmd,asynExecuter);
         //注册
         AsynExecuterUtil.getAsynExecuterMap().put(classCmd,asynExecuter);
-        AsynExecuterUtil.getAsynCmdNameMapping().put(classCmd.getName(),classCmd);
+        AsynExecuterUtil.getAsynCmdNameMapping().put(classCmd.getSimpleName(),classCmd);
 
     }
 
@@ -68,13 +70,7 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade,InitializingBe
             log.error("根据asynCmd获取不到对应的执行器,检查执行器是否有注册:" + asynCmd.getClass().getName());
             throw new AsynException(AsynExCode.ILLEGAL);
         }
-        DispatchMode dispatchMode = asynExecuter.getDispatchMode();
-        //如果是要立刻执行 则直接设置状态为执行中
-        boolean executer = false;
-        if (DispatchMode.DEFAULT != dispatchMode){
-            asynCmd.setStatus(AsynStatus.EXECUTE.getStatus());
-            executer = true;
-        }
+        buildAsynCmd(asynCmd,asynExecuter);
         try {
             asynExecuterService.saveCmd(asynCmd);
         }catch (org.springframework.dao.DuplicateKeyException e){
@@ -83,13 +79,32 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade,InitializingBe
             return;
         }
         //如果不需要立刻执行 直接返回
-        if (!executer){
+        if (asynCmd.getStatus().equals(AsynStatus.INIT.getStatus())){
             return;
         }
         executer(asynExecuter,asynCmd);
 
-
     }
+
+    private void buildAsynCmd(AsynCmd asynCmd,AbstractAsynExecuter<? extends AsynCmd> asynExecuter){
+        DispatchMode dispatchMode = asynExecuter.getDispatchMode();
+        //如果是要立刻执行 则直接设置状态为执行中
+        if (DispatchMode.DEFAULT != dispatchMode){
+            asynCmd.setStatus(AsynStatus.EXECUTE.getStatus());
+            asynCmd.setExecuteNum(1);
+        }else {
+            asynCmd.setStatus(AsynStatus.INIT.getStatus());
+            asynCmd.setExecuteNum(0);
+        }
+        asynCmd.setCmdType(asynCmd.getClass().getSimpleName());
+        if (asynCmd.getNextTime() == null){
+            asynCmd.setNextTime(new Date());
+        }
+        if (asynCmd.getCreateName() == null){
+            asynCmd.setCreateName(AsynCmd.default_create_name);
+        }
+    }
+
 
     /**
      * 执行异步命令

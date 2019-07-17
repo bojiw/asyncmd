@@ -5,6 +5,7 @@
 package com.asyncmd.service;
 
 import com.asyncmd.enums.AsynStatus;
+import com.asyncmd.model.AsynUpdateParam;
 import com.asyncmd.utils.convert.AsynCmdConvert;
 import com.asyncmd.dao.AsynCmdDAO;
 import com.asyncmd.dao.AsynCmdHistoryDAO;
@@ -45,18 +46,14 @@ public interface AsynExecuterService {
      * 获取异步命令
      * @return
      */
-    List<AsynCmd> queryAsynCmd(int limit);
+    List<AsynCmd> queryAsynCmd(int limit,int tableIndex,AsynStatus status);
+
 
     /**
      * 根据业务id修改状态
-     * @param bizIds
+     * @param param
      */
-    boolean updateStatus(List<String> bizIds, AsynStatus asynStatus);
+    boolean batchUpdateStatus(AsynUpdateParam param, int tableIndex);
 
-    /**
-     * 获取分表的异步命令
-     * @return
-     */
-    List<AsynCmd> querySubTableAsynCmd(int limit,int tableIndex);
 
 }

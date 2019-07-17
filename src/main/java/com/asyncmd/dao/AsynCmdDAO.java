@@ -5,6 +5,7 @@
 package com.asyncmd.dao;
 
 import com.asyncmd.model.AsynCmdDO;
+import com.asyncmd.model.AsynUpdateParam;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
@@ -36,11 +37,18 @@ public interface AsynCmdDAO {
 
     /**
      * 根据业务id集合批量更新状态
-     * @param bizIds
-     * @param status
+     * @param asynUpdateParam
      * @return
      */
-    long batchUpdateStatus(@Param("bizIds") List<String> bizIds,@Param("status") String status);
+    long batchUpdateStatus(AsynUpdateParam asynUpdateParam);
+
+    /**
+     * 分表根据业务id集合批量更新状态
+     * @param asynUpdateParam
+     * @return
+     */
+    long batchupdateStatusSubTable(String tableIndex,AsynUpdateParam asynUpdateParam);
+
 
 
     /**
@@ -49,8 +57,17 @@ public interface AsynCmdDAO {
      * @param executerTime
      * @return
      */
-    List<AsynCmdDO> queryAsynCmd(@Param("limit") int limit,@Param("executerTime") Date executerTime);
+    List<AsynCmdDO> queryAsynCmd(@Param("status") String status,
+                                 @Param("limit") int limit,@Param("executerTime") Date executerTime);
 
+    /**
+     * 查询分表异步命令
+     * @param limit
+     * @param executerTime
+     * @return
+     */
+    List<AsynCmdDO> querySubTableAsynCmd(@Param("tableIndex")String tableIndex, @Param("status") String status,
+                                          @Param("limit") int limit,@Param("executerTime") Date executerTime);
 
 
 }

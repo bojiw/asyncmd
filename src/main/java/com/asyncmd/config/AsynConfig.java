@@ -26,7 +26,7 @@ public class AsynConfig {
     /**
      * 一次从表中捞取命令数量
      */
-    private int limit = 20;
+    private int limit = 30;
 
     /**
      * 如果调度模式为异步或者同步调度 则第一次无论设置多少都是立即执行
@@ -79,5 +79,13 @@ public class AsynConfig {
 
     public int getLimit() {
         return limit;
+    }
+
+    /**
+     * 异步命令表是否分表
+     * @return
+     */
+    public boolean isSubTable(){
+        return tableNum > 0;
     }
 }

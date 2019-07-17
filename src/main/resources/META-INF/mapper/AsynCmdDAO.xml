@@ -42,21 +42,52 @@
     <update id="batchUpdateStatus" >
         UPDATE asyn_cmd
         <set>
-            status = #{status}
+            status = #{status},
+            <if test="executer != null and executer ">
+                execute_num = execute_num + 1
+            </if>
+            <if test="reset != null and reset">
+                execute_num = execute_num - 1
+            </if>
+
         </set>
         where
+        status = #{whereAsynStatus} and
         biz_id IN
         <foreach collection="bizIds" index="index" item="bizId" open="(" separator="," close=")">
             #{bizId}
         </foreach>
     </update>
+
+    <update id="batchupdateStatusSubTable">
+        UPDATE asyn_cmd_#{tableIndex}
+        <set>
+            status = #{status},
+            execute_num = execute_num + 1
+        </set>
+        where
+        status = #{whereAsynStatus} and
+        biz_id IN
+        <foreach collection="bizIds" index="index" item="bizId" open="(" separator="," close=")">
+            #{bizId}
+        </foreach>
+    </update>
+
     <select id="queryAsynCmd" resultMap="asynResultMap">
         select
           <include refid="BASE_LIST"/>
         from asyn_cmd
         where
-        status = 'INIT' and next_time &lt;= #{executerTime}
+        status = #{status} and next_time &lt;= #{executerTime}
         limit #{limit}
     </select>
 
+    <select id="querySubTableAsynCmd" resultMap="asynResultMap">
+        select
+        <include refid="BASE_LIST"/>
+        from asyn_cmd_#{tableIndex}
+        where
+        status = #{status} and next_time &lt;= #{executerTime}
+        limit #{limit}
+    </select>
 </mapper>

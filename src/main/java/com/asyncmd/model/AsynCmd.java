@@ -18,6 +18,7 @@ import java.util.Date;
 public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
     private static final long serialVersionUID = 2362119134833203155L;
 
+    public static final String default_create_name = "system";
 
     /**
      * 唯一id 需要唯一 如果业务没有好的唯一算法 可以使用SnowflakeIdWorkerUtil工具类生成

@@ -4,12 +4,14 @@
  */
 package com.asyncmd.service.impl;
 
+import com.asyncmd.config.AsynGroupConfig;
 import com.asyncmd.dao.AsynCmdDAO;
 import com.asyncmd.dao.AsynCmdHistoryDAO;
 import com.asyncmd.enums.AsynStatus;
 import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynCmdDO;
+import com.asyncmd.model.AsynUpdateParam;
 import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.utils.TransactionTemplateUtil;
 import com.asyncmd.utils.convert.AsynCmdConvert;
@@ -36,6 +38,8 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
 
     @Autowired
     private AsynCmdHistoryDAO asynCmdHistoryDAO;
+    @Autowired
+    private AsynGroupConfig asynGroupConfig;
     /**
      * 插入异步命令
      * @param asynCmd
@@ -60,22 +64,41 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
         });
     }
 
-    public boolean updateStatus(List<String> bizIds, AsynStatus asynStatus) {
-        long l = asynCmdDAO.batchUpdateStatus(bizIds, asynStatus.getStatus());
-        if (l > 0){
+    public boolean batchUpdateStatus(AsynUpdateParam param,int tableIndex) {
+        Long sum;
+
+        if (asynGroupConfig.getAsynConfig().getTableNum() == 0){
+            sum = asynCmdDAO.batchUpdateStatus(param);
+        }else {
+            sum = asynCmdDAO.batchupdateStatusSubTable(getTableIndex(tableIndex), param);
+
+        }
+        if (sum > 0){
             return true;
         }
         return false;
 
     }
 
-    public List<AsynCmd> queryAsynCmd(int limit) {
-        List<AsynCmdDO> asynCmdDOS = asynCmdDAO.queryAsynCmd(limit, new Date(System.currentTimeMillis() + 1000));
+    public List<AsynCmd> queryAsynCmd(int limit,int tableIndex,AsynStatus status) {
+        List<AsynCmdDO> asynCmdDOS;
+        if (asynGroupConfig.getAsynConfig().isSubTable()){
+            asynCmdDOS = asynCmdDAO.querySubTableAsynCmd(getTableIndex(tableIndex),status.getStatus(),limit,getNextMillis());
+        }else {
+            asynCmdDOS = asynCmdDAO.queryAsynCmd(status.getStatus(),limit, getNextMillis());
+        }
         return AsynCmdConvert.toCmdList(asynCmdDOS);
     }
 
-    public List<AsynCmd> querySubTableAsynCmd(int limit, int tableIndex) {
-        return null;
+
+    private String getTableIndex(int tableIndex){
+        if (tableIndex < 10){
+            return "0" + tableIndex;
+        }
+        return String.valueOf(tableIndex);
     }
 
+    private Date getNextMillis(){
+        return new Date(System.currentTimeMillis() + 1000);
+    }
 }

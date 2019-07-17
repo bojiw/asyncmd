@@ -11,13 +11,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @author wangwendi
- * @version $Id: GroupConfig.java, v 0.1 2019年07月16日 下午2:01 wangwendi Exp $
+ * @version $Id: AsynGroupConfig.java, v 0.1 2019年07月16日 下午2:01 wangwendi Exp $
  */
-public class GroupConfig {
+public class AsynGroupConfig {
     private AsynConfig asynConfig;
 
 
-    public GroupConfig(){
+    public AsynGroupConfig(){
         asynConfig = new AsynConfig();
     }
 

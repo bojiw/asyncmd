@@ -4,7 +4,7 @@
  */
 package com.asyncmd.model;
 
-import com.asyncmd.config.GroupConfig;
+import com.asyncmd.config.AsynGroupConfig;
 import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
@@ -47,7 +47,7 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
     private AsynExecuterService asynExecuterService;
 
     @Autowired
-    private GroupConfig groupConfig;
+    private AsynGroupConfig groupConfig;
 
 
     /**
@@ -108,7 +108,7 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
         try {
             ThreadPoolTaskExecutorUtil.newInstance().getPoolTaskExecutor().execute(new AsynRunnable(asynCmd,countException));
         }catch (Exception e){
-            log.warn("asyn线程池已满,请关注是否需要调整线程池大小");
+            log.warn("asyn线程池异常",e);
             return false;
         }
         return true;
