@@ -6,6 +6,7 @@ package com.asyncmd.service;
 
 import com.asyncmd.enums.AsynStatus;
 import com.asyncmd.model.AsynUpdateParam;
+import com.asyncmd.model.Frequency;
 import com.asyncmd.utils.convert.AsynCmdConvert;
 import com.asyncmd.dao.AsynCmdDAO;
 import com.asyncmd.dao.AsynCmdHistoryDAO;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,7 +48,7 @@ public interface AsynExecuterService {
      * 获取异步命令
      * @return
      */
-    List<AsynCmd> queryAsynCmd(int limit,int tableIndex,AsynStatus status);
+    List<AsynCmd> queryAsynCmd(int limit,int tableIndex,AsynStatus status,Date whereNextTime);
 
 
     boolean updateStatus(AsynUpdateParam param);
@@ -56,6 +58,14 @@ public interface AsynExecuterService {
      * @param param
      */
     boolean batchUpdateStatus(AsynUpdateParam param, Integer tableIndex);
+
+
+    /**
+     * 获取下一次执行时间
+     * @param executerFrequencyList
+     * @return
+     */
+    Date getNextTime(List<Frequency> executerFrequencyList,AsynCmd asynCmd);
 
 
 }

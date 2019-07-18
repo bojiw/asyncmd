@@ -14,6 +14,7 @@ import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.utils.AsynExecuterUtil;
 import com.asyncmd.utils.ThreadPoolTaskExecutorUtil;
 import com.asyncmd.utils.TransactionTemplateUtil;
+import com.asyncmd.utils.convert.AsynCmdConvert;
 import com.google.common.collect.Lists;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +26,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -56,8 +58,8 @@ public class AsynExecuterJobManagerImpl implements AsynExecuterJobManager {
             log.warn("asyn线程池不足,请注意,剩余线程数"+ getPoolSurplusNum());
             return;
         }
-        final List<AsynCmd> asynCmdList = asynExecuterService.queryAsynCmd(asynGroupConfig.getAsynConfig().getLimit(),tableIndex,AsynStatus.INIT);
-        final List<String> bizIds = getBizIds(asynCmdList);
+        final List<AsynCmd> asynCmdList = asynExecuterService.queryAsynCmd(asynGroupConfig.getAsynConfig().getLimit(),tableIndex,AsynStatus.INIT,getNextMillis());
+        final List<String> bizIds = AsynCmdConvert.toBizIds(asynCmdList);
         if (CollectionUtils.isEmpty(bizIds)){
             return;
         }
@@ -76,7 +78,7 @@ public class AsynExecuterJobManagerImpl implements AsynExecuterJobManager {
                 }
                 List<AsynCmd> failList = pushPool(asynCmdList);
                 //push线程池失败的异步命令业务id
-                return getBizIds(failList);
+                return AsynCmdConvert.toBizIds(failList);
             }
         });
         if (CollectionUtils.isEmpty(failBizIds)){
@@ -95,22 +97,15 @@ public class AsynExecuterJobManagerImpl implements AsynExecuterJobManager {
             }
         });
     }
+    private Date getNextMillis(){
+        return new Date(System.currentTimeMillis() + 1000);
+    }
+
 
 
     private int getPoolSurplusNum(){
         ThreadPoolTaskExecutor poolTaskExecutor = ThreadPoolTaskExecutorUtil.newInstance().getPoolTaskExecutor();
         return poolTaskExecutor.getMaxPoolSize() - poolTaskExecutor.getActiveCount();
-    }
-
-    private List<String> getBizIds(List<AsynCmd> asynCmdList){
-        if (CollectionUtils.isEmpty(asynCmdList)){
-            return Lists.newArrayList();
-        }
-        List<String> bizIds = Lists.newArrayList();
-        for (AsynCmd asynCmd : asynCmdList){
-            bizIds.add(asynCmd.getBizId());
-        }
-        return bizIds;
     }
 
 

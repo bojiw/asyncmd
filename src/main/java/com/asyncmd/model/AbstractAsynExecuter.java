@@ -162,13 +162,8 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
 
                 }else {
                     asynUpdateParam.setStatus(AsynStatus.INIT.getStatus());
-                    int retry = asynCmd.getExecuteNum() - 1;
-                    if (!CollectionUtils.isEmpty(executerFrequencyList)){
-                        asynUpdateParam.setNextTime(getNextTime(retry,executerFrequencyList));
-                    }else {
-                        List<Frequency> groupExecuterFrequencys = asynGroupConfig.getAsynConfig().getExecuterFrequency();
-                        asynUpdateParam.setNextTime(getNextTime(retry,groupExecuterFrequencys));
-                    }
+
+                    asynUpdateParam.setNextTime(asynExecuterService.getNextTime(executerFrequencyList,asynCmd));
 
                 }
                 asynUpdateParam.setBizId(asynCmd.getBizId());
@@ -185,15 +180,7 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
             }
         }
 
-        private Date getNextTime(int retry,List<Frequency> executerFrequencyList){
-            Frequency frequency;
-            if (executerFrequencyList.size() < retry){
-                frequency = executerFrequencyList.get(executerFrequencyList.size() - 1);
-            }else {
-                frequency = executerFrequencyList.get(retry);
-            }
-            return frequency.getNextTime(asynCmd.getNextTime())
-        }
+
 
         private boolean countNotNull(){
             return countException != null;
@@ -240,6 +227,10 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
 
     public DispatchMode getDispatchMode() {
         return dispatchMode;
+    }
+
+    public List<Frequency> getExecuterFrequencyList() {
+        return executerFrequencyList;
     }
 }
 

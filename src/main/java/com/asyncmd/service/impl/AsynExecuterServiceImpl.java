@@ -12,6 +12,7 @@ import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynCmdDO;
 import com.asyncmd.model.AsynUpdateParam;
+import com.asyncmd.model.Frequency;
 import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.utils.TransactionTemplateUtil;
 import com.asyncmd.utils.convert.AsynCmdConvert;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -122,12 +124,12 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
 
     }
 
-    public List<AsynCmd> queryAsynCmd(int limit,int tableIndex,AsynStatus status) {
+    public List<AsynCmd> queryAsynCmd(int limit,int tableIndex,AsynStatus status,Date whereNextTime) {
         List<AsynCmdDO> asynCmdDOS;
         if (asynGroupConfig.getAsynConfig().isSubTable()){
-            asynCmdDOS = asynCmdDAO.querySubTableAsynCmd(getTableIndex(tableIndex),status.getStatus(),limit,getNextMillis());
+            asynCmdDOS = asynCmdDAO.querySubTableAsynCmd(getTableIndex(tableIndex),status.getStatus(),limit,whereNextTime);
         }else {
-            asynCmdDOS = asynCmdDAO.queryAsynCmd(status.getStatus(),limit, getNextMillis());
+            asynCmdDOS = asynCmdDAO.queryAsynCmd(status.getStatus(),limit, whereNextTime);
         }
         return AsynCmdConvert.toCmdList(asynCmdDOS);
     }
@@ -140,7 +142,22 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
         return String.valueOf(tableIndex);
     }
 
-    private Date getNextMillis(){
-        return new Date(System.currentTimeMillis() + 1000);
+    public Date getNextTime(List<Frequency> executerFrequencyList,AsynCmd asynCmd) {
+        int retry = asynCmd.getExecuteNum() - 1;
+        if (!CollectionUtils.isEmpty(executerFrequencyList)){
+            return nextTime(retry,executerFrequencyList,asynCmd);
+        }
+        List<Frequency> groupExecuterFrequencys = asynGroupConfig.getAsynConfig().getExecuterFrequency();
+        return nextTime(retry,groupExecuterFrequencys,asynCmd);
+    }
+
+    private Date nextTime(int retry,List<Frequency> executerFrequencyList,AsynCmd asynCmd){
+        Frequency frequency;
+        if (executerFrequencyList.size() < retry){
+            frequency = executerFrequencyList.get(executerFrequencyList.size() - 1);
+        }else {
+            frequency = executerFrequencyList.get(retry);
+        }
+        return frequency.getNextTime(asynCmd.getNextTime());
     }
 }

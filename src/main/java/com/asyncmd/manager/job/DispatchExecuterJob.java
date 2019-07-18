@@ -18,7 +18,6 @@ public class DispatchExecuterJob implements SimpleJob {
 
     public void execute(ShardingContext shardingContext) {
         AsynExecuterJobManager asynExecuterJobManager = AsynSpringUtil.getBean(AsynExecuterJobManager.class);
-        System.out.println(shardingContext.getShardingItem());
         asynExecuterJobManager.executer(shardingContext.getShardingItem());
     }
 }

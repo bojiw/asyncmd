@@ -7,6 +7,7 @@ package com.asyncmd.config;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
 import com.asyncmd.manager.job.DispatchExecuterJob;
+import com.asyncmd.manager.job.DispatchRestJob;
 import com.dangdang.ddframe.job.config.JobCoreConfiguration;
 import com.dangdang.ddframe.job.config.simple.SimpleJobConfiguration;
 import com.dangdang.ddframe.job.lite.api.JobScheduler;
@@ -15,13 +16,16 @@ import com.dangdang.ddframe.job.reg.base.CoordinatorRegistryCenter;
 import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperConfiguration;
 import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperRegistryCenter;
 import org.quartz.CronExpression;
-import org.springframework.util.StringUtils;
 
 /**
  * @author wangwendi
  * @version $Id: AsynJobConfig.java, v 0.1 2019年07月16日 上午11:24 wangwendi Exp $
  */
 public class AsynJobConfig {
+
+    private static final String EXECUTE = "_execute";
+    private static final String REST = "_rest";
+
     /**
      * zookeeper地址
      */
@@ -49,13 +53,36 @@ public class AsynJobConfig {
         if (tableNum == 0){
             tableNum = 1;
         }
+        createExecuterJob(tableNum);
+        createRestJob(tableNum);
+    }
+
+    /**
+     * 创建执行任务
+     * @param tableNum
+     */
+    private void createExecuterJob(int tableNum){
+        String newJobName = jobName + EXECUTE;
         // 定义作业核心配置
-        JobCoreConfiguration simpleCoreConfig = JobCoreConfiguration.newBuilder(jobName, cron, tableNum).build();
+        JobCoreConfiguration simpleCoreConfig = JobCoreConfiguration.newBuilder(newJobName, cron, tableNum).build();
         SimpleJobConfiguration simpleJobConfig = new SimpleJobConfiguration(simpleCoreConfig, DispatchExecuterJob.class.getCanonicalName());
         // 定义Lite作业根配置
         LiteJobConfiguration simpleJobRootConfig = LiteJobConfiguration.newBuilder(simpleJobConfig).overwrite(true).build();
         new JobScheduler(createRegistryCenter(zookeeperUrl), simpleJobRootConfig).init();
+    }
 
+    /**
+     * 创建状态重置任务 防止因为系统异常导致执行失败的任务一直无法变成初始化状态
+     * @param tableNum
+     */
+    private void createRestJob(int tableNum){
+        String newJobName = jobName + REST;
+        // 定义作业核心配置
+        JobCoreConfiguration simpleCoreConfig = JobCoreConfiguration.newBuilder(newJobName, "0/60 * * * * ?", tableNum).build();
+        SimpleJobConfiguration simpleJobConfig = new SimpleJobConfiguration(simpleCoreConfig, DispatchRestJob.class.getCanonicalName());
+        // 定义Lite作业根配置
+        LiteJobConfiguration simpleJobRootConfig = LiteJobConfiguration.newBuilder(simpleJobConfig).overwrite(true).build();
+        new JobScheduler(createRegistryCenter(zookeeperUrl), simpleJobRootConfig).init();
     }
 
     private static CoordinatorRegistryCenter createRegistryCenter(String zookeeperUrl) {

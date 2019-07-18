@@ -95,5 +95,16 @@ public class AsynCmdConvert {
 
     }
 
+    public static List<String> toBizIds(List<AsynCmd> asynCmdList){
+        if (CollectionUtils.isEmpty(asynCmdList)){
+            return Lists.newArrayList();
+        }
+        List<String> bizIds = Lists.newArrayList();
+        for (AsynCmd asynCmd : asynCmdList){
+            bizIds.add(asynCmd.getBizId());
+        }
+        return bizIds;
+    }
+
 
 }
