@@ -48,7 +48,7 @@ public class AsynConfig {
 
 
     public void initConfig(){
-        if (StringUtils.isEmpty(executerFrequencyList)){
+        if (StringUtils.isEmpty(executerFrequencys)){
             throw new AsynException(AsynExCode.EXECUTER_FREQUENCY_ILLEGAL);
         }
         executerFrequencyList = FrequencyUtil.createFrequencys(executerFrequencys);

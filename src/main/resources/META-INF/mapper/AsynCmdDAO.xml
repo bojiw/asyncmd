@@ -35,7 +35,7 @@
 
     </insert>
     <insert id="saveCmdSubTable" parameterType="com.asyncmd.model.AsynCmdDO">
-        INSERT INTO asyn_cmd_#{tableIndex} (cmd_id, cmd_type, content,
+        INSERT INTO asyn_cmd#{tableIndex} (cmd_id, cmd_type, content,
           biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,gmt_create,gmt_modify)
         VALUES ( #{cmdId}, #{cmdType}, #{content}, #{bizId},
           #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},now(),now())
@@ -90,7 +90,7 @@
         </foreach>
     </update>
     <update id="updateStatusSubTable">
-        UPDATE asyn_cmd_#{tableIndex}
+        UPDATE asyn_cmd#{tableIndex}
         <set>
             status = #{status},
             execute_num = execute_num + 1,
@@ -101,7 +101,7 @@
     </update>
 
     <update id="batchupdateStatusSubTable">
-        UPDATE asyn_cmd_#{tableIndex}
+        UPDATE asyn_cmd#{tableIndex}
         <set>
             status = #{status},
             execute_num = execute_num + 1
@@ -126,7 +126,7 @@
     <select id="querySubTableAsynCmd" resultMap="asynResultMap">
         select
         <include refid="BASE_LIST"/>
-        from asyn_cmd_#{tableIndex}
+        from asyn_cmd#{tableIndex}
         where
         status = #{status} and next_time &lt;= #{executerTime}
         limit #{limit}
