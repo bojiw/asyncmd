@@ -12,12 +12,19 @@ import com.asyncmd.exception.AsynException;
 import com.asyncmd.manager.AsynExecuterFacade;
 import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.utils.CountException;
+import com.asyncmd.utils.FrequencyUtil;
 import com.asyncmd.utils.ThreadPoolTaskExecutorUtil;
 import com.google.common.collect.Lists;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 异步命令执行器
@@ -48,8 +55,20 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
     @Autowired
     private AsynExecuterService asynExecuterService;
 
+    /**
+     * 如果有特别的异步命令不想要用全局重试频率 可以设置
+     * 如果调度模式为异步或者同步调度 则第一次无论设置多少都是立即执行
+     * 重试执行频率 5s,10s,1m,1h
+     * 代表第一次重试5秒以后执行 第二次10秒以后执行 第三次1分钟以后执行 第四次1小时以后执行 之后都是间隔1小时执行
+     * 执行频率 5s,10s,20s
+     * 代表第一次重试5秒以后执行 第二次10秒以后执行 第三次20秒以后执行
+     */
+    protected String executerFrequencys;
+
+    private List<Frequency> executerFrequencyList = new ArrayList<Frequency>();
+
     @Autowired
-    private AsynGroupConfig groupConfig;
+    private AsynGroupConfig asynGroupConfig;
 
 
     /**
@@ -138,9 +157,23 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
             }catch (Exception e){
                 //失败更新状态为初始化 由调度中心调度
                 AsynUpdateParam asynUpdateParam = new AsynUpdateParam();
+                if (asynCmd.getExecuteNum() >= asynGroupConfig.getAsynConfig().getRetryNum()){
+                    asynUpdateParam.setStatus(AsynStatus.ERROR.getStatus());
+
+                }else {
+                    asynUpdateParam.setStatus(AsynStatus.INIT.getStatus());
+                    int retry = asynCmd.getExecuteNum() - 1;
+                    if (!CollectionUtils.isEmpty(executerFrequencyList)){
+                        asynUpdateParam.setNextTime(getNextTime(retry,executerFrequencyList));
+                    }else {
+                        List<Frequency> groupExecuterFrequencys = asynGroupConfig.getAsynConfig().getExecuterFrequency();
+                        asynUpdateParam.setNextTime(getNextTime(retry,groupExecuterFrequencys));
+                    }
+
+                }
                 asynUpdateParam.setBizId(asynCmd.getBizId());
-                asynUpdateParam.setStatus(AsynStatus.INIT.getStatus());
                 asynUpdateParam.setWhereAsynStatus(AsynStatus.EXECUTE.getStatus());
+
                 asynExecuterService.updateStatus(asynUpdateParam);
                 if (countNotNull()){
                     countException.setException(new AsynException(AsynExCode.SYS_ERROR,e));
@@ -150,6 +183,16 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
                     countException.countDown();
                 }
             }
+        }
+
+        private Date getNextTime(int retry,List<Frequency> executerFrequencyList){
+            Frequency frequency;
+            if (executerFrequencyList.size() < retry){
+                frequency = executerFrequencyList.get(executerFrequencyList.size() - 1);
+            }else {
+                frequency = executerFrequencyList.get(retry);
+            }
+            return frequency.getNextTime(asynCmd.getNextTime())
         }
 
         private boolean countNotNull(){
@@ -170,6 +213,9 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
      * @throws Exception
      */
     public void afterPropertiesSet() throws Exception {
+        if (!StringUtils.isEmpty(executerFrequencys)){
+            executerFrequencyList = FrequencyUtil.createFrequencys(executerFrequencys);
+        }
         //如果是自动注册 直接在初始化的时候注册
         if (autoRegister){
             asynExecuterFacade.registerAsynExecuter(this);
@@ -182,6 +228,10 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
 
     public void setAsynExecuterFacade(AsynExecuterFacade asynExecuterFacade) {
         this.asynExecuterFacade = asynExecuterFacade;
+    }
+
+    public void setExecuterFrequencys(String executerFrequencys) {
+        this.executerFrequencys = executerFrequencys;
     }
 
     public void setDispatchMode(DispatchMode dispatchMode) {

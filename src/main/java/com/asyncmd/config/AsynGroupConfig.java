@@ -62,4 +62,7 @@ public class AsynGroupConfig {
     public void setLimit(int limit) {
         asynConfig.setLimit(limit);
     }
+    public void setRetryNum(int retryNum) {
+        asynConfig.setRetryNum(retryNum);
+    }
 }

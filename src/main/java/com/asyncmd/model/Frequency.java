@@ -8,6 +8,9 @@ import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
 import org.springframework.util.StringUtils;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * 调度频率
  * @author wangwendi
@@ -65,6 +68,28 @@ public class Frequency {
             return true;
         }
         return false;
+    }
+    public Date getNextTime(Date oldNextTime){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(oldNextTime);
+        add(calendar);
+        return calendar.getTime();
+
+    }
+
+    private void add(Calendar calendar){
+        if (second.equals(unit)){
+            calendar.add(Calendar.SECOND,frequency);
+            return;
+        }
+        if (minute.equals(unit)){
+            calendar.add(Calendar.MINUTE,frequency);
+            return;
+        }
+        if (hour.equals(unit)){
+            calendar.add(Calendar.HOUR,frequency);
+        }
+        return;
     }
 
     public int getFrequency() {

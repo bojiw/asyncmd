@@ -61,6 +61,9 @@
             <if test="reset != null and reset">
                 execute_num = execute_num - 1
             </if>
+            <if test="nextTime != null">
+                next_time = #{nextTime}
+            </if>
 
         </set>
         where
@@ -90,7 +93,7 @@
         UPDATE asyn_cmd_#{tableIndex}
         <set>
             status = #{status},
-            execute_num = execute_num + 1
+            execute_num = execute_num + 1,
         </set>
         where
         status = #{whereAsynStatus} and

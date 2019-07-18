@@ -42,12 +42,12 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade,InitializingBe
     private AsynExecuterService asynExecuterService;
 
     @Autowired
-    private AsynGroupConfig groupConfig;
+    private AsynGroupConfig asynGroupConfig;
 
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        groupConfig.init();
+        asynGroupConfig.init();
     }
 
 

@@ -7,9 +7,9 @@ package com.asyncmd.config;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
 import com.asyncmd.model.Frequency;
+import com.asyncmd.utils.FrequencyUtil;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,13 +29,18 @@ public class AsynConfig {
     private int limit = 30;
 
     /**
-     * 如果调度模式为异步或者同步调度 则第一次无论设置多少都是立即执行
-     * 执行频率 5s,10s,1m,1h
-     * 代表第一次5秒以后执行 第二次10秒以后执行 第三次1分钟以后执行 第四次1小时以后执行 之后都是间隔1小时执行
-     * 执行频率 5s,10s,20s
-     * 代表第一次5秒以后执行 第二次10秒以后执行 第三次20秒以后执行
+     * 重试次数
      */
-    private List<Frequency> executerFrequencyList = new ArrayList<Frequency>();
+    private int retryNum = 12;
+
+    /**
+     * 如果调度模式为异步或者同步调度 则第一次无论设置多少都是立即执行
+     * 重试执行频率 5s,10s,1m,1h
+     * 代表第一次重试5秒以后执行 第二次10秒以后执行 第三次1分钟以后执行 第四次1小时以后执行 之后都是间隔1小时执行
+     * 执行频率 5s,10s,20s
+     * 代表第一次重试5秒以后执行 第二次10秒以后执行 第三次20秒以后执行
+     */
+    private List<Frequency> executerFrequencyList;
 
     private String executerFrequencys;
 
@@ -46,10 +51,8 @@ public class AsynConfig {
         if (StringUtils.isEmpty(executerFrequencyList)){
             throw new AsynException(AsynExCode.EXECUTER_FREQUENCY_ILLEGAL);
         }
-        String[] frequencys = executerFrequencys.split(",");
-        for (String frequency : frequencys){
-            executerFrequencyList.add(new Frequency(frequency));
-        }
+        executerFrequencyList = FrequencyUtil.createFrequencys(executerFrequencys);
+
         asynJobConfig.init(tableNum);
     }
 
@@ -87,5 +90,13 @@ public class AsynConfig {
      */
     public boolean isSubTable(){
         return tableNum > 0;
+    }
+
+    public int getRetryNum() {
+        return retryNum;
+    }
+
+    public void setRetryNum(int retryNum) {
+        this.retryNum = retryNum;
     }
 }

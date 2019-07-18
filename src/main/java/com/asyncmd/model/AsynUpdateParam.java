@@ -4,6 +4,7 @@
  */
 package com.asyncmd.model;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,6 +42,11 @@ public class AsynUpdateParam {
      * 是否重置
      */
     private Boolean reset;
+
+    /**
+     * 下一次执行时间
+     */
+    private Date nextTime;
 
     public List<String> getBizIds() {
         return bizIds;
@@ -88,5 +94,13 @@ public class AsynUpdateParam {
 
     public void setBizId(String bizId) {
         this.bizId = bizId;
+    }
+
+    public Date getNextTime() {
+        return nextTime;
+    }
+
+    public void setNextTime(Date nextTime) {
+        this.nextTime = nextTime;
     }
 }
