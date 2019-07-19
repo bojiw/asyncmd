@@ -55,6 +55,7 @@
         UPDATE asyn_cmd
         <set>
             status = #{status},
+            gmt_modify = now(),
             <if test="executer != null and executer ">
                 execute_num = execute_num + 1
             </if>
@@ -74,6 +75,7 @@
         UPDATE asyn_cmd
         <set>
             status = #{status},
+            gmt_modify = now(),
             <if test="executer != null and executer ">
                 execute_num = execute_num + 1
             </if>
@@ -93,6 +95,7 @@
         UPDATE asyn_cmd#{tableIndex}
         <set>
             status = #{status},
+            gmt_modify = now(),
             execute_num = execute_num + 1,
         </set>
         where
@@ -104,6 +107,7 @@
         UPDATE asyn_cmd#{tableIndex}
         <set>
             status = #{status},
+            gmt_modify = now(),
             execute_num = execute_num + 1
         </set>
         where

@@ -17,8 +17,9 @@ import com.asyncmd.utils.AsynExecuterUtil;
 import com.asyncmd.utils.ParadigmUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -30,7 +31,7 @@ import java.util.Date;
  * @author wangwendi
  * @version $Id: AsynExecuterFacadeImpl.java, v 0.1 2018年09月30日 wangwendi Exp $
  */
-public class AsynExecuterFacadeImpl implements AsynExecuterFacade,InitializingBean {
+public class AsynExecuterFacadeImpl implements AsynExecuterFacade,BeanPostProcessor {
 
     /**
      * 唯一索引冲突code
@@ -45,11 +46,22 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade,InitializingBe
     private AsynGroupConfig asynGroupConfig;
 
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    /**
+     * 异步命令注册在InitializingBean.afterPropertiesSet 需要在注册以后在进行初始化 防止定时任务执行时还未注册
+     * postProcessAfterInitialization在afterPropertiesSet之后执行
+     * @param o
+     * @param s
+     * @return
+     * @throws BeansException
+     */
+    public Object postProcessAfterInitialization(Object o, String s) throws BeansException {
         asynGroupConfig.init();
+        return null;
     }
 
+    public Object postProcessBeforeInitialization(Object o, String s) throws BeansException {
+        return null;
+    }
 
     @Override
     public void registerAsynExecuter(AbstractAsynExecuter<? extends AsynCmd> asynExecuter) {
