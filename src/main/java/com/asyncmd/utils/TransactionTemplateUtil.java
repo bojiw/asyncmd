@@ -15,7 +15,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class TransactionTemplateUtil {
     private static final TransactionTemplateUtil instance = new TransactionTemplateUtil();
 
-    private volatile TransactionTemplate template;
+    private TransactionTemplate template;
 
     public static TransactionTemplateUtil newInstance(){
         return instance;

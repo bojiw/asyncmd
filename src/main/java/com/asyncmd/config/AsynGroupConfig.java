@@ -65,4 +65,8 @@ public class AsynGroupConfig {
     public void setRetryNum(int retryNum) {
         asynConfig.setRetryNum(retryNum);
     }
+
+    public void setRestCron(String restCron){
+        asynConfig.getAsynJobConfig().setRestCron(restCron);
+    }
 }

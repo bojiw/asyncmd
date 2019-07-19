@@ -35,9 +35,14 @@ public class AsynJobConfig {
      */
     private String jobName;
     /**
-     * 任务执行频率 默认每隔3秒执行一次
+     * 执行任务执行频率 默认每隔3秒执行一次
      */
     private String cron = "0/3 * * * * ?";
+
+    /**
+     * 重置状态任务执行频率 默认每隔60秒执行一次
+     */
+    private String restCron = "0/60 * * * * ?";
 
 
     public void init(int tableNum){
@@ -78,7 +83,7 @@ public class AsynJobConfig {
     private void createRestJob(int tableNum){
         String newJobName = jobName + REST;
         // 定义作业核心配置
-        JobCoreConfiguration simpleCoreConfig = JobCoreConfiguration.newBuilder(newJobName, "0/60 * * * * ?", tableNum).build();
+        JobCoreConfiguration simpleCoreConfig = JobCoreConfiguration.newBuilder(newJobName, restCron, tableNum).build();
         SimpleJobConfiguration simpleJobConfig = new SimpleJobConfiguration(simpleCoreConfig, DispatchRestJob.class.getCanonicalName());
         // 定义Lite作业根配置
         LiteJobConfiguration simpleJobRootConfig = LiteJobConfiguration.newBuilder(simpleJobConfig).overwrite(true).build();
@@ -101,5 +106,9 @@ public class AsynJobConfig {
 
     public void setCron(String cron) {
         this.cron = cron;
+    }
+
+    public void setRestCron(String restCron) {
+        this.restCron = restCron;
     }
 }
