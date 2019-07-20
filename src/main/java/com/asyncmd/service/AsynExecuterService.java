@@ -67,5 +67,12 @@ public interface AsynExecuterService {
      */
     Date getNextTime(List<Frequency> executerFrequencyList,AsynCmd asynCmd);
 
+    /**
+     * 根据bizId获取异步命令
+     * @param bizId
+     * @return
+     */
+    AsynCmd getAsynCmdByBizId(String bizId,Class<? extends AsynCmd>asynCmdClass);
+
 
 }

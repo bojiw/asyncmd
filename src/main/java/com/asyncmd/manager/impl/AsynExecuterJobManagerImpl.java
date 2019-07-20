@@ -11,6 +11,7 @@ import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynUpdateParam;
 import com.asyncmd.service.AsynExecuterService;
+import com.asyncmd.service.impl.AsynDispatchServiceImpl;
 import com.asyncmd.utils.AsynExecuterUtil;
 import com.asyncmd.utils.ThreadPoolTaskExecutorUtil;
 import com.asyncmd.utils.TransactionTemplateUtil;
@@ -44,6 +45,9 @@ public class AsynExecuterJobManagerImpl implements AsynExecuterJobManager {
     @Autowired
     private AsynGroupConfig asynGroupConfig;
 
+    @Autowired
+    private AsynDispatchServiceImpl asynDispatchService;
+
     public void executer(int tableIndex) {
 
         asynExecuter(tableIndex);
@@ -64,23 +68,24 @@ public class AsynExecuterJobManagerImpl implements AsynExecuterJobManager {
             return;
         }
         //更新状态为执行中
-        final List<String> failBizIds = TransactionTemplateUtil.newInstance().getTemplate().execute(new TransactionCallback<List<String>>() {
-            public List<String> doInTransaction(TransactionStatus status) {
+        final Boolean updateSuccess = TransactionTemplateUtil.newInstance().getTemplate().execute(new TransactionCallback<Boolean>() {
+            public Boolean doInTransaction(TransactionStatus status) {
                 AsynUpdateParam param = new AsynUpdateParam();
                 param.setBizIds(bizIds);
                 param.setExecuter(true);
                 param.setStatus(AsynStatus.EXECUTE.getStatus());
                 param.setWhereAsynStatus(AsynStatus.INIT.getStatus());
-                //如果更新失败 则直接返回
-                boolean b = asynExecuterService.batchUpdateStatus(param, tableIndex);
-                if (!b){
-                    return Lists.newArrayList();
-                }
-                List<AsynCmd> failList = pushPool(asynCmdList);
-                //push线程池失败的异步命令业务id
-                return AsynCmdConvert.toBizIds(failList);
+                return asynExecuterService.batchUpdateStatus(param, tableIndex);
+
             }
         });
+        //如果更新失败 则直接返回
+        if (updateSuccess == null || !updateSuccess){
+            return;
+        }
+        List<AsynCmd> failList = pushPool(asynCmdList);
+        //push线程池失败的异步命令业务id
+        final List<String> failBizIds = AsynCmdConvert.toBizIds(failList);
         if (CollectionUtils.isEmpty(failBizIds)){
             return;
         }
@@ -112,15 +117,12 @@ public class AsynExecuterJobManagerImpl implements AsynExecuterJobManager {
     private List<AsynCmd> pushPool(List<AsynCmd> asynCmdList){
         List<AsynCmd> failList = Lists.newArrayList();
         for (AsynCmd asynCmd : asynCmdList){
-            AbstractAsynExecuter<? extends AsynCmd> abstractAsynExecuter = AsynExecuterUtil.getAsynExecuterMap().get(asynCmd.getClass());
-            if (!abstractAsynExecuter.asynExecuter(asynCmd)){
+            List<AbstractAsynExecuter<? extends AsynCmd>> abstractAsynExecuters = AsynExecuterUtil.getAsynExecuterMap().get(asynCmd.getClass());
+            if (!asynDispatchService.asynExecuter(asynCmd,abstractAsynExecuters)){
                 failList.add(asynCmd);
             }
         }
         return failList;
     }
 
-    public void reset(int tableIndex) {
-
-    }
 }

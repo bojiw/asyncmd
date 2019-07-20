@@ -5,7 +5,6 @@
 package com.asyncmd.manager.impl;
 
 import com.asyncmd.config.AsynGroupConfig;
-import com.asyncmd.enums.AsynStatus;
 import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
@@ -13,17 +12,16 @@ import com.asyncmd.manager.AsynExecuterFacade;
 import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.service.AsynExecuterService;
+import com.asyncmd.service.DispatchService;
 import com.asyncmd.utils.AsynExecuterUtil;
+import com.asyncmd.utils.DispatchFactory;
 import com.asyncmd.utils.ParadigmUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.CollectionUtils;
 
-import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -31,7 +29,7 @@ import java.util.Date;
  * @author wangwendi
  * @version $Id: AsynExecuterFacadeImpl.java, v 0.1 2018年09月30日 wangwendi Exp $
  */
-public class AsynExecuterFacadeImpl implements AsynExecuterFacade,BeanPostProcessor {
+public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
 
     /**
      * 唯一索引冲突code
@@ -45,22 +43,17 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade,BeanPostProces
     @Autowired
     private AsynGroupConfig asynGroupConfig;
 
+    @Autowired
+    private DispatchFactory dispatchFactory;
+
 
     /**
      * 异步命令注册在InitializingBean.afterPropertiesSet 需要在注册以后在进行初始化 防止定时任务执行时还未注册
-     * postProcessAfterInitialization在afterPropertiesSet之后执行
-     * @param o
-     * @param s
+     * 采用xml的init-method方法来调用 调用顺序为InitializingBean -> init-method
      * @return
-     * @throws BeansException
      */
-    public Object postProcessAfterInitialization(Object o, String s) throws BeansException {
+    public void init() {
         asynGroupConfig.init();
-        return null;
-    }
-
-    public Object postProcessBeforeInitialization(Object o, String s) throws BeansException {
-        return null;
     }
 
     @Override
@@ -70,19 +63,23 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade,BeanPostProces
         //效验
         vaildAsynCmd(classCmd,asynExecuter);
         //注册
-        AsynExecuterUtil.getAsynExecuterMap().put(classCmd,asynExecuter);
+        AsynExecuterUtil.put(classCmd,asynExecuter);
         AsynExecuterUtil.getAsynCmdNameMapping().put(classCmd.getSimpleName(),classCmd);
 
     }
 
     @Override
     public void saveExecuterAsynCmd(AsynCmd asynCmd) {
-        AbstractAsynExecuter<? extends AsynCmd> asynExecuter = AsynExecuterUtil.getAsynExecuterMap().get(asynCmd.getClass());
-        if (asynExecuter == null){
-            log.error("根据asynCmd获取不到对应的执行器,检查执行器是否有注册:" + asynCmd.getClass().getName());
-            throw new AsynException(AsynExCode.ILLEGAL);
+        List<AbstractAsynExecuter<? extends AsynCmd>> asynExecuters = AsynExecuterUtil.getAsynExecuterMap().get(asynCmd.getClass());
+        if (CollectionUtils.isEmpty(asynExecuters)){
+            throw new AsynException(AsynExCode.ILLEGAL,"根据asynCmd获取不到对应的执行器,检查执行器是否有注册:" + asynCmd.getClass().getName());
         }
-        buildAsynCmd(asynCmd,asynExecuter);
+        DispatchMode dispatchMode = asynExecuters.get(0).getDispatchMode();
+        if (dispatchMode == null){
+            throw new AsynException(AsynExCode.ILLEGAL,asynExecuters.get(0).getClass().getSimpleName() + "的dispatchMode不能为空");
+        }
+        DispatchService dispatchService = dispatchFactory.getDispatchService(dispatchMode.getStatus());
+        dispatchService.buildAsynCmd(asynCmd,asynExecuters.get(0));
         try {
             asynExecuterService.saveCmd(asynCmd);
         }catch (org.springframework.dao.DuplicateKeyException e){
@@ -90,110 +87,8 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade,BeanPostProces
             log.warn("保存异步命令幂等异常bizId=" + asynCmd.getBizId());
             return;
         }
-        //如果不需要立刻执行 直接返回
-        if (asynCmd.getStatus().equals(AsynStatus.INIT.getStatus())){
-            return;
-        }
-        executer(asynExecuter,asynCmd);
-
-    }
-
-    private void buildAsynCmd(AsynCmd asynCmd,AbstractAsynExecuter<? extends AsynCmd> asynExecuter){
-        DispatchMode dispatchMode = asynExecuter.getDispatchMode();
-        //如果是要立刻执行 则直接设置状态为执行中
-        if (DispatchMode.DEFAULT != dispatchMode){
-            asynCmd.setStatus(AsynStatus.EXECUTE.getStatus());
-            asynCmd.setExecuteNum(1);
-        }else {
-            asynCmd.setStatus(AsynStatus.INIT.getStatus());
-            asynCmd.setExecuteNum(0);
-        }
-        asynCmd.setCmdType(asynCmd.getClass().getSimpleName());
-        if (asynCmd.getNextTime() == null){
-            asynCmd.setNextTime(new Date());
-        }
-        if (asynCmd.getCreateName() == null){
-            asynCmd.setCreateName(AsynCmd.default_create_name);
-        }
-    }
-
-
-    /**
-     * 执行异步命令
-     * @param asynExecuter
-     * @param asynCmd
-     */
-    private void executer(AbstractAsynExecuter<? extends AsynCmd> asynExecuter, AsynCmd asynCmd){
-
-        switch (asynExecuter.getDispatchMode()){
-            case ASYN :
-                asynExecuter.asynExecuter(asynCmd);
-                break;
-            case ASY:
-                asyExecuter(asynExecuter,asynCmd);
-                break;
-            default:
-        }
-    }
-
-    /**
-     * 同步执行
-     * @param asynExecuter
-     * @param asynCmd
-     */
-    private void asyExecuter(AbstractAsynExecuter<? extends AsynCmd> asynExecuter, AsynCmd asynCmd){
-        if (TransactionSynchronizationManager.isActualTransactionActive()){
-            //如果在事务内 则在事务的回调中执行 防止执行器中也有事务导致嵌套事务
-            TransactionSynchronizationManager
-                    .registerSynchronization(new AsyTransactionSynchronization(asynCmd,asynExecuter));
-
-        }else {
-            asynExecuter.asyExecuter(asynCmd,false);
-        }
-
-    }
-
-    class AsyTransactionSynchronization implements TransactionSynchronization{
-
-        private AsynCmd              asynCmd;
-        private AbstractAsynExecuter asynExecuter;
-
-        AsyTransactionSynchronization(AsynCmd asynCmd,AbstractAsynExecuter asynExecuter){
-            this.asynCmd = asynCmd;
-            this.asynExecuter = asynExecuter;
-        }
-
-        @Override
-        public void afterCompletion(int i) {
-            //如果事务已经提交 则同步执行命令
-            if (TransactionSynchronization.STATUS_COMMITTED == i){
-                asynExecuter.asyExecuter(asynCmd,true);
-            }
-        }
-        @Override
-        public void suspend() {
-
-        }
-        @Override
-        public void resume() {
-
-        }
-        @Override
-        public void flush() {
-
-        }
-        @Override
-        public void beforeCommit(boolean b) {
-
-        }
-        @Override
-        public void beforeCompletion() {
-
-        }
-        @Override
-        public void afterCommit() {
-
-        }
+        //进行调度执行
+        dispatchService.dispatch(asynCmd,asynExecuters);
     }
 
 

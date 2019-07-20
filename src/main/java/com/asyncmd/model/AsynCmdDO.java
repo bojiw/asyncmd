@@ -88,25 +88,13 @@ public class AsynCmdDO implements Serializable {
      */
     private String updateIp;
 
+    /**
+     * 执行成功的处理器名
+     */
+    private String successExecuters;
 
     public AsynCmdDO(){
 
-    }
-    public AsynCmdDO(AsynCmd asynCmd){
-        this.setBizId(asynCmd.getBizId());
-        this.setCmdId(asynCmd.getCmdId());
-        this.setCmdType(asynCmd.getCmdType());
-        this.setContent(asynCmd.objectToJson(asynCmd.getContent()));
-        this.setCreateHostname(asynCmd.getCreateHostname());
-        this.setCreateIp(asynCmd.getCreateIp());
-        this.setCreateName(asynCmd.getCreateName());
-        this.setExecuteNum(asynCmd.getExecuteNum());
-        this.setGmtCreate(asynCmd.getGmtCreate());
-        this.setGmtModify(asynCmd.getGmtModify());
-        this.setNextTime(asynCmd.getNextTime());
-        this.setStatus(asynCmd.getStatus());
-        this.setUpdateHostname(asynCmd.getUpdateHostname());
-        this.setUpdateIp(asynCmd.getUpdateIp());
     }
 
 
@@ -220,5 +208,13 @@ public class AsynCmdDO implements Serializable {
 
     public void setUpdateIp(String updateIp) {
         this.updateIp = updateIp;
+    }
+
+    public String getSuccessExecuters() {
+        return successExecuters;
+    }
+
+    public void setSuccessExecuters(String successExecuters) {
+        this.successExecuters = successExecuters;
     }
 }

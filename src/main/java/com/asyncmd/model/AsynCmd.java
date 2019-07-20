@@ -5,9 +5,11 @@
 package com.asyncmd.model;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -94,13 +96,18 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
     private E content;
 
     /**
+     * 执行成功的处理器名
+     */
+    private List<String> successExecuters = Lists.newArrayList();
+
+    /**
      * 获取范型类型 由子类返回
      * @return
      */
     protected abstract Class<E> getObject();
 
     /**
-     * json转对象 有需要子类可以重写
+     * json转对象
      * @param content
      * @return
      */
@@ -109,7 +116,7 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
     }
 
     /**
-     * 对象转json 有需要子类可以重写
+     * 对象转json
      * @param content
      * @return
      */
@@ -228,5 +235,17 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
 
     public void setContent(E content) {
         this.content = content;
+    }
+
+    public List<String> getSuccessExecuters() {
+        return successExecuters;
+    }
+
+    public void setSuccessExecuters(List<String> successExecuters) {
+        this.successExecuters = successExecuters;
+    }
+
+    public void addSuccessExecuter(String successExecuter){
+        successExecuters.add(successExecuter);
     }
 }

@@ -17,10 +17,4 @@ public interface AsynExecuterJobManager {
      */
     void executer(int tableIndex);
 
-    /**
-     * 调度异步命令重置
-     * @param tableIndex
-     */
-    void reset(int tableIndex);
-
 }

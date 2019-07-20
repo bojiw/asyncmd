@@ -44,6 +44,9 @@ public class ThreadPoolTaskExecutorUtil {
     }
 
     public void setPoolTaskExecutor(ThreadPoolTaskExecutor poolTaskExecutor) {
+        //如果有线程运行 等运行完再关闭 正常情况执行这里时没有线程会运行 只是做个预防
+        this.poolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        this.poolTaskExecutor.shutdown();
         this.poolTaskExecutor = poolTaskExecutor;
     }
 

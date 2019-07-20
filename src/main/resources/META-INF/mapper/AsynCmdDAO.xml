@@ -18,27 +18,28 @@
         <result property="status" column="status"/>
         <result property="updateHostname" column="update_hostname"/>
         <result property="updateIp" column="update_ip"/>
+        <result property="successExecuters" column="success_executers"/>
     </resultMap>
 
     <sql id="BASE_LIST">
         cmd_id,cmd_type,content,biz_id,create_hostname,create_ip,create_name,
-        execute_num,gmt_create,gmt_modify,next_time,status,update_hostname,update_ip
+        execute_num,gmt_create,gmt_modify,next_time,status,update_hostname,update_ip,success_executers
     </sql>
 
     
     
     <insert id="saveCmd" parameterType="com.asyncmd.model.AsynCmdDO">
-        INSERT INTO asyn_cmd(cmd_id, cmd_type, content,
-          biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,gmt_create,gmt_modify)
-        VALUES ( #{cmdId}, #{cmdType}, #{content}, #{bizId},
-          #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},now(),now())
+        INSERT INTO asyn_cmd(cmd_type, content,
+          biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,success_executers,gmt_create,gmt_modify)
+        VALUES (#{cmdType}, #{content}, #{bizId},
+          #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},#{successExecuters},now(),now())
 
     </insert>
     <insert id="saveCmdSubTable" parameterType="com.asyncmd.model.AsynCmdDO">
-        INSERT INTO asyn_cmd#{tableIndex} (cmd_id, cmd_type, content,
-          biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,gmt_create,gmt_modify)
-        VALUES ( #{cmdId}, #{cmdType}, #{content}, #{bizId},
-          #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},now(),now())
+        INSERT INTO asyn_cmd#{tableIndex} (cmd_type, content,
+          biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,success_executers,gmt_create,gmt_modify)
+        VALUES ( #{cmdType}, #{content}, #{bizId},
+          #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},#{successExecuters},now(),now())
 
     </insert>
 
@@ -57,13 +58,16 @@
             status = #{status},
             gmt_modify = now(),
             <if test="executer != null and executer ">
-                execute_num = execute_num + 1
+                execute_num = execute_num + 1,
             </if>
             <if test="reset != null and reset">
-                execute_num = execute_num - 1
+                execute_num = execute_num - 1,
             </if>
             <if test="nextTime != null">
-                next_time = #{nextTime}
+                next_time = #{nextTime},
+            </if>
+            <if test="successExecutes != null">
+                success_executers = #{successExecutes}
             </if>
 
         </set>
@@ -97,6 +101,9 @@
             status = #{status},
             gmt_modify = now(),
             execute_num = execute_num + 1,
+            <if test="successExecutes != null">
+                success_executers = #{successExecutes}
+            </if>
         </set>
         where
         status = #{whereAsynStatus} and
@@ -124,6 +131,9 @@
         from asyn_cmd
         where
         status = #{status} and next_time &lt;= #{executerTime}
+        <if test="desc != null and desc">
+            order by gmt_create
+        </if>
         limit #{limit}
     </select>
 
@@ -133,6 +143,23 @@
         from asyn_cmd#{tableIndex}
         where
         status = #{status} and next_time &lt;= #{executerTime}
+        <if test="desc != null and desc">
+            order by gmt_create
+        </if>
         limit #{limit}
+    </select>
+
+    <select id="getAsynCmdByBizId" resultType="com.asyncmd.model.AsynCmdDO">
+        select
+        <include refid="BASE_LIST"/>
+        from asyn_cmd
+        where biz_id = #{bizId}
+    </select>
+
+    <select id="getSubTableAsynCmdByBizId" resultType="com.asyncmd.model.AsynCmdDO">
+        select
+        <include refid="BASE_LIST"/>
+        from asyn_cmd#{tableIndex}
+        where biz_id = #{bizId}
     </select>
 </mapper>

@@ -18,24 +18,26 @@
         <result property="status" column="status"/>
         <result property="updateHostname" column="update_hostname"/>
         <result property="updateIp" column="update_ip"/>
+        <result property="successExecuters" column="success_executers"/>
+
     </resultMap>
 
 
     
     
     <insert id="saveCmd" parameterType="com.asyncmd.model.AsynCmdHistoryDO">
-        INSERT INTO asyn_cmd_history(cmd_id, cmd_type, content,
-          biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,gmt_create,gmt_modify)
-        VALUES ( #{cmdId}, #{cmdType}, #{content}, #{bizId},
-          #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},now(),now())
+        INSERT INTO asyn_cmd_history(cmd_type, content,
+          biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,success_executers,gmt_create,gmt_modify)
+        VALUES ( #{cmdType}, #{content}, #{bizId},
+          #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},#{successExecuters},now(),now())
 
     </insert>
 
     <insert id="saveCmdSubTable" parameterType="com.asyncmd.model.AsynCmdHistoryDO">
-        INSERT INTO asyn_cmd_history#{tableIndex} (cmd_id, cmd_type, content,
-          biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,gmt_create,gmt_modify)
-        VALUES ( #{cmdId}, #{cmdType}, #{content}, #{bizId},
-          #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},now(),now())
+        INSERT INTO asyn_cmd_history#{tableIndex} (cmd_type, content,
+          biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,success_executers,gmt_create,gmt_modify)
+        VALUES (#{cmdType}, #{content}, #{bizId},
+          #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},#{successExecuters},now(),now())
 
     </insert>
 

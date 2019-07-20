@@ -12,7 +12,7 @@ package com.asyncmd.enums;
  */
 public enum DispatchMode {
 
-    DEFAULT("DEFAULT","调度中心调度"),
+    DISPATCH("DISPATCH","调度中心调度"),
     ASYN("ASYN","异步执行"),
     ASY("ASY","同步执行");
 

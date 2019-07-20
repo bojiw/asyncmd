@@ -17,7 +17,10 @@ public class AsynException extends RuntimeException {
         super(code.getMessage());
         this.code = code.getCode();
     }
-
+    public AsynException(AsynExCode code,String message){
+        super(message);
+        this.code = code.getCode();
+    }
 
     public AsynException(AsynExCode code,Throwable throwable){
         super(code.getMessage(),throwable);

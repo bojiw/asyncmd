@@ -34,6 +34,11 @@ public class AsynConfig {
     private int retryNum = 12;
 
     /**
+     * 异步命令是否要先进后出 默认先进先出 注意这个只针对一张表的情况
+     */
+    private Boolean desc = false;
+
+    /**
      * 如果调度模式为异步或者同步调度 则第一次无论设置多少都是立即执行
      * 重试执行频率 5s,10s,1m,1h
      * 代表第一次重试5秒以后执行 第二次10秒以后执行 第三次1分钟以后执行 第四次1小时以后执行 之后都是间隔1小时执行
@@ -98,5 +103,13 @@ public class AsynConfig {
 
     public void setRetryNum(int retryNum) {
         this.retryNum = retryNum;
+    }
+
+    public void setDesc(Boolean desc) {
+        this.desc = desc;
+    }
+
+    public Boolean getDesc() {
+        return desc;
     }
 }

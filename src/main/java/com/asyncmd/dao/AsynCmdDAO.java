@@ -88,7 +88,7 @@ public interface AsynCmdDAO {
      * @return
      */
     List<AsynCmdDO> queryAsynCmd(@Param("status") String status,
-                                 @Param("limit") int limit,@Param("executerTime") Date executerTime);
+                                 @Param("limit") int limit,@Param("executerTime") Date executerTime,@Param("desc")Boolean desc);
 
     /**
      * 查询分表异步命令
@@ -97,7 +97,21 @@ public interface AsynCmdDAO {
      * @return
      */
     List<AsynCmdDO> querySubTableAsynCmd(@Param("tableIndex")String tableIndex, @Param("status") String status,
-                                          @Param("limit") int limit,@Param("executerTime") Date executerTime);
+                                          @Param("limit") int limit,@Param("executerTime") Date executerTime,@Param("desc")Boolean desc);
 
+    /**
+     * 根据bizId获取异步命令对象
+     * @param bizId
+     * @return
+     */
+    AsynCmdDO getAsynCmdByBizId(@Param("bizId") String bizId);
+
+    /**
+     * 分表根据bizId获取异步命令对象
+     * @param tableIndex
+     * @param bizId
+     * @return
+     */
+    AsynCmdDO getSubTableAsynCmdByBizId(@Param("tableIndex")String tableIndex, @Param("bizId") String bizId);
 
 }

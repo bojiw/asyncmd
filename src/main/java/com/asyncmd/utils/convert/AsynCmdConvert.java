@@ -4,6 +4,7 @@
  */
 package com.asyncmd.utils.convert;
 
+import com.alibaba.fastjson.JSON;
 import com.asyncmd.enums.AsynStatus;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
@@ -14,6 +15,7 @@ import com.asyncmd.utils.AsynExecuterUtil;
 import com.google.common.collect.Lists;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +26,9 @@ import java.util.List;
 public class AsynCmdConvert {
 
     public static AsynCmdDO toDo(AsynCmd asynCmd){
+        if (asynCmd == null){
+            return null;
+        }
         AsynCmdDO asynCmdDO = new AsynCmdDO();
         asynCmdDO.setCmdId(asynCmd.getCmdId());
         asynCmdDO.setCmdType(asynCmd.getCmdType());
@@ -39,6 +44,7 @@ public class AsynCmdConvert {
         asynCmdDO.setCreateName(asynCmd.getCreateName());
         asynCmdDO.setUpdateHostname(asynCmd.getUpdateHostname());
         asynCmdDO.setUpdateIp(asynCmd.getUpdateIp());
+        asynCmdDO.setSuccessExecuters(JSON.toJSONString(asynCmd.getSuccessExecuters()));
         return asynCmdDO;
     }
     public static List<AsynCmd> toCmdList(List<AsynCmdDO> asynCmdDOs){
@@ -55,6 +61,9 @@ public class AsynCmdConvert {
     }
     public static AsynCmd toCmd(AsynCmdDO asynCmdDO,Class<? extends AsynCmd>asynCmdClass){
         try {
+            if (asynCmdDO == null){
+                return null;
+            }
             AsynCmd asynCmd = asynCmdClass.newInstance();
             asynCmd.setCmdId(asynCmdDO.getCmdId());
             asynCmd.setCmdType(asynCmdDO.getCmdType());
@@ -70,6 +79,7 @@ public class AsynCmdConvert {
             asynCmd.setUpdateIp(asynCmdDO.getUpdateIp());
             asynCmd.setGmtModify(asynCmdDO.getGmtModify());
             asynCmd.setContent(asynCmd.jsonToObject(asynCmdDO.getContent()));
+            asynCmd.setSuccessExecuters(JSON.parseObject(asynCmdDO.getSuccessExecuters(),ArrayList.class));
             return asynCmd;
         }catch (Exception e){
             throw new AsynException(AsynExCode.ILLEGAL);
@@ -91,6 +101,7 @@ public class AsynCmdConvert {
         asynCmdHistoryDO.setCreateName(asynCmd.getCreateName());
         asynCmdHistoryDO.setUpdateHostname(asynCmd.getUpdateHostname());
         asynCmdHistoryDO.setUpdateIp(asynCmd.getUpdateIp());
+        asynCmdHistoryDO.setSuccessExecuters(JSON.toJSONString(asynCmd.getSuccessExecuters()));
         return asynCmdHistoryDO;
 
     }

@@ -69,4 +69,8 @@ public class AsynGroupConfig {
     public void setRestCron(String restCron){
         asynConfig.getAsynJobConfig().setRestCron(restCron);
     }
+    public void setDesc(Boolean desc) {
+        asynConfig.setDesc(desc);
+    }
+
 }

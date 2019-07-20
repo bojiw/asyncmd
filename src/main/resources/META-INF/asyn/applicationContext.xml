@@ -23,6 +23,20 @@
         <property name="basePackage" value="com.asyncmd.dao"/>
     </bean>
 
-    <bean id="asynExecuterFacade" class="com.asyncmd.manager.impl.AsynExecuterFacadeImpl"/>
+    <bean id="asynDispatchService" class="com.asyncmd.service.impl.AsynDispatchServiceImpl"/>
+    <bean id="centerDispatchService" class="com.asyncmd.service.impl.CenterDispatchServiceImpl"/>
+    <bean id="synDispatchService" class="com.asyncmd.service.impl.SynDispatchServiceImpl"/>
+
+    <bean id="dispatchFactory" class="com.asyncmd.utils.DispatchFactory">
+        <property name="dispatchServiceMap">
+            <map>
+                <entry key="DISPATCH" value-ref="centerDispatchService"/>
+                <entry key="ASYN" value-ref="asynDispatchService"/>
+                <entry key="SYN" value-ref="synDispatchService"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="asynExecuterFacade" class="com.asyncmd.manager.impl.AsynExecuterFacadeImpl" init-method="init"/>
 
 </beans>

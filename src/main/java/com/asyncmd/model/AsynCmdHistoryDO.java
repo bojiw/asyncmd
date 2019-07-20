@@ -89,6 +89,11 @@ public class AsynCmdHistoryDO implements Serializable {
      */
     private String updateIp;
 
+    /**
+     * 执行成功的处理器名
+     */
+    private String successExecuters;
+
     public Long getCmdId() {
         return cmdId;
     }
@@ -199,5 +204,13 @@ public class AsynCmdHistoryDO implements Serializable {
 
     public void setUpdateIp(String updateIp) {
         this.updateIp = updateIp;
+    }
+
+    public String getSuccessExecuters() {
+        return successExecuters;
+    }
+
+    public void setSuccessExecuters(String successExecuters) {
+        this.successExecuters = successExecuters;
     }
 }

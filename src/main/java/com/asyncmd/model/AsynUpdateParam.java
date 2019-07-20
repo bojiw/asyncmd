@@ -48,6 +48,8 @@ public class AsynUpdateParam {
      */
     private Date nextTime;
 
+    private String successExecutes;
+
     public List<String> getBizIds() {
         return bizIds;
     }
@@ -102,5 +104,13 @@ public class AsynUpdateParam {
 
     public void setNextTime(Date nextTime) {
         this.nextTime = nextTime;
+    }
+
+    public String getSuccessExecutes() {
+        return successExecutes;
+    }
+
+    public void setSuccessExecutes(String successExecutes) {
+        this.successExecutes = successExecutes;
     }
 }

@@ -14,6 +14,7 @@ import com.asyncmd.model.AsynCmdDO;
 import com.asyncmd.model.AsynUpdateParam;
 import com.asyncmd.model.Frequency;
 import com.asyncmd.service.AsynExecuterService;
+import com.asyncmd.utils.AsynExecuterUtil;
 import com.asyncmd.utils.TransactionTemplateUtil;
 import com.asyncmd.utils.convert.AsynCmdConvert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
      * @return
      */
     public long saveCmd(AsynCmd asynCmd){
-        AsynCmdDO asynCmdDO = new AsynCmdDO(asynCmd);
+        AsynCmdDO asynCmdDO = AsynCmdConvert.toDo(asynCmd);
 
         if (asynGroupConfig.getAsynConfig().isSubTable()){
             int index = getIndex(asynCmd.getBizId());
@@ -79,16 +80,21 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
      * @param asynCmd
      */
     public void backupCmd(final AsynCmd asynCmd){
+        //重新捞取最新的一条数据
+        final AsynCmd newAsynCmd = getAsynCmdByBizId(asynCmd.getBizId(), asynCmd.getClass());
+        if (newAsynCmd == null){
+            return;
+        }
         TransactionTemplateUtil.newInstance().getTemplate().execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
                 if (asynGroupConfig.getAsynConfig().isSubTable()){
-                    int index = getIndex(asynCmd.getBizId());
-                    asynCmdDAO.delCmdSubTable(getTableIndex(index),asynCmd.getBizId());
-                    asynCmdHistoryDAO.saveCmdSubTable(getTableIndex(index),AsynCmdConvert.toHistoryCmd(asynCmd));
+                    int index = getIndex(newAsynCmd.getBizId());
+                    asynCmdDAO.delCmdSubTable(getTableIndex(index),newAsynCmd.getBizId());
+                    asynCmdHistoryDAO.saveCmdSubTable(getTableIndex(index),AsynCmdConvert.toHistoryCmd(newAsynCmd));
                 }else {
-                    asynCmdDAO.delCmd(asynCmd.getBizId());
-                    asynCmdHistoryDAO.saveCmd(AsynCmdConvert.toHistoryCmd(asynCmd));
+                    asynCmdDAO.delCmd(newAsynCmd.getBizId());
+                    asynCmdHistoryDAO.saveCmd(AsynCmdConvert.toHistoryCmd(newAsynCmd));
                 }
 
             }
@@ -126,10 +132,11 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
 
     public List<AsynCmd> queryAsynCmd(int limit,int tableIndex,AsynStatus status,Date whereNextTime) {
         List<AsynCmdDO> asynCmdDOS;
+        Boolean desc = asynGroupConfig.getAsynConfig().getDesc();
         if (asynGroupConfig.getAsynConfig().isSubTable()){
-            asynCmdDOS = asynCmdDAO.querySubTableAsynCmd(getTableIndex(tableIndex),status.getStatus(),limit,whereNextTime);
+            asynCmdDOS = asynCmdDAO.querySubTableAsynCmd(getTableIndex(tableIndex),status.getStatus(),limit,whereNextTime,desc);
         }else {
-            asynCmdDOS = asynCmdDAO.queryAsynCmd(status.getStatus(),limit, whereNextTime);
+            asynCmdDOS = asynCmdDAO.queryAsynCmd(status.getStatus(),limit, whereNextTime,desc);
         }
         return AsynCmdConvert.toCmdList(asynCmdDOS);
     }
@@ -159,5 +166,13 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
             frequency = executerFrequencyList.get(retry);
         }
         return frequency.getNextTime(asynCmd.getNextTime());
+    }
+
+    public AsynCmd getAsynCmdByBizId(String bizId,Class<? extends AsynCmd> asynCmdClass) {
+        if (asynGroupConfig.getAsynConfig().isSubTable()){
+            int index = getIndex(bizId);
+            return AsynCmdConvert.toCmd(asynCmdDAO.getSubTableAsynCmdByBizId(getTableIndex(index), bizId),asynCmdClass);
+        }
+        return AsynCmdConvert.toCmd(asynCmdDAO.getAsynCmdByBizId(bizId),asynCmdClass);
     }
 }
