@@ -13,6 +13,6 @@ import java.util.Comparator;
 public class AsynExecuterComparator implements Comparator<AbstractAsynExecuter> {
     public int compare(AbstractAsynExecuter o1, AbstractAsynExecuter o2) {
 
-        return o2.sort - o1.sort;
+        return o2.getSort() - o1.getSort();
     }
 }

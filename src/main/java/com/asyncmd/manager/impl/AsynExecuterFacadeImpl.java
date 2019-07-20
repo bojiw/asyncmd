@@ -47,14 +47,6 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
     private DispatchFactory dispatchFactory;
 
 
-    /**
-     * 异步命令注册在InitializingBean.afterPropertiesSet 需要在注册以后在进行初始化 防止定时任务执行时还未注册
-     * 采用xml的init-method方法来调用 调用顺序为InitializingBean -> init-method
-     * @return
-     */
-    public void init() {
-        asynGroupConfig.init();
-    }
 
     @Override
     public void registerAsynExecuter(AbstractAsynExecuter<? extends AsynCmd> asynExecuter) {

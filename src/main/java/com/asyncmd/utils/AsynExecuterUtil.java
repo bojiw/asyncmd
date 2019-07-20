@@ -6,11 +6,15 @@ package com.asyncmd.utils;
 
 import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
+import com.asyncmd.model.AsynExecuterComparator;
 import com.google.common.collect.Lists;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -42,5 +46,20 @@ public class AsynExecuterUtil {
             return;
         }
         abstractAsynExecuters.add(asynExecuter);
+    }
+
+    /**
+     * 把所以异步命令执行器进行排序
+     */
+    public static void init(){
+        if (asynExecuterMap.isEmpty()){
+            return;
+        }
+        Iterator<Entry<Class<? extends AsynCmd>, List<AbstractAsynExecuter<? extends AsynCmd>>>> iterator = asynExecuterMap.entrySet().iterator();
+        while (iterator.hasNext()){
+            List<AbstractAsynExecuter<? extends AsynCmd>> value = iterator.next().getValue();
+            Collections.sort(value,new AsynExecuterComparator());
+        }
+
     }
 }

@@ -37,6 +37,7 @@
         </property>
     </bean>
 
-    <bean id="asynExecuterFacade" class="com.asyncmd.manager.impl.AsynExecuterFacadeImpl" init-method="init"/>
+    <bean id="asynExecuterFacade" class="com.asyncmd.manager.impl.AsynExecuterFacadeImpl" init-method="init" />
+    <bean id="initConfig" class="com.asyncmd.config.InitConfig"/>
 
 </beans>
