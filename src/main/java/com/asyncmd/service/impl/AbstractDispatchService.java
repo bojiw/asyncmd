@@ -11,6 +11,7 @@ import com.asyncmd.exception.AsynException;
 import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynRunnable;
+import com.asyncmd.model.AsynUpdateParam;
 import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.service.DispatchService;
 import com.asyncmd.utils.CountException;
@@ -85,6 +86,13 @@ public abstract class AbstractDispatchService implements DispatchService {
             AsynRunnable asynRunnable = createAsynRunnable(asynCmd,asynExecuterList,countException);
             ThreadPoolTaskExecutorUtil.newInstance().getPoolTaskExecutor().execute(asynRunnable);
         }catch (Exception e){
+            //放入线程池失败则状态为回滚
+            AsynUpdateParam param = new AsynUpdateParam();
+            param.setBizId(asynCmd.getBizId());
+            param.setStatus(AsynStatus.INIT.getStatus());
+            param.setStatus(AsynStatus.EXECUTE.getStatus());
+            param.setReset(true);
+            asynExecuterService.updateStatus(param);
             log.warn("asyn线程池异常",e);
             LocalExceptionUtil.set(new AsynException(AsynExCode.THREAD_POLL_ERROR));
             return false;

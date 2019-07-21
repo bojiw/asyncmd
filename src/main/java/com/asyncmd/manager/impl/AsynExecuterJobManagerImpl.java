@@ -117,6 +117,8 @@ public class AsynExecuterJobManagerImpl implements AsynExecuterJobManager {
     private List<AsynCmd> pushPool(List<AsynCmd> asynCmdList){
         List<AsynCmd> failList = Lists.newArrayList();
         for (AsynCmd asynCmd : asynCmdList){
+            //内存中的执行次数+1
+            asynCmd.setExecuteNum(asynCmd.getExecuteNum() + 1);
             List<AbstractAsynExecuter<? extends AsynCmd>> abstractAsynExecuters = AsynExecuterUtil.getAsynExecuterMap().get(asynCmd.getClass());
             if (!asynDispatchService.asynExecuter(asynCmd,abstractAsynExecuters)){
                 failList.add(asynCmd);
