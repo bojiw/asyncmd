@@ -83,24 +83,25 @@ public class AsynExecuterJobManagerImpl implements AsynExecuterJobManager {
         if (updateSuccess == null || !updateSuccess){
             return;
         }
-        List<AsynCmd> failList = pushPool(asynCmdList);
-        //push线程池失败的异步命令业务id
-        final List<String> failBizIds = AsynCmdConvert.toBizIds(failList);
-        if (CollectionUtils.isEmpty(failBizIds)){
-            return;
-        }
-        //推送线程池失败的命令状态重置
-        TransactionTemplateUtil.newInstance().getTemplate().execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                AsynUpdateParam failParam = new AsynUpdateParam();
-                failParam.setBizIds(failBizIds);
-                failParam.setReset(true);
-                failParam.setStatus(AsynStatus.INIT.getStatus());
-                failParam.setWhereAsynStatus(AsynStatus.EXECUTE.getStatus());
-                asynExecuterService.batchUpdateStatus(failParam,tableIndex);
-            }
-        });
+        pushPool(asynCmdList);
+        //重置移到底层
+        // //push线程池失败的异步命令业务id
+        // final List<String> failBizIds = AsynCmdConvert.toBizIds(failList);
+        // if (CollectionUtils.isEmpty(failBizIds)){
+        //     return;
+        // }
+        // //推送线程池失败的命令状态重置
+        // TransactionTemplateUtil.newInstance().getTemplate().execute(new TransactionCallbackWithoutResult() {
+        //     @Override
+        //     protected void doInTransactionWithoutResult(TransactionStatus status) {
+        //         AsynUpdateParam failParam = new AsynUpdateParam();
+        //         failParam.setBizIds(failBizIds);
+        //         failParam.setReset(true);
+        //         failParam.setStatus(AsynStatus.INIT.getStatus());
+        //         failParam.setWhereAsynStatus(AsynStatus.EXECUTE.getStatus());
+        //         asynExecuterService.batchUpdateStatus(failParam,tableIndex);
+        //     }
+        // });
     }
     private Date getNextMillis(){
         return new Date(System.currentTimeMillis() + 1000);
