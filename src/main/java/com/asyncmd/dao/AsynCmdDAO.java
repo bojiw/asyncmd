@@ -32,10 +32,10 @@ public interface AsynCmdDAO {
      * @param asynCmdDO
      * @return
      */
-    long saveCmdSubTable(String tableIndex,AsynCmdDO asynCmdDO);
+    long saveCmdSubTable(@Param("asynCmd") AsynCmdDO asynCmdDO,@Param("tableIndex") String tableIndex);
 
 
-    /**
+    /**s
      * 删除异步命令
      * @param bizId
      * @return
@@ -48,7 +48,7 @@ public interface AsynCmdDAO {
      * @param bizId
      * @return
      */
-    long delCmdSubTable(String tableIndex,String bizId);
+    long delCmdSubTable(@Param("tableIndex")String tableIndex,@Param("bizId") String bizId);
 
 
     /**
@@ -63,7 +63,7 @@ public interface AsynCmdDAO {
      * @param asynUpdateParam
      * @return
      */
-    long updateStatusSubTable(String tableIndex,AsynUpdateParam asynUpdateParam);
+    long updateStatusSubTable(@Param("tableIndex")String tableIndex,@Param("asynUpdateParam") AsynUpdateParam asynUpdateParam);
 
     /**
      * 根据业务id集合批量更新状态
@@ -77,7 +77,7 @@ public interface AsynCmdDAO {
      * @param asynUpdateParam
      * @return
      */
-    long batchupdateStatusSubTable(String tableIndex,AsynUpdateParam asynUpdateParam);
+    long batchupdateStatusSubTable(@Param("tableIndex")String tableIndex,@Param("asynUpdateParam") AsynUpdateParam asynUpdateParam);
 
 
 

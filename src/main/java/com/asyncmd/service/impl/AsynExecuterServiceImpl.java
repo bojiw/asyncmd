@@ -53,7 +53,7 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
 
         if (asynGroupConfig.getAsynConfig().isSubTable()){
             int index = getIndex(asynCmd.getBizId());
-            return asynCmdDAO.saveCmdSubTable(getTableIndex(index),asynCmdDO);
+            return asynCmdDAO.saveCmdSubTable(asynCmdDO,getTableIndex(index));
         }else {
             return asynCmdDAO.saveCmd(asynCmdDO);
         }
@@ -103,10 +103,11 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
 
     public boolean updateStatus(AsynUpdateParam param) {
         Long sum;
-        if (asynGroupConfig.getAsynConfig().getTableNum() == 0){
-            sum = asynCmdDAO.updateStatus(param);
-        }else {
+        if (asynGroupConfig.getAsynConfig().isSubTable()){
             sum = asynCmdDAO.updateStatusSubTable(getTableIndex(getIndex(param.getBizId())),param);
+        }else {
+            sum = asynCmdDAO.updateStatus(param);
+
         }
         if (sum > 0){
             return true;

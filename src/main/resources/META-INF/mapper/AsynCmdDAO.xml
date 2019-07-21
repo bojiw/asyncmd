@@ -35,11 +35,11 @@
           #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},#{successExecuters},now(),now())
 
     </insert>
-    <insert id="saveCmdSubTable" parameterType="com.asyncmd.model.AsynCmdDO">
-        INSERT INTO asyn_cmd#{tableIndex} (cmd_type, content,
+    <insert id="saveCmdSubTable">
+        INSERT INTO asyn_cmd${tableIndex} (cmd_type, content,
           biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,success_executers,gmt_create,gmt_modify)
-        VALUES ( #{cmdType}, #{content}, #{bizId},
-          #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},#{successExecuters},now(),now())
+        VALUES ( #{asynCmd.cmdType}, #{asynCmd.content}, #{asynCmd.bizId},
+          #{asynCmd.createHostname}, #{asynCmd.createIp}, #{asynCmd.createName}, #{asynCmd.executeNum},#{asynCmd.nextTime},#{asynCmd.status},#{asynCmd.updateHostname},#{asynCmd.updateIp},#{asynCmd.successExecuters},now(),now())
 
     </insert>
 
@@ -49,7 +49,7 @@
     </delete>
 
     <delete id="delCmdSubTable" parameterType="string">
-        DELETE FROM asyn_cmd_#{tableIndex} WHERE biz_id=#{bizId}
+        DELETE FROM asyn_cmd${tableIndex} WHERE biz_id=#{bizId}
     </delete>
 
     <update id="updateStatus">
@@ -96,31 +96,41 @@
         </foreach>
     </update>
     <update id="updateStatusSubTable">
-        UPDATE asyn_cmd#{tableIndex}
+        UPDATE asyn_cmd${tableIndex}
         <set>
-            status = #{status},
+            status = #{asynUpdateParam.status},
             gmt_modify = now(),
-            execute_num = execute_num + 1,
-            <if test="successExecutes != null">
-                success_executers = #{successExecutes}
+            <if test="executer != null and executer ">
+                execute_num = execute_num + 1
+            </if>
+            <if test="reset != null and reset">
+                execute_num = execute_num - 1
+            </if>
+            <if test="asynUpdateParam.successExecutes != null">
+                success_executers = #{asynUpdateParam.successExecutes}
             </if>
         </set>
         where
-        status = #{whereAsynStatus} and
-        biz_id = #{bizId}
+        status = #{asynUpdateParam.whereAsynStatus} and
+        biz_id = #{asynUpdateParam.bizId}
     </update>
 
     <update id="batchupdateStatusSubTable">
-        UPDATE asyn_cmd#{tableIndex}
+        UPDATE asyn_cmd${tableIndex}
         <set>
-            status = #{status},
+            status = #{asynUpdateParam.status},
             gmt_modify = now(),
-            execute_num = execute_num + 1
+            <if test="asynUpdateParam.executer != null and asynUpdateParam.executer ">
+                execute_num = execute_num + 1
+            </if>
+            <if test="asynUpdateParam.reset != null and asynUpdateParam.reset">
+                execute_num = execute_num - 1
+            </if>
         </set>
         where
-        status = #{whereAsynStatus} and
+        status = #{asynUpdateParam.whereAsynStatus} and
         biz_id IN
-        <foreach collection="bizIds" index="index" item="bizId" open="(" separator="," close=")">
+        <foreach collection="asynUpdateParam.bizIds" index="index" item="bizId" open="(" separator="," close=")">
             #{bizId}
         </foreach>
     </update>
@@ -140,7 +150,7 @@
     <select id="querySubTableAsynCmd" resultMap="asynResultMap">
         select
         <include refid="BASE_LIST"/>
-        from asyn_cmd#{tableIndex}
+        from asyn_cmd${tableIndex}
         where
         status = #{status} and next_time &lt;= #{executerTime}
         <if test="desc != null and desc">
@@ -159,7 +169,7 @@
     <select id="getSubTableAsynCmdByBizId" resultType="com.asyncmd.model.AsynCmdDO">
         select
         <include refid="BASE_LIST"/>
-        from asyn_cmd#{tableIndex}
+        from asyn_cmd${tableIndex}
         where biz_id = #{bizId}
     </select>
 </mapper>
