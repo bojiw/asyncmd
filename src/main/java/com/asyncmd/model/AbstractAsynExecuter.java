@@ -81,7 +81,7 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
         this.dispatchMode = dispatchMode;
     }
 
-    final public DispatchMode getDispatchMode() {
+    public DispatchMode getDispatchMode() {
         return dispatchMode;
     }
 
