@@ -8,7 +8,6 @@ import com.asyncmd.utils.ThreadPoolTaskExecutorUtil;
 import com.asyncmd.utils.TransactionTemplateUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import javax.sql.DataSource;
 
@@ -41,10 +40,15 @@ public class AsynGroupConfig {
 
 
 
-    public void setPoolTaskExecutor(ThreadPoolTaskExecutor poolTaskExecutor) {
-        ThreadPoolTaskExecutorUtil.newInstance().setPoolTaskExecutor(poolTaskExecutor);
+    private void setCorePoolSize(int corePoolSize){
+        ThreadPoolTaskExecutorUtil.newInstance().setCorePoolSize(corePoolSize);
     }
-
+    private void setMaxPoolSize(int maxPoolSize){
+        ThreadPoolTaskExecutorUtil.newInstance().setMaxPoolSize(maxPoolSize);
+    }
+    private void setQueueCapacity(int queueCapacity){
+        ThreadPoolTaskExecutorUtil.newInstance().setQueueCapacity(queueCapacity);
+    }
     public void setExecuterFrequencys(String executerFrequencys) {
         asynConfig.setExecuterFrequencys(executerFrequencys);
     }
@@ -84,4 +88,20 @@ public class AsynGroupConfig {
         TransactionTemplateUtil.newInstance().setDataSource(dataSource);
     }
 
+    public void setMaxNo(Integer maxNo) {
+        asynConfig.getAsynJobConfig().getAsynBackupConfig().setMaxNo(maxNo);
+    }
+
+    public void setBeforeDate(Integer beforeDate) {
+        asynConfig.getAsynJobConfig().getAsynBackupConfig().setBeforeDate(beforeDate);
+    }
+
+    public void setBackup(Boolean backup) {
+        asynConfig.getAsynJobConfig().getAsynBackupConfig().setBackup(backup);
+    }
+
+
+    public void setBackupCron(String backupCron) {
+        asynConfig.getAsynJobConfig().getAsynBackupConfig().setBackupCron(backupCron);
+    }
 }

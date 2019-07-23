@@ -5,6 +5,8 @@ import com.asyncmd.config.AsynGroupConfig;
 import com.asyncmd.dao.AsynCmdDAO;
 import com.asyncmd.dao.AsynCmdHistoryDAO;
 import com.asyncmd.enums.AsynStatus;
+import com.asyncmd.exception.AsynExCode;
+import com.asyncmd.exception.AsynException;
 import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynCmdDO;
@@ -17,6 +19,7 @@ import com.asyncmd.utils.LocalHostUtil;
 import com.asyncmd.utils.SubTableUtil;
 import com.asyncmd.utils.TransactionTemplateUtil;
 import com.asyncmd.utils.convert.AsynCmdConvert;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
@@ -58,20 +61,26 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
 
     /**
      * 备份异步命令
-     * @param asynCmd
+     * @param asynCmds
      */
-    public void backupCmd(final AsynCmd asynCmd){
-        //重新捞取最新的一条数据
-        final AsynCmd newAsynCmd = getAsynCmdByBizId(asynCmd.getBizId(), asynCmd.getClass());
-        if (newAsynCmd == null){
-            return;
+    public void backupCmd(final Integer tableIndex, final List<AsynCmd> asynCmds){
+        final List<String> bizIds = Lists.newArrayList();
+        final List<AsynCmdHistoryDO> asynCmdHistoryDOS = Lists.newArrayList();
+        for (AsynCmd asynCmd : asynCmds){
+            bizIds.add(asynCmd.getBizId());
+            asynCmdHistoryDOS.add(AsynCmdConvert.toHistoryCmd(asynCmd));
         }
         TransactionTemplateUtil.newInstance().getTemplate().execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-
-                asynCmdDAO.delCmd(asynCmd.getBizId());
-                asynCmdHistoryDAO.saveCmd(AsynCmdConvert.toHistoryCmd(newAsynCmd));
+                long successNum = asynCmdDAO.batchDelCmd(tableIndex, bizIds);
+                if (successNum != asynCmds.size()){
+                    throw new AsynException(AsynExCode.SYS_ERROR,"删除异步命令失败");
+                }
+                long l = asynCmdHistoryDAO.batchSaveCmd(tableIndex, asynCmdHistoryDOS);
+                if (l != asynCmds.size()){
+                    throw new AsynException(AsynExCode.SYS_ERROR,"备份异步命令失败");
+                }
 
             }
         });
@@ -97,7 +106,7 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
 
     }
 
-    public List<AsynCmd> queryAsynCmd(int limit,int tableIndex,AsynStatus status,Date whereNextTime) {
+    public List<AsynCmd> queryAsynCmd(Integer limit,int tableIndex,AsynStatus status,Date whereNextTime) {
 
         Boolean desc = asynGroupConfig.getAsynConfig().getDesc();
         List<AsynCmdDO> asynCmdDOS = asynCmdDAO.queryAsynCmd(tableIndex,status.getStatus(),limit, whereNextTime,desc);

@@ -7,6 +7,7 @@ import com.asyncmd.model.Frequency;
 import com.asyncmd.utils.FrequencyUtil;
 import com.asyncmd.utils.LocalHostUtil;
 import com.asyncmd.utils.SubTableUtil;
+import com.asyncmd.utils.ThreadPoolTaskExecutorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
@@ -54,10 +55,9 @@ public class AsynConfig {
     private AsynJobConfig asynJobConfig = new AsynJobConfig();
 
 
+
     public void initConfig(){
-        //需要先初始化分表工具类
-        SubTableUtil.init(tableNum);
-        LocalHostUtil.init();
+        beforeInit();
         if (StringUtils.isEmpty(executerFrequencys)){
             log.error(AsynExCode.EXECUTER_FREQUENCY_ILLEGAL.getMessage());
             throw new AsynException(AsynExCode.EXECUTER_FREQUENCY_ILLEGAL);
@@ -67,8 +67,11 @@ public class AsynConfig {
         asynJobConfig.init(tableNum);
     }
 
-    public int getTableNum() {
-        return tableNum;
+    private void beforeInit(){
+        //需要先初始化分表工具类
+        SubTableUtil.init(tableNum);
+        LocalHostUtil.init();
+        ThreadPoolTaskExecutorUtil.newInstance().init();
     }
 
     public List<Frequency> getExecuterFrequency() {
@@ -95,14 +98,6 @@ public class AsynConfig {
         return limit;
     }
 
-    /**
-     * 异步命令表是否分表
-     * @return
-     */
-    public boolean isSubTable(){
-        return tableNum > 0;
-    }
-
     public int getRetryNum() {
         return retryNum;
     }
@@ -118,4 +113,6 @@ public class AsynConfig {
     public Boolean getDesc() {
         return desc;
     }
+
+
 }

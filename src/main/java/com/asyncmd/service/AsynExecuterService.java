@@ -37,15 +37,15 @@ public interface AsynExecuterService {
 
     /**
      * 备份异步命令
-     * @param asynCmd
+     * @param asynCmds
      */
-    void backupCmd(final AsynCmd asynCmd);
+    void backupCmd(final Integer tableIndex, final List<AsynCmd> asynCmds);
 
     /**
      * 获取异步命令
      * @return
      */
-    List<AsynCmd> queryAsynCmd(int limit,int tableIndex,AsynStatus status,Date whereNextTime);
+    List<AsynCmd> queryAsynCmd(Integer limit,int tableIndex,AsynStatus status,Date whereNextTime);
 
 
     boolean updateStatus(AsynUpdateParam param);

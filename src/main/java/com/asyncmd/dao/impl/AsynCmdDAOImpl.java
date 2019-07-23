@@ -40,6 +40,24 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
         return JdbcTemplateUtil.newInstance().update(sql,new Object[]{bizId});
     }
 
+    public long batchDelCmd(Integer tableIndex, final List<String> bizIds) {
+        String tableName = SubTableUtil.getTableName(tableIndex, null, AsynCmdDO.TABLE_NAME);
+        String sql = "DELETE FROM " + tableName + " WHERE biz_id=?";
+        int[] ints = JdbcTemplateUtil.newInstance().batchUpdate(sql, new BatchPreparedStatementSetter() {
+            public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
+                preparedStatement.setString(1, bizIds.get(i));
+            }
+
+            public int getBatchSize() {
+                return bizIds.size();
+            }
+        });
+        if (ints == null){
+            return 0;
+        }
+        return ints.length;
+    }
+
     public long updateStatus(AsynUpdateParam asynUpdateParam) {
         String tableName = SubTableUtil.getTableName(null, asynUpdateParam.getBizId(), AsynCmdDO.TABLE_NAME);
         List<Object> param = Lists.newArrayList();
@@ -95,9 +113,7 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
         int[] ints = JdbcTemplateUtil.newInstance().batchUpdate(sql, new BatchPreparedStatementSetter() {
             public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
                 String bizId = asynUpdateParam.getBizIds().get(i);
-                for (int j = 0;
-                     j < param.size();
-                     j++) {
+                for (int j = 0;j < param.size();j++) {
                     preparedStatement.setObject(j + 1, param.get(j));
                 }
                 preparedStatement.setString(param.size() + 1, bizId);
@@ -114,14 +130,16 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
     }
 
 
-    public List<AsynCmdDO> queryAsynCmd(Integer tableIndex, String status, int limit, Date executerTime, Boolean desc) {
+    public List<AsynCmdDO> queryAsynCmd(Integer tableIndex, String status, Integer limit, Date executerTime, Boolean desc) {
         String tableName = SubTableUtil.getTableName(tableIndex,null, AsynCmdDO.TABLE_NAME);
         StringBuffer sql = getSelectBase(tableName);
         sql.append(" where status = ? and next_time <= ?");
         if (desc != null){
             sql.append(" order by gmt_create");
         }
-        sql.append(" limit ?");
+        if (limit != null){
+            sql.append(" limit ?");
+        }
 
         return JdbcTemplateUtil.newInstance().query(sql.toString(),new Object[]{status,executerTime,limit},new AsynCmdRowMapper());
     }

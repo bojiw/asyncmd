@@ -3,6 +3,8 @@ package com.asyncmd.dao;
 
 import com.asyncmd.model.AsynCmdHistoryDO;
 
+import java.util.List;
+
 /**
  * 异步命令历史表
  * @author wangwendi
@@ -16,6 +18,13 @@ public interface AsynCmdHistoryDAO {
      * @return
      */
     long saveCmd(AsynCmdHistoryDO asynCmdHistoryDO);
+
+    /**
+     * 保存历史异步命令
+     * @param asynCmdHistoryDOs
+     * @return
+     */
+    long batchSaveCmd(Integer tableIndex, List<AsynCmdHistoryDO> asynCmdHistoryDOs);
 
 
 }

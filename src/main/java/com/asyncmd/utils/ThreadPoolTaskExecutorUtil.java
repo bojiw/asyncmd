@@ -18,6 +18,7 @@ public class ThreadPoolTaskExecutorUtil {
      */
     private ThreadPoolTaskExecutor poolTaskExecutor;
 
+
     public ThreadPoolTaskExecutorUtil(){
         //默认线程池
         poolTaskExecutor = new ThreadPoolTaskExecutor();
@@ -26,13 +27,15 @@ public class ThreadPoolTaskExecutorUtil {
         //核心线程数量为5
         poolTaskExecutor.setCorePoolSize(5);
         //最大线程数量为40
-        poolTaskExecutor.setMaxPoolSize(40);
+        poolTaskExecutor.setMaxPoolSize(100);
         //空闲线程等待时间为300秒
         poolTaskExecutor.setKeepAliveSeconds(300);
         //等待队列为100
-        poolTaskExecutor.setQueueCapacity(100);
+        poolTaskExecutor.setQueueCapacity(50);
         //如果线程池满 则抛异常
         poolTaskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
+    }
+    public void init(){
         poolTaskExecutor.initialize();
     }
 
@@ -40,11 +43,14 @@ public class ThreadPoolTaskExecutorUtil {
         return instance;
     }
 
-    public void setPoolTaskExecutor(ThreadPoolTaskExecutor poolTaskExecutor) {
-        //如果有线程运行 等运行完再关闭 正常情况执行这里时没有线程会运行 只是做个预防
-        this.poolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-        this.poolTaskExecutor.shutdown();
-        this.poolTaskExecutor = poolTaskExecutor;
+    public void setCorePoolSize(int corePoolSize){
+        poolTaskExecutor.setCorePoolSize(corePoolSize);
+    }
+    public void setMaxPoolSize(int maxPoolSize){
+        poolTaskExecutor.setMaxPoolSize(maxPoolSize);
+    }
+    public void setQueueCapacity(int queueCapacity){
+        poolTaskExecutor.setQueueCapacity(queueCapacity);
     }
 
     public ThreadPoolTaskExecutor getPoolTaskExecutor() {

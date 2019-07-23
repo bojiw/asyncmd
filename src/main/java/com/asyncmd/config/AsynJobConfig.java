@@ -3,6 +3,7 @@ package com.asyncmd.config;
 
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
+import com.asyncmd.manager.job.DispatchBackupJob;
 import com.asyncmd.manager.job.DispatchExecuterJob;
 import com.asyncmd.manager.job.DispatchRestJob;
 import com.dangdang.ddframe.job.config.JobCoreConfiguration;
@@ -27,6 +28,7 @@ public class AsynJobConfig {
 
     private static final String EXECUTE = "_execute";
     private static final String REST = "_rest";
+    private static final String BACKUP = "_backup";
 
     /**
      * zookeeper地址
@@ -45,6 +47,9 @@ public class AsynJobConfig {
      * 重置状态任务执行频率 默认每隔60秒执行一次
      */
     private String restCron = "0/60 * * * * ?";
+
+    private AsynBackupConfig asynBackupConfig = new AsynBackupConfig();
+
 
 
     public void init(int tableNum){
@@ -67,6 +72,8 @@ public class AsynJobConfig {
         }
         createExecuterJob(tableNum);
         createRestJob(tableNum);
+        createBackupJob(tableNum);
+
     }
 
     /**
@@ -97,6 +104,24 @@ public class AsynJobConfig {
         new JobScheduler(createRegistryCenter(zookeeperUrl), simpleJobRootConfig).init();
     }
 
+    /**
+     * 创建备份任务
+     * @param tableNum
+     */
+    private void createBackupJob(int tableNum){
+        //判断是否需要启动备份任务
+        if (!asynBackupConfig.getBackup()){
+            return;
+        }
+        String newJobName = jobName + BACKUP;
+        // 定义作业核心配置
+        JobCoreConfiguration simpleCoreConfig = JobCoreConfiguration.newBuilder(newJobName, asynBackupConfig.getBackupCron(), tableNum).build();
+        SimpleJobConfiguration simpleJobConfig = new SimpleJobConfiguration(simpleCoreConfig, DispatchBackupJob.class.getCanonicalName());
+        // 定义Lite作业根配置
+        LiteJobConfiguration simpleJobRootConfig = LiteJobConfiguration.newBuilder(simpleJobConfig).overwrite(true).build();
+        new JobScheduler(createRegistryCenter(zookeeperUrl), simpleJobRootConfig).init();
+    }
+
     private static CoordinatorRegistryCenter createRegistryCenter(String zookeeperUrl) {
         CoordinatorRegistryCenter regCenter = new ZookeeperRegistryCenter(new ZookeeperConfiguration(zookeeperUrl, "asyn-executer"));
         regCenter.init();
@@ -117,5 +142,9 @@ public class AsynJobConfig {
 
     public void setRestCron(String restCron) {
         this.restCron = restCron;
+    }
+
+    public AsynBackupConfig getAsynBackupConfig() {
+        return asynBackupConfig;
     }
 }

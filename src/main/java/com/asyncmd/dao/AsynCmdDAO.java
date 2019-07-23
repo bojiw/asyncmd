@@ -33,6 +33,13 @@ public interface AsynCmdDAO {
      */
     long delCmd(String bizId);
 
+    /**
+     * 批量删除异步命令
+     * @param bizIds
+     * @return
+     */
+    long batchDelCmd(Integer tableIndex,List<String> bizIds);
+
 
 
     /**
@@ -58,7 +65,7 @@ public interface AsynCmdDAO {
      * @param executerTime
      * @return
      */
-    List<AsynCmdDO> queryAsynCmd(Integer tableIndex,String status,int limit, Date executerTime,Boolean desc);
+    List<AsynCmdDO> queryAsynCmd(Integer tableIndex,String status,Integer limit, Date executerTime,Boolean desc);
 
 
 
