@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.manager.impl;
 
 import com.asyncmd.config.AsynGroupConfig;
@@ -24,7 +21,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
@@ -32,7 +28,7 @@ import java.util.List;
 
 /**
  * @author wangwendi
- * @version $Id: AsynExecuterJobManagerImpl.java, v 0.1 2019年07月16日 下午7:23 wangwendi Exp $
+ * @version $Id: AsynExecuterJobManagerImpl.java, v 0.1 2019年07月16日 wangwendi Exp $
  */
 @Service
 public class AsynExecuterJobManagerImpl implements AsynExecuterJobManager {

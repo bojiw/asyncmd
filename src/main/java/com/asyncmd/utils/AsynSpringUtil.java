@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.utils;
 
 import org.apache.commons.logging.Log;
@@ -14,7 +11,7 @@ import org.springframework.stereotype.Component;
 /**
  *
  * @author wangwendi
- * @version $Id: SpringContextUtil.java, v 0.1 2019年01月15日 下午9:27 wangwendi Exp $
+ * @version $Id: SpringContextUtil.java, v 0.1 2019年01月15日 wangwendi Exp $
  */
 @Component
 public class AsynSpringUtil implements ApplicationContextAware {

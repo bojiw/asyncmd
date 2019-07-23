@@ -8,7 +8,7 @@
         <result property="cmdType" column="cmd_type"/>
         <result property="content" column="content"/>
         <result property="bizId" column="biz_id"/>
-        <result property="createHostname" column="create_hostname"/>
+        <result property="createHostName" column="create_host_name"/>
         <result property="createIp" column="create_ip"/>
         <result property="createName" column="create_name"/>
         <result property="executeNum" column="execute_num"/>
@@ -16,7 +16,7 @@
         <result property="gmtModify" column="gmt_modify"/>
         <result property="nextTime" column="next_time"/>
         <result property="status" column="status"/>
-        <result property="updateHostname" column="update_hostname"/>
+        <result property="updateHostName" column="update_host_name"/>
         <result property="updateIp" column="update_ip"/>
         <result property="successExecuters" column="success_executers"/>
 
@@ -24,20 +24,12 @@
 
 
     
-    
+
     <insert id="saveCmd" parameterType="com.asyncmd.model.AsynCmdHistoryDO">
-        INSERT INTO asyn_cmd_history(cmd_type, content,
-          biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,success_executers,gmt_create,gmt_modify)
-        VALUES ( #{cmdType}, #{content}, #{bizId},
-          #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},#{successExecuters},now(),now())
-
-    </insert>
-
-    <insert id="saveCmdSubTable" parameterType="com.asyncmd.model.AsynCmdHistoryDO">
-        INSERT INTO asyn_cmd_history${tableIndex} (cmd_type, content,
-          biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,success_executers,gmt_create,gmt_modify)
-        VALUES (#{cmdType}, #{content}, #{bizId},
-          #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},#{successExecuters},now(),now())
+        INSERT INTO ${tableName} (cmd_type, content,
+          biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,gmt_create,gmt_modify)
+        VALUES (#{asynCmdHistoryDO.cmdType}, #{asynCmdHistoryDO.content}, #{asynCmdHistoryDO.bizId},
+          #{asynCmdHistoryDO.createHostName}, #{asynCmdHistoryDO.createIp}, #{asynCmdHistoryDO.createName}, #{asynCmdHistoryDO.executeNum},#{asynCmdHistoryDO.nextTime},#{asynCmdHistoryDO.status},#{asynCmdHistoryDO.updateHostName},#{asynCmdHistoryDO.updateIp},#{asynCmdHistoryDO.successExecuters},now(),now())
 
     </insert>
 

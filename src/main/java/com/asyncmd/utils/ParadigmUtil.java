@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.utils;
 
 import com.asyncmd.model.AsynCmd;
@@ -12,7 +9,7 @@ import java.lang.reflect.Type;
 /**
  *
  * @author wangwendi
- * @version $Id: ParadigmUtil.java, v 0.1 2019年06月28日 上午11:45 wangwendi Exp $
+ * @version $Id: ParadigmUtil.java, v 0.1 2019年06月28日 wangwendi Exp $
  */
 public class ParadigmUtil {
 

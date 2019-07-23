@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2018 All Rights Reserved.
- */
+
 package com.asyncmd.model;
 
 import com.asyncmd.enums.DispatchMode;

@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2018 All Rights Reserved.
- */
+
 package com.asyncmd.exception;
 
 /**
@@ -17,7 +14,9 @@ public enum AsynExCode {
     THREAD_POLL_ERROR(1002,"线程池异常,预计线程池已满"),
     TEMPLATE_NULL(2001,"事务模板方法为空"),
     EXECUTER_FREQUENCY_ILLEGAL(2002,"executerFrequency调度频率参数异常,标准格式为:5s,10s,1m,2h"),
-    CRON_ILLEGAL(2002,"cron格式异常,请检测是否为正确的cron表达式"),
+    CRON_ILLEGAL(2003,"cron格式异常,请检测是否为正确的cron表达式"),
+    DATASOURCE_NULL(2004,"datasource不能为空"),
+    ZOOKEEPER_NULL(2005,"zookeeper地址不能为空"),
     ;
 
     private Integer code;

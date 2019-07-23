@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.model;
 
 import com.alibaba.fastjson.JSON;
@@ -16,7 +13,7 @@ import java.util.List;
 
 /**
  * @author wangwendi
- * @version $Id: AsynRunnable.java, v 0.1 2019年07月20日 上午12:20 wangwendi Exp $
+ * @version $Id: AsynRunnable.java, v 0.1 2019年07月20日 wangwendi Exp $
  */
 public class AsynRunnable implements Runnable {
 

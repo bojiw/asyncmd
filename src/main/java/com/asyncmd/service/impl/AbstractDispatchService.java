@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.service.impl;
 
 import com.asyncmd.config.AsynGroupConfig;
@@ -16,6 +13,7 @@ import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.service.DispatchService;
 import com.asyncmd.utils.CountException;
 import com.asyncmd.utils.LocalExceptionUtil;
+import com.asyncmd.utils.LocalHostUtil;
 import com.asyncmd.utils.ThreadPoolTaskExecutorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,7 +24,7 @@ import java.util.List;
 
 /**
  * @author wangwendi
- * @version $Id: AbstractDispatchService.java, v 0.1 2019年07月19日 下午11:47 wangwendi Exp $
+ * @version $Id: AbstractDispatchService.java, v 0.1 2019年07月19日 wangwendi Exp $
  */
 public abstract class AbstractDispatchService implements DispatchService {
     private Log log = LogFactory.getLog(this.getClass());
@@ -64,6 +62,10 @@ public abstract class AbstractDispatchService implements DispatchService {
         }
         asynCmd.setStatus(AsynStatus.EXECUTE.getStatus());
         asynCmd.setExecuteNum(1);
+        asynCmd.setCreateHostName(LocalHostUtil.getHostName());
+        asynCmd.setCreateIp(LocalHostUtil.getIp());
+        asynCmd.setUpdateHostName(LocalHostUtil.getHostName());
+        asynCmd.setUpdateIp(LocalHostUtil.getIp());
         return asynCmd;
     }
 

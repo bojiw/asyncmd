@@ -8,7 +8,7 @@
         <result property="cmdType" column="cmd_type"/>
         <result property="content" column="content"/>
         <result property="bizId" column="biz_id"/>
-        <result property="createHostname" column="create_hostname"/>
+        <result property="createHostName" column="create_host_name"/>
         <result property="createIp" column="create_ip"/>
         <result property="createName" column="create_name"/>
         <result property="executeNum" column="execute_num"/>
@@ -16,98 +16,50 @@
         <result property="gmtModify" column="gmt_modify"/>
         <result property="nextTime" column="next_time"/>
         <result property="status" column="status"/>
-        <result property="updateHostname" column="update_hostname"/>
+        <result property="updateHostName" column="update_host_name"/>
         <result property="updateIp" column="update_ip"/>
         <result property="successExecuters" column="success_executers"/>
     </resultMap>
 
     <sql id="BASE_LIST">
-        cmd_id,cmd_type,content,biz_id,create_hostname,create_ip,create_name,
-        execute_num,gmt_create,gmt_modify,next_time,status,update_hostname,update_ip,success_executers
+        cmd_id,cmd_type,content,biz_id,create_host_name,create_ip,create_name,
+        execute_num,gmt_create,gmt_modify,next_time,status,update_host_name,update_ip,success_executers
     </sql>
 
     
-    
-    <insert id="saveCmd" parameterType="com.asyncmd.model.AsynCmdDO">
-        INSERT INTO asyn_cmd(cmd_type, content,
-          biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,success_executers,gmt_create,gmt_modify)
-        VALUES (#{cmdType}, #{content}, #{bizId},
-          #{createHostname}, #{createIp}, #{createName}, #{executeNum},#{nextTime},#{status},#{updateHostname},#{updateIp},#{successExecuters},now(),now())
 
-    </insert>
-    <insert id="saveCmdSubTable">
-        INSERT INTO asyn_cmd${tableIndex} (cmd_type, content,
-          biz_id, create_hostname, create_ip, create_name,execute_num,next_time,status,update_hostname,update_ip,success_executers,gmt_create,gmt_modify)
+    <insert id="saveCmd">
+        INSERT INTO ${tableName} (cmd_type, content,
+          biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,gmt_create,gmt_modify)
         VALUES ( #{asynCmd.cmdType}, #{asynCmd.content}, #{asynCmd.bizId},
-          #{asynCmd.createHostname}, #{asynCmd.createIp}, #{asynCmd.createName}, #{asynCmd.executeNum},#{asynCmd.nextTime},#{asynCmd.status},#{asynCmd.updateHostname},#{asynCmd.updateIp},#{asynCmd.successExecuters},now(),now())
+          #{asynCmd.createHostName}, #{asynCmd.createIp}, #{asynCmd.createName}, #{asynCmd.executeNum},#{asynCmd.nextTime},#{asynCmd.status},#{asynCmd.updateHostName},#{asynCmd.updateIp},#{asynCmd.successExecuters},now(),now())
 
     </insert>
 
 
     <delete id="delCmd" parameterType="string">
-        DELETE FROM asyn_cmd WHERE biz_id=#{bizId}
-    </delete>
-
-    <delete id="delCmdSubTable" parameterType="string">
-        DELETE FROM asyn_cmd${tableIndex} WHERE biz_id=#{bizId}
+        DELETE FROM ${tableName} WHERE biz_id=#{bizId}
     </delete>
 
     <update id="updateStatus">
-        UPDATE asyn_cmd
-        <set>
-            status = #{status},
-            gmt_modify = now(),
-            <if test="executer != null and executer ">
-                execute_num = execute_num + 1,
-            </if>
-            <if test="reset != null and reset">
-                execute_num = execute_num - 1,
-            </if>
-            <if test="nextTime != null">
-                next_time = #{nextTime},
-            </if>
-            <if test="successExecutes != null">
-                success_executers = #{successExecutes}
-            </if>
-
-        </set>
-        where
-        status = #{whereAsynStatus} and
-        biz_id = #{bizId}
-    </update>
-    <update id="batchUpdateStatus" >
-        UPDATE asyn_cmd
-        <set>
-            status = #{status},
-            gmt_modify = now(),
-            <if test="executer != null and executer ">
-                execute_num = execute_num + 1
-            </if>
-            <if test="reset != null and reset">
-                execute_num = execute_num - 1
-            </if>
-
-        </set>
-        where
-        status = #{whereAsynStatus} and
-        biz_id IN
-        <foreach collection="bizIds" index="index" item="bizId" open="(" separator="," close=")">
-            #{bizId}
-        </foreach>
-    </update>
-    <update id="updateStatusSubTable">
-        UPDATE asyn_cmd${tableIndex}
+        UPDATE ${tableName}
         <set>
             status = #{asynUpdateParam.status},
             gmt_modify = now(),
-            <if test="executer != null and executer ">
-                execute_num = execute_num + 1
+            <if test="asynUpdateParam.executer != null and asynUpdateParam.executer ">
+                execute_num = execute_num + 1,
             </if>
-            <if test="reset != null and reset">
-                execute_num = execute_num - 1
+            <if test="asynUpdateParam.reset != null and asynUpdateParam.reset">
+                execute_num = execute_num - 1,
             </if>
             <if test="asynUpdateParam.successExecutes != null">
-                success_executers = #{asynUpdateParam.successExecutes}
+                success_executers = #{asynUpdateParam.successExecutes},
+            </if>
+            <if test="asynUpdateParam.updateHostName != null">
+                update_host_name = #{asynUpdateParam.updateHostName},
+            </if>
+            <if test="asynUpdateParam.updateIp != null">
+                update_ip = #{asynUpdateParam.updateIp},
             </if>
         </set>
         where
@@ -115,16 +67,22 @@
         biz_id = #{asynUpdateParam.bizId}
     </update>
 
-    <update id="batchupdateStatusSubTable">
-        UPDATE asyn_cmd${tableIndex}
+    <update id="batchUpdateStatus">
+        UPDATE ${tableName}
         <set>
             status = #{asynUpdateParam.status},
             gmt_modify = now(),
             <if test="asynUpdateParam.executer != null and asynUpdateParam.executer ">
-                execute_num = execute_num + 1
+                execute_num = execute_num + 1,
             </if>
             <if test="asynUpdateParam.reset != null and asynUpdateParam.reset">
-                execute_num = execute_num - 1
+                execute_num = execute_num - 1,
+            </if>
+            <if test="asynUpdateParam.updateHostName != null">
+                update_host_name = #{asynUpdateParam.updateHostName},
+            </if>
+            <if test="asynUpdateParam.updateIp != null">
+                update_ip = #{asynUpdateParam.updateIp},
             </if>
         </set>
         where
@@ -135,10 +93,11 @@
         </foreach>
     </update>
 
+
     <select id="queryAsynCmd" resultMap="asynResultMap">
         select
-          <include refid="BASE_LIST"/>
-        from asyn_cmd
+        <include refid="BASE_LIST"/>
+        from ${tableName}
         where
         status = #{status} and next_time &lt;= #{executerTime}
         <if test="desc != null and desc">
@@ -147,29 +106,11 @@
         limit #{limit}
     </select>
 
-    <select id="querySubTableAsynCmd" resultMap="asynResultMap">
-        select
-        <include refid="BASE_LIST"/>
-        from asyn_cmd${tableIndex}
-        where
-        status = #{status} and next_time &lt;= #{executerTime}
-        <if test="desc != null and desc">
-            order by gmt_create
-        </if>
-        limit #{limit}
-    </select>
 
     <select id="getAsynCmdByBizId" resultType="com.asyncmd.model.AsynCmdDO">
         select
         <include refid="BASE_LIST"/>
-        from asyn_cmd
-        where biz_id = #{bizId}
-    </select>
-
-    <select id="getSubTableAsynCmdByBizId" resultType="com.asyncmd.model.AsynCmdDO">
-        select
-        <include refid="BASE_LIST"/>
-        from asyn_cmd${tableIndex}
+        from ${tableName}
         where biz_id = #{bizId}
     </select>
 </mapper>

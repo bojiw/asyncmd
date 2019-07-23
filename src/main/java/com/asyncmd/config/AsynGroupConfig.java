@@ -1,19 +1,24 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.config;
 
+import com.asyncmd.exception.AsynExCode;
+import com.asyncmd.exception.AsynException;
+import com.asyncmd.utils.JdbcTemplateUtil;
 import com.asyncmd.utils.ThreadPoolTaskExecutorUtil;
 import com.asyncmd.utils.TransactionTemplateUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.sql.DataSource;
 
 /**
  * @author wangwendi
- * @version $Id: AsynGroupConfig.java, v 0.1 2019年07月16日 下午2:01 wangwendi Exp $
+ * @version $Id: AsynGroupConfig.java, v 0.1 2019年07月16日 wangwendi Exp $
  */
 public class AsynGroupConfig {
+    private static Log log = LogFactory.getLog(AsynGroupConfig.class);
+
     private AsynConfig asynConfig;
 
 
@@ -22,6 +27,10 @@ public class AsynGroupConfig {
     }
 
     public void init(){
+        if (JdbcTemplateUtil.newInstance().getJdbcTemplate().getDataSource() == null){
+            log.error(AsynExCode.DATASOURCE_NULL.getMessage());
+            throw new AsynException(AsynExCode.DATASOURCE_NULL);
+        }
         asynConfig.initConfig();
     }
 
@@ -31,9 +40,6 @@ public class AsynGroupConfig {
     }
 
 
-    public void setTemplate(TransactionTemplate template){
-        TransactionTemplateUtil.newInstance().setTransactionTemplate(template);
-    }
 
     public void setPoolTaskExecutor(ThreadPoolTaskExecutor poolTaskExecutor) {
         ThreadPoolTaskExecutorUtil.newInstance().setPoolTaskExecutor(poolTaskExecutor);
@@ -71,6 +77,11 @@ public class AsynGroupConfig {
     }
     public void setDesc(Boolean desc) {
         asynConfig.setDesc(desc);
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        JdbcTemplateUtil.newInstance().setDataSource(dataSource);
+        TransactionTemplateUtil.newInstance().setDataSource(dataSource);
     }
 
 }

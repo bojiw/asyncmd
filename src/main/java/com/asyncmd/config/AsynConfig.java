@@ -1,25 +1,27 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.config;
 
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
 import com.asyncmd.model.Frequency;
 import com.asyncmd.utils.FrequencyUtil;
+import com.asyncmd.utils.LocalHostUtil;
+import com.asyncmd.utils.SubTableUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 
 /**
  * @author wangwendi
- * @version $Id: AsynConfig.java, v 0.1 2019年07月12日 下午5:16 wangwendi Exp $
+ * @version $Id: AsynConfig.java, v 0.1 2019年07月12日 wangwendi Exp $
  */
 public class AsynConfig {
+    private static Log log = LogFactory.getLog(AsynConfig.class);
 
     /**
-     * 分表数量
+     * 分表数量 如果设置需要是2的倍数如 8 16 32 64
      */
     private int tableNum = 0;
 
@@ -53,7 +55,11 @@ public class AsynConfig {
 
 
     public void initConfig(){
+        //需要先初始化分表工具类
+        SubTableUtil.init(tableNum);
+        LocalHostUtil.init();
         if (StringUtils.isEmpty(executerFrequencys)){
+            log.error(AsynExCode.EXECUTER_FREQUENCY_ILLEGAL.getMessage());
             throw new AsynException(AsynExCode.EXECUTER_FREQUENCY_ILLEGAL);
         }
         executerFrequencyList = FrequencyUtil.createFrequencys(executerFrequencys);

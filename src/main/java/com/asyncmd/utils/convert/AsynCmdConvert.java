@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.utils.convert;
 
 import com.alibaba.fastjson.JSON;
@@ -21,7 +18,7 @@ import java.util.List;
 
 /**
  * @author wangwendi
- * @version $Id: AsynCmdConvert.java, v 0.1 2019年07月09日 下午9:02 wangwendi Exp $
+ * @version $Id: AsynCmdConvert.java, v 0.1 2019年07月09日 wangwendi Exp $
  */
 public class AsynCmdConvert {
 
@@ -39,10 +36,10 @@ public class AsynCmdConvert {
         asynCmdDO.setExecuteNum(asynCmd.getExecuteNum());
         asynCmdDO.setNextTime(asynCmd.getNextTime());
         asynCmdDO.setStatus(asynCmd.getStatus());
-        asynCmdDO.setCreateHostname(asynCmd.getCreateHostname());
+        asynCmdDO.setCreateHostName(asynCmd.getCreateHostName());
         asynCmdDO.setCreateIp(asynCmd.getCreateIp());
         asynCmdDO.setCreateName(asynCmd.getCreateName());
-        asynCmdDO.setUpdateHostname(asynCmd.getUpdateHostname());
+        asynCmdDO.setUpdateHostName(asynCmd.getUpdateHostName());
         asynCmdDO.setUpdateIp(asynCmd.getUpdateIp());
         asynCmdDO.setSuccessExecuters(JSON.toJSONString(asynCmd.getSuccessExecuters()));
         return asynCmdDO;
@@ -72,10 +69,10 @@ public class AsynCmdConvert {
             asynCmd.setExecuteNum(asynCmdDO.getExecuteNum());
             asynCmd.setNextTime(asynCmdDO.getNextTime());
             asynCmd.setStatus(asynCmdDO.getStatus());
-            asynCmd.setCreateHostname(asynCmdDO.getCreateHostname());
+            asynCmd.setCreateHostName(asynCmdDO.getCreateHostName());
             asynCmd.setCreateIp(asynCmdDO.getCreateIp());
             asynCmd.setCreateName(asynCmdDO.getCreateName());
-            asynCmd.setUpdateHostname(asynCmdDO.getUpdateHostname());
+            asynCmd.setUpdateHostName(asynCmdDO.getUpdateHostName());
             asynCmd.setUpdateIp(asynCmdDO.getUpdateIp());
             asynCmd.setGmtModify(asynCmdDO.getGmtModify());
             asynCmd.setContent(asynCmd.jsonToObject(asynCmdDO.getContent()));
@@ -96,10 +93,10 @@ public class AsynCmdConvert {
         asynCmdHistoryDO.setExecuteNum(asynCmd.getExecuteNum());
         asynCmdHistoryDO.setNextTime(asynCmd.getNextTime());
         asynCmdHistoryDO.setStatus(AsynStatus.SUCCESS.getStatus());
-        asynCmdHistoryDO.setCreateHostname(asynCmd.getCreateHostname());
+        asynCmdHistoryDO.setCreateHostName(asynCmd.getCreateHostName());
         asynCmdHistoryDO.setCreateIp(asynCmd.getCreateIp());
         asynCmdHistoryDO.setCreateName(asynCmd.getCreateName());
-        asynCmdHistoryDO.setUpdateHostname(asynCmd.getUpdateHostname());
+        asynCmdHistoryDO.setUpdateHostName(asynCmd.getUpdateHostName());
         asynCmdHistoryDO.setUpdateIp(asynCmd.getUpdateIp());
         asynCmdHistoryDO.setSuccessExecuters(JSON.toJSONString(asynCmd.getSuccessExecuters()));
         return asynCmdHistoryDO;

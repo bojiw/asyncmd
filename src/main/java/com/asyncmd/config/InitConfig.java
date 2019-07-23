@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.config;
 
 import com.asyncmd.utils.AsynExecuterUtil;
@@ -10,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author wangwendi
- * @version $Id: InitConfig.java, v 0.1 2019年07月20日 下午11:16 wangwendi Exp $
+ * @version $Id: InitConfig.java, v 0.1 2019年07月20日 wangwendi Exp $
  */
 public class InitConfig implements SmartInitializingSingleton {
     @Autowired

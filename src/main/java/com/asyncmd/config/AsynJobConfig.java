@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.config;
 
 import com.asyncmd.exception.AsynExCode;
@@ -15,13 +12,18 @@ import com.dangdang.ddframe.job.lite.config.LiteJobConfiguration;
 import com.dangdang.ddframe.job.reg.base.CoordinatorRegistryCenter;
 import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperConfiguration;
 import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperRegistryCenter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.quartz.CronExpression;
+import org.springframework.util.StringUtils;
 
 /**
  * @author wangwendi
- * @version $Id: AsynJobConfig.java, v 0.1 2019年07月16日 上午11:24 wangwendi Exp $
+ * @version $Id: AsynJobConfig.java, v 0.1 2019年07月16日 wangwendi Exp $
  */
 public class AsynJobConfig {
+    private static Log log = LogFactory.getLog(AsynJobConfig.class);
+
 
     private static final String EXECUTE = "_execute";
     private static final String REST = "_rest";
@@ -51,7 +53,12 @@ public class AsynJobConfig {
             //效验cron表达式是否正确
             CronExpression.validateExpression(cron);
         }catch (Exception e){
+            log.error(AsynExCode.CRON_ILLEGAL.getMessage());
             throw new AsynException(AsynExCode.CRON_ILLEGAL);
+        }
+        if (StringUtils.isEmpty(zookeeperUrl)){
+            log.error(AsynExCode.ZOOKEEPER_NULL.getMessage());
+            throw new AsynException(AsynExCode.ZOOKEEPER_NULL);
         }
 
         //如果没有分表 则设置1个分片

@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.service.impl;
 
 import com.asyncmd.enums.AsynStatus;
@@ -13,7 +10,7 @@ import java.util.List;
 /**
  * 调度中心调度
  * @author wangwendi
- * @version $Id: CenterDispatchServiceImpl.java, v 0.1 2019年07月19日 下午11:50 wangwendi Exp $
+ * @version $Id: CenterDispatchServiceImpl.java, v 0.1 2019年07月19日 wangwendi Exp $
  */
 public class CenterDispatchServiceImpl extends AbstractDispatchService {
 

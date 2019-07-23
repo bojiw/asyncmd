@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.model;
 
 import com.asyncmd.exception.AsynExCode;
@@ -14,7 +11,7 @@ import java.util.Date;
 /**
  * 调度频率
  * @author wangwendi
- * @version $Id: Frequency.java, v 0.1 2019年07月15日 下午8:35 wangwendi Exp $
+ * @version $Id: Frequency.java, v 0.1 2019年07月15日 wangwendi Exp $
  */
 public class Frequency {
     /**

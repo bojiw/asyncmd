@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.utils;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -10,7 +7,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author wangwendi
- * @version $Id: ThreadPoolTaskExecutorUtil.java, v 0.1 2019年07月16日 下午8:33 wangwendi Exp $
+ * @version $Id: ThreadPoolTaskExecutorUtil.java, v 0.1 2019年07月16日 wangwendi Exp $
  */
 public class ThreadPoolTaskExecutorUtil {
 

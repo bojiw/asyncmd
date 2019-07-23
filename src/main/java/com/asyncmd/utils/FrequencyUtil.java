@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.utils;
 
 import com.asyncmd.model.Frequency;
@@ -11,7 +8,7 @@ import java.util.List;
 
 /**
  * @author wangwendi
- * @version $Id: FrequencyUtil.java, v 0.1 2019年07月17日 下午11:47 wangwendi Exp $
+ * @version $Id: FrequencyUtil.java, v 0.1 2019年07月17日 wangwendi Exp $
  */
 public class FrequencyUtil {
 

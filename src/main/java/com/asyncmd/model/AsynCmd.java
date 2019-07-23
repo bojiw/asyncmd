@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2018 All Rights Reserved.
- */
+
 package com.asyncmd.model;
 
 import com.alibaba.fastjson.JSON;
@@ -15,7 +12,7 @@ import java.util.List;
  *
  * 异步命令对象
  * @author wangwendi
- * @version $Id: AsynCmd.java, v 0.1 2018年09月20日 下午7:36 wangwendi Exp $
+ * @version $Id: AsynCmd.java, v 0.1 2018年09月20日 wangwendi Exp $
  */
 public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
     private static final long serialVersionUID = 2362119134833203155L;
@@ -68,7 +65,7 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
     /**
      * 创建任务的主机名
      */
-    private String createHostname;
+    private String createHostName;
 
     /**
      * 创建任务的ip
@@ -83,7 +80,7 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
     /**
      * 更新任务的主机名
      */
-    private String updateHostname;
+    private String updateHostName;
 
     /**
      * 更新任务的ip
@@ -181,14 +178,6 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
         this.status = status;
     }
 
-    public String getCreateHostname() {
-        return createHostname;
-    }
-
-    public void setCreateHostname(String createHostname) {
-        this.createHostname = createHostname;
-    }
-
     public String getCreateIp() {
         return createIp;
     }
@@ -205,12 +194,20 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
         this.createName = createName;
     }
 
-    public String getUpdateHostname() {
-        return updateHostname;
+    public String getCreateHostName() {
+        return createHostName;
     }
 
-    public void setUpdateHostname(String updateHostname) {
-        this.updateHostname = updateHostname;
+    public void setCreateHostName(String createHostName) {
+        this.createHostName = createHostName;
+    }
+
+    public String getUpdateHostName() {
+        return updateHostName;
+    }
+
+    public void setUpdateHostName(String updateHostName) {
+        this.updateHostName = updateHostName;
     }
 
     public String getUpdateIp() {

@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.service.impl;
 
 import com.asyncmd.exception.AsynExCode;
@@ -21,7 +18,7 @@ import java.util.List;
 /**
  * 同步执行
  * @author wangwendi
- * @version $Id: SynDispatchServiceImpl.java, v 0.1 2019年07月19日 下午11:53 wangwendi Exp $
+ * @version $Id: SynDispatchServiceImpl.java, v 0.1 2019年07月19日 wangwendi Exp $
  */
 public class SynDispatchServiceImpl extends AbstractDispatchService{
     private Log log = LogFactory.getLog(this.getClass());

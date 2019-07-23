@@ -1,7 +1,4 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2019 All Rights Reserved.
- */
+
 package com.asyncmd.model;
 
 import java.util.Date;
@@ -10,7 +7,7 @@ import java.util.List;
 /**
  * 异步命令更新请求参数
  * @author wangwendi
- * @version $Id: AsynUpdateParam.java, v 0.1 2019年07月17日 下午6:39 wangwendi Exp $
+ * @version $Id: AsynUpdateParam.java, v 0.1 2019年07月17日 wangwendi Exp $
  */
 public class AsynUpdateParam {
 
@@ -48,7 +45,20 @@ public class AsynUpdateParam {
      */
     private Date nextTime;
 
+    /**
+     * 执行成功的执行器
+     */
     private String successExecutes;
+
+    /**
+     * 执行更新操作的服务器名称
+     */
+    private String updateHostName;
+
+    /**
+     * 执行更新操作的服务器ip
+     */
+    private String updateIp;
 
     public List<String> getBizIds() {
         return bizIds;
@@ -112,5 +122,21 @@ public class AsynUpdateParam {
 
     public void setSuccessExecutes(String successExecutes) {
         this.successExecutes = successExecutes;
+    }
+
+    public String getUpdateHostName() {
+        return updateHostName;
+    }
+
+    public void setUpdateHostName(String updateHostName) {
+        this.updateHostName = updateHostName;
+    }
+
+    public String getUpdateIp() {
+        return updateIp;
+    }
+
+    public void setUpdateIp(String updateIp) {
+        this.updateIp = updateIp;
     }
 }

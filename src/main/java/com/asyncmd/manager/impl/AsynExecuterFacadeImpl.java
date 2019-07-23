@@ -1,10 +1,6 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2018 All Rights Reserved.
- */
+
 package com.asyncmd.manager.impl;
 
-import com.asyncmd.config.AsynGroupConfig;
 import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
@@ -40,8 +36,6 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
     @Autowired
     private AsynExecuterService asynExecuterService;
 
-    @Autowired
-    private AsynGroupConfig asynGroupConfig;
 
     @Autowired
     private DispatchFactory dispatchFactory;
