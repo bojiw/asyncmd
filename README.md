@@ -16,7 +16,7 @@
 
 如何有不了解领域驱动事件的同学可以看下下面这篇文章 讲的比较容易懂
 [https://blog.csdn.net/weixin_33759269/article/details/91386492]()
-#### 下图为异步命令组件在目前主流的三种领域事件发送方式里的应用
+#### 下图为异步命令组件在目前主流的三种领域事件发送方式里的应用 目前领域外的事件更多的是采用第二种直接使用mq 异步命令组件主要是第三种情况使用比较多
 
 ![image](https://github.com/bojiw/asyncmdDemo/blob/master/dominimage.png)
 
