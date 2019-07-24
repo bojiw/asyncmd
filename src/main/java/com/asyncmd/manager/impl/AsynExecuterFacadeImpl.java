@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -56,6 +57,7 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
 
     @Override
     public void saveExecuterAsynCmd(AsynCmd asynCmd) {
+        validation(asynCmd);
         List<AbstractAsynExecuter<? extends AsynCmd>> asynExecuters = AsynExecuterUtil.getAsynExecuterMap().get(asynCmd.getClass());
         if (CollectionUtils.isEmpty(asynExecuters)){
             throw new AsynException(AsynExCode.ILLEGAL,"根据asynCmd获取不到对应的执行器,检查执行器是否有注册:" + asynCmd.getClass().getName());
@@ -75,6 +77,19 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
         }
         //进行调度执行
         dispatchService.dispatch(asynCmd,asynExecuters);
+    }
+
+    private void validation(AsynCmd asynCmd){
+        if (asynCmd == null){
+            throw new AsynException(AsynExCode.ILLEGAL,"入参数不能为空");
+        }
+        if (StringUtils.isEmpty(asynCmd.getBizId())){
+            throw new AsynException(AsynExCode.ILLEGAL,"bizId不能为空");
+        }
+        if (asynCmd.getContent() == null){
+            throw new AsynException(AsynExCode.ILLEGAL,"content不能为空");
+        }
+
     }
 
 
