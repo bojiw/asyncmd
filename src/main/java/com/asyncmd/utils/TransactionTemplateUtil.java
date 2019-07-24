@@ -3,7 +3,6 @@ package com.asyncmd.utils;
 
 import com.asyncmd.exception.AsynExCode;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;

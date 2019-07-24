@@ -108,7 +108,7 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
      * @param content
      * @return
      */
-    public E jsonToObject(String content){
+    final public E jsonToObject(String content){
         return JSON.parseObject(content,getObject());
     }
 
@@ -117,132 +117,132 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
      * @param content
      * @return
      */
-    public String objectToJson(E content){
+    final public String objectToJson(E content){
         return JSON.toJSONString(content);
     }
 
 
-    public Long getCmdId() {
+    final public Long getCmdId() {
         return cmdId;
     }
 
-    public void setCmdId(Long cmdId) {
+    final public void setCmdId(Long cmdId) {
         this.cmdId = cmdId;
     }
 
-    public String getCmdType() {
+    final public String getCmdType() {
         return cmdType;
     }
 
-    public void setCmdType(String cmdType) {
+    final public void setCmdType(String cmdType) {
         this.cmdType = cmdType;
     }
 
-    public String getBizId() {
+    final public String getBizId() {
         return bizId;
     }
 
-    public void setBizId(String bizId) {
+    final public void setBizId(String bizId) {
         this.bizId = bizId;
     }
 
-    public Date getGmtCreate() {
+    final public Date getGmtCreate() {
         return gmtCreate;
     }
 
-    public void setGmtCreate(Date gmtCreate) {
+    final public void setGmtCreate(Date gmtCreate) {
         this.gmtCreate = gmtCreate;
     }
 
-    public Integer getExecuteNum() {
+    final public Integer getExecuteNum() {
         return executeNum;
     }
 
-    public void setExecuteNum(Integer executeNum) {
+    final public void setExecuteNum(Integer executeNum) {
         this.executeNum = executeNum;
     }
 
-    public Date getNextTime() {
+    final public Date getNextTime() {
         return nextTime;
     }
 
-    public void setNextTime(Date nextTime) {
+    final public void setNextTime(Date nextTime) {
         this.nextTime = nextTime;
     }
 
-    public String getStatus() {
+    final public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    final public void setStatus(String status) {
         this.status = status;
     }
 
-    public String getCreateIp() {
+    final public String getCreateIp() {
         return createIp;
     }
 
-    public void setCreateIp(String createIp) {
+    final public void setCreateIp(String createIp) {
         this.createIp = createIp;
     }
 
-    public String getCreateName() {
+    final public String getCreateName() {
         return createName;
     }
 
-    public void setCreateName(String createName) {
+    final public void setCreateName(String createName) {
         this.createName = createName;
     }
 
-    public String getCreateHostName() {
+    final public String getCreateHostName() {
         return createHostName;
     }
 
-    public void setCreateHostName(String createHostName) {
+    final public void setCreateHostName(String createHostName) {
         this.createHostName = createHostName;
     }
 
-    public String getUpdateHostName() {
+    final public String getUpdateHostName() {
         return updateHostName;
     }
 
-    public void setUpdateHostName(String updateHostName) {
+    final public void setUpdateHostName(String updateHostName) {
         this.updateHostName = updateHostName;
     }
 
-    public String getUpdateIp() {
+    final public String getUpdateIp() {
         return updateIp;
     }
 
-    public void setUpdateIp(String updateIp) {
+    final public void setUpdateIp(String updateIp) {
         this.updateIp = updateIp;
     }
 
-    public Date getGmtModify() {
+    final public Date getGmtModify() {
         return gmtModify;
     }
 
-    public void setGmtModify(Date gmtModify) {
+    final public void setGmtModify(Date gmtModify) {
         this.gmtModify = gmtModify;
     }
 
-    public E getContent() {
+    final public E getContent() {
         return content;
     }
 
-    public void setContent(E content) {
+    final public void setContent(E content) {
         this.content = content;
     }
 
-    public List<String> getSuccessExecuters() {
+    final public List<String> getSuccessExecuters() {
         return successExecuters;
     }
 
-    public void setSuccessExecuters(List<String> successExecuters) {
+    final public void setSuccessExecuters(List<String> successExecuters) {
         this.successExecuters = successExecuters;
     }
 
-    public void addSuccessExecuter(String successExecuter){
+    final public void addSuccessExecuter(String successExecuter){
         successExecuters.add(successExecuter);
     }
 }

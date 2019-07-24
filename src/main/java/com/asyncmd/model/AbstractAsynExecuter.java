@@ -31,7 +31,6 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
 
     /**
      * 如果有特别的异步命令不想要用全局重试频率 可以设置
-     * 如果调度模式为异步或者同步调度 则第一次无论设置多少都是立即执行
      * 重试执行频率 5s,10s,1m,1h
      * 代表第一次重试5秒以后执行 第二次10秒以后执行 第三次1分钟以后执行 第四次1小时以后执行 之后都是间隔1小时执行
      * 执行频率 5s,10s,20s

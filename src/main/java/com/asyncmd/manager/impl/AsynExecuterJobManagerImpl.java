@@ -54,11 +54,14 @@ public class AsynExecuterJobManagerImpl implements AsynExecuterJobManager {
      * 异步命令执行
      */
     private void asynExecuter(final int tableIndex){
+        Integer limit;
         if (asynGroupConfig.getAsynConfig().getLimit() > getPoolSurplusNum()){
             log.warn("asyn线程池不足,请注意,剩余线程数"+ getPoolSurplusNum());
-            return;
+            limit = getPoolSurplusNum();
+        }else {
+            limit = asynGroupConfig.getAsynConfig().getLimit();
         }
-        final List<AsynCmd> asynCmdList = asynExecuterService.queryAsynCmd(asynGroupConfig.getAsynConfig().getLimit(),tableIndex,AsynStatus.INIT,getNextMillis());
+        final List<AsynCmd> asynCmdList = asynExecuterService.queryAsynCmd(limit,tableIndex,AsynStatus.INIT,getNextMillis());
         final List<String> bizIds = AsynCmdConvert.toBizIds(asynCmdList);
         if (CollectionUtils.isEmpty(bizIds)){
             return;

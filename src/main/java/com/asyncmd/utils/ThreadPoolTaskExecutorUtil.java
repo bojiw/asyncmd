@@ -24,14 +24,14 @@ public class ThreadPoolTaskExecutorUtil {
         poolTaskExecutor = new ThreadPoolTaskExecutor();
         //线程池名称
         poolTaskExecutor.setThreadNamePrefix("asyn-thread");
-        //核心线程数量为5
-        poolTaskExecutor.setCorePoolSize(5);
-        //最大线程数量为40
-        poolTaskExecutor.setMaxPoolSize(100);
+        //核心线程数量为10
+        poolTaskExecutor.setCorePoolSize(10);
+        //最大线程数量为60
+        poolTaskExecutor.setMaxPoolSize(60);
         //空闲线程等待时间为300秒
         poolTaskExecutor.setKeepAliveSeconds(300);
-        //等待队列为100
-        poolTaskExecutor.setQueueCapacity(50);
+        //等待队列为150
+        poolTaskExecutor.setQueueCapacity(150);
         //如果线程池满 则抛异常
         poolTaskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
     }

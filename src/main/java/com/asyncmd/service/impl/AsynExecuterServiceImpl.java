@@ -7,16 +7,13 @@ import com.asyncmd.dao.AsynCmdHistoryDAO;
 import com.asyncmd.enums.AsynStatus;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
-import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynCmdDO;
 import com.asyncmd.model.AsynCmdHistoryDO;
 import com.asyncmd.model.AsynUpdateParam;
 import com.asyncmd.model.Frequency;
 import com.asyncmd.service.AsynExecuterService;
-import com.asyncmd.utils.AsynExecuterUtil;
 import com.asyncmd.utils.LocalHostUtil;
-import com.asyncmd.utils.SubTableUtil;
 import com.asyncmd.utils.TransactionTemplateUtil;
 import com.asyncmd.utils.convert.AsynCmdConvert;
 import com.google.common.collect.Lists;
@@ -28,8 +25,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -38,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 public class AsynExecuterServiceImpl  implements AsynExecuterService {
+
 
     @Autowired
     private AsynCmdDAO asynCmdDAO;

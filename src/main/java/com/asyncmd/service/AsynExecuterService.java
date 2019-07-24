@@ -2,24 +2,12 @@
 package com.asyncmd.service;
 
 import com.asyncmd.enums.AsynStatus;
+import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynUpdateParam;
 import com.asyncmd.model.Frequency;
-import com.asyncmd.utils.convert.AsynCmdConvert;
-import com.asyncmd.dao.AsynCmdDAO;
-import com.asyncmd.dao.AsynCmdHistoryDAO;
-import com.asyncmd.model.AbstractAsynExecuter;
-import com.asyncmd.model.AsynCmd;
-import com.asyncmd.model.AsynCmdDO;
-import com.asyncmd.utils.TransactionTemplateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *

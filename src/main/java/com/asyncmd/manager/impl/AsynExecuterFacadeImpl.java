@@ -60,7 +60,7 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
         validation(asynCmd);
         List<AbstractAsynExecuter<? extends AsynCmd>> asynExecuters = AsynExecuterUtil.getAsynExecuterMap().get(asynCmd.getClass());
         if (CollectionUtils.isEmpty(asynExecuters)){
-            throw new AsynException(AsynExCode.ILLEGAL,"根据asynCmd获取不到对应的执行器,检查执行器是否有注册:" + asynCmd.getClass().getName());
+            throw new AsynException(AsynExCode.ILLEGAL,"根据asynCmd获取不到对应的执行器,检查执行器是否有配置由spring管理:" + asynCmd.getClass().getName());
         }
         DispatchMode dispatchMode = asynExecuters.get(0).getDispatchMode();
         if (dispatchMode == null){
