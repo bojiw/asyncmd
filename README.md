@@ -3,7 +3,7 @@
 [https://github.com/bojiw/asyncmdDemo](异步命令组件demo)
 #### 异步命令组件核心功能
 就是把一些耗时比较高并且可以异步处理的同步请求转换为异步处理来提高并发,并且把命令内容保存到数据库表中来提高数据可靠性并且通过重试来保证数据的最终一致性
-![image](https://github.com/bojiw/asyncmd/blob/master/asynimage.png)
+![image](https://github.com/bojiw/asyncmdDemo/blob/master/asynimage.png)
 ###### 注意：这个目前只是一个组件 只需要引入jar包 并且在自己的应用库中创建异步命令表 指定zookeeper地址就可以使用 并不是集中式单独部署一台应用进行使用 这样可以保证一个应用的异步命令积压或者使用有问题 不会影响到其他应用 也变相的把压力分摊到不同的应用中
 
 #### 使用逻辑
@@ -18,7 +18,7 @@
 [https://blog.csdn.net/weixin_33759269/article/details/91386492]()
 #### 下图为异步命令组件在目前主流的三种领域事件发送方式里的应用
 
-![image](https://github.com/bojiw/asyncmd/blob/master/dominimage.png)
+![image](https://github.com/bojiw/asyncmdDemo/blob/master/dominimage.png)
 
 ### 使用场景二
 短信或者邮件系统 因为调用第三方运营商接口比较慢 很多都是先接收请求 保存起来 然后立刻返回调用方发送成功的结果 再异步发送给用户 这时候就可以使用异步命令组件来实现 
