@@ -141,6 +141,7 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
 ```
 5、执行源码sql目录下的asyn.sql创建表 
 根据前面第三步设置的asynGroupConfig.tableNum分表数量来创建对应的表数量 如上面设置的4 则创建asyn_cmd00,asyn_cmd01,asyn_cmd02,asyn_cmd03 4张表
+
 6、使用异步命令门面服务AsynExecuterFacade 保存异步命令 可以直接用@Autowired注解注入就可以
 
 ```
