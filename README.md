@@ -225,7 +225,7 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
         <!--调度方式 默认为异步调度 对应的调度枚举类DispatchMode-->
         <property name="dispatchMode" value="DISPATCH"/>
         <!-- 重试频率 -->
-        <property name="executerFrequencys" value="5s,10,1h"/>
+        <property name="executerFrequencys" value="5s,10s,1h"/>
         <!-- 排序值 越大越早执行  -->
         <property name="sort" value="110"/>
     </bean>
