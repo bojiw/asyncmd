@@ -33,3 +33,39 @@
 ### 使用场景。。。欢迎补充
 
 以上的场景只是我能想到的部分 其实还有很多 核心其实就是可以支持同步转异步 并且组件可以保证可靠性和数据的最终一致性 只要是某些需求场景需要这个功能都可以用异步命令组件来实现
+
+## 快速使用
+1、引入jar
+```
+      <dependency>
+          <groupId>com.bojiw</groupId>
+          <artifactId>asyncmd</artifactId>
+          <version>1.1</version>
+      </dependency>
+```
+2、在spring的xml文件中 引入xml文件
+```
+    <import resource="classpath*:/META-INF/asyn/applicationContext.xml"/>
+```
+3、配置AsynGroupConfig
+
+```
+    <bean id="asynGroupConfig" class="com.asyncmd.config.AsynGroupConfig">
+        <!--必填项-->
+        <!--定时任务名称 重点：需要不同工程不一样 推荐用应用名称来命名 如果多个项目定义的相同 定时任务会有问题-->
+        <property name="jobName" value="demo-asyn"/>
+        <!--zookeeper地址-->
+        <property name="zookeeperUrl" value="127.0.0.1:2181"/>
+        <!--数据源 -->
+        <property name="dataSource" ref="dataSource"/>
+        <!--重试执行频率 5s,10s,1m,1h 频率建议不要小于3秒-->
+        <property name="executerFrequencys" value="10s,10s,1m"/>
+        <!--分表数量-->
+        <property name="tableNum" value="4"/>
+      </bean>
+```
+4、创建自己业务的asynBizObject,asynCmd,asynExecuter
+
+      
+2、执行源码sql目录下的asyn.sql创建表 根据设置
+
