@@ -231,3 +231,21 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
     </bean>
     
 ```
+也可以java代码设置
+```
+    @Service
+public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
+    @Override
+    public DispatchMode getDispatchMode() {
+        return DispatchMode.DISPATCH;
+    }
+
+    /**
+     * 只有赠送成功才会进行通知 所以设置push通知处理器最后一个执行
+     * @return
+     */
+    @Override
+    protected int getSort() {
+        return 90;
+    }
+```
