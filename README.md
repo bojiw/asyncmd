@@ -253,7 +253,7 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
 ## 性能和调优
 
 目前在本地测试情况
-使用默认线程池配置 最大线程数200 等待队列150
+使用默认线程池配置 最大线程数150 等待队列300
 一个tomcat 分4个表
 每秒钟qps300 持续2分钟 执行器业务逻辑随机处理50毫米到1秒 总生产3万6千条
 异步命令全部处理完成为2分15秒 基本不会出现命令挤压的情况
