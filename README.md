@@ -1,6 +1,6 @@
 # asyncmd
 ## 前言
-以前有幸看过网商银行的一个异步命令组件源码 感觉功能比较实用 可以在挺多场景上使用 尤其现在领域驱动设计目前比较火 配合这个组件可以对领域内事件更好的支持 因为看目前也没有对应的开源组件 所以自己准备开发一个 核心功能的设计思路和以前看过的异步命令组件比较像
+以前有幸看过网商银行的一个异步命令组件源码 感觉功能比较实用 可以在挺多场景上使用 尤其现在领域驱动设计目前比较火 配合这个组件可以对领域内事件更好的支持 因为看目前也没有对应的开源组件 所以自己准备开发一个异步命令组件 核心功能的设计思路主要参考以前看过的异步命令组件
 ## 使用demo
 [https://github.com/bojiw/asyncmdDemo](异步命令组件demo)
 #### 异步命令组件核心功能
@@ -65,7 +65,94 @@
       </bean>
 ```
 4、创建自己业务的asynBizObject,asynCmd,asynExecuter
+主要是继承AsynBizObject，AsynCmd，AbstractAsynExecuter
+例子：
+```
+/**
+ * 短信业务模型
+ * @author wangwendi
+ * @version $Id: SmsBiz.java, v 0.1 2019年07月23日 下午8:58 wangwendi Exp $
+ */
+public class SmsBiz extends AsynBizObject {
+    /**
+     * 手机号
+     */
+    private String mobiles;
+    /**
+     * 短信内容
+     */
+    private String content;
 
-      
-2、执行源码sql目录下的asyn.sql创建表 根据设置
+    public String getMobiles() {
+        return mobiles;
+    }
+
+    public void setMobiles(String mobiles) {
+        this.mobiles = mobiles;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+}
+```
+```
+/**
+ * 短信异步命令
+ * @author wangwendi
+ * @version $Id: SmsAsynCmd.java, v 0.1 2019年07月23日 下午8:57 wangwendi Exp $
+ */
+public class SmsAsynCmd extends AsynCmd<SmsBiz> {
+
+    /**
+     * 必须实现 返回对应的AsynBizObject
+    **/
+    @Override
+    protected Class getObject() {
+        return SmsBiz.class;
+    }
+}
+```
+```
+/**
+ * 短信异步命令执行器 需要注入到spring容器中 加@Service注解或者xml配置bean
+ * @author wangwendi
+ * @version $Id: SmsExecuter.java, v 0.1 2019年07月23日 下午9:01 wangwendi Exp $
+ */
+@Service
+public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
+
+    /**
+      * 具体业务逻辑
+    **/
+    @Override
+    protected void executer(SmsAsynCmd cmd) {
+        SmsBiz content = cmd.getContent();
+        System.out.println("发送短信");
+        System.out.println("短信手机号" + content.getMobiles());
+    }
+}
+```
+5、执行源码sql目录下的asyn.sql创建表 
+根据前面第三步设置的asynGroupConfig.tableNum分表数量来创建对应的表数量 如上面设置的4 则创建asyn_cmd00,asyn_cmd01,asyn_cmd02,asyn_cmd03 4张表
+6、使用异步命令门面服务AsynExecuterFacade 保存异步命令 可以直接用@Autowired注解注入就可以
+
+```
+    @Autowired
+    private AsynExecuterFacade asynExecuterFacade;
+    //创建业务对象 创建异步命令对象 然后调用方法 就会自动执行SmsExecuter.executer方法
+      SmsBiz smsBiz = new SmsBiz();
+      smsBiz.setContent(content);
+      smsBiz.setMobiles(mobiles);
+      SmsAsynCmd asynCmd = new SmsAsynCmd();
+      asynCmd.setContent(smsBiz);
+      asynCmd.setBizId(bizId);
+      asynExecuterFacade.saveExecuterAsynCmd(asynCmd);
+
+```
+
 
