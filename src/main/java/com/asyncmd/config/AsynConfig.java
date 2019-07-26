@@ -29,7 +29,7 @@ public class AsynConfig {
     /**
      * 一次从表中捞取命令数量
      */
-    private int limit = 30;
+    private int limit = 20;
 
     /**
      * 重试次数
