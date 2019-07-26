@@ -157,6 +157,15 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
       asynExecuterFacade.saveExecuterAsynCmd(asynCmd);
 
 ```
+## 如何保证高可用
+异步命令组件里主要是依靠elasticjob的故障转移和分片来保证高可用
+[http://elasticjob.io/docs/elastic-job-lite/00-overview/intro/]()
+
+当设置表的数量为4 elasticjob则会分4片来执行调度 每个分片各自从对应的表捞取数据 如果有两台应用服务器 一般应该两个各自执行两个分片 当其中一台应用服务器挂了 则会让一台执行4个分片 这样就保证了只要有一台应用服务器 异步命令组件肯定会捞取所有表的数据 只是执行快慢的问题 异步命令组件的性能主要依赖与表的数量和应用服务器个数 越多 消费能力越高
+
+
+![image](https://github.com/bojiw/asyncmdDemo/blob/master/ha.png)
+
 
 ## 详细配置项
 有两个地方可以配置 一个为全局配置项AsynGroupConfig 一个为设置个性化配置项AbstractAsynExecuter
@@ -177,7 +186,7 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
              * 这个参数如果想不同异步命令频率不一样 可以在异步命令执行器也有参数可以设置
         -->
         <property name="executerFrequencys" value="10s,10s,1m"/>
-        <!--分表数量 正式环境一定要填写 设置需要是2的倍数如 4 8 16 32 64 因为分表位计算是通过biz_id 然后和hashmap相同的计算下标的方式 & hash
+        <!--分表数量 推荐16 如果改了线程池数据 则需要根据下面优化环节进行调整 正式环境一定要填写 设置需要是2的倍数如 4 8 16 32 64 因为分表位计算是通过biz_id 然后和hashmap相同的计算下标的方式 & hash
             4代表分了4张异步命令表
             也代表有4个线程同时捞取4张异步命令表的数据进行执行 测试环境可以不填写
             默认一张异步命令表 后台只会有一个线程捞取数据
@@ -198,7 +207,7 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
         <property name="cron" value="0/3 * * * * ?"/>
         <!--异步命令是否要先进后出 默认先进先出 true代表后进先出 注意这个只针对一张表的情况 -->
         <property name="desc" value="true"/>
-        <!--一次从一张表中捞取命令数量 默认30条数据 10代表捞取10条数据 如果是为了提高消费速度 推荐通过设置分表数量和线程池大小来配置 -->
+        <!--一次从一张表中捞取命令数量 默认20条数据 10代表捞取10条数据 如果是为了提高消费速度 推荐通过设置分表数量和线程池大小来配置 -->
         <property name="limit" value="10"/>
         <!--重试次数 默认重试12次 20代表重试20次-->
         <property name="retryNum" value="20"/>
@@ -273,11 +282,10 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
 总共花费4分钟消费完所有命令
 
 消费挤压命令逻辑为
-每隔1秒 就会从命令表中捞取30条数据 4张表 30*4=120 代表1秒钟处理120数据 如果想提高消费速度 分成8张表则8*30=240 每隔1秒处理240条数据 表的数量越多 消费速度越快 不过也还是需要依赖线程池 如果捞取的数量大于线程池的数量 则会多余 所以表数量需要和线程池的数量最对应调整
+每隔1秒 就会从命令表中捞取30条数据 4张表 20*4=80 代表1秒钟处理80数据 如果想提高消费速度 分成16张表则16*20=320 每隔1秒处理320条数据 表的数量越多 消费速度越快 不过也还是需要依赖线程池 如果捞取的数量大于线程池的数量 则会多余 所以表数量需要和线程池的数量最对应调整
 #### 调优
 主要是对下面四个参数进行调整
 需要 表数量*每次捞取的数量<线程池最大线程数(需要根据自己业务情况来设置 不是越多越好)+缓存队列(根据执行器平均处理时间来设置 可以配合多久扫表执行时间来调整)
-
 
 
 
