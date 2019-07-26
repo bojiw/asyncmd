@@ -68,10 +68,6 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
     }
 
 
-    final public void setAsynExecuterFacade(AsynExecuterFacade asynExecuterFacade) {
-        this.asynExecuterFacade = asynExecuterFacade;
-    }
-
     public void setExecuterFrequencys(String executerFrequencys) {
         this.executerFrequencys = executerFrequencys;
     }

@@ -92,7 +92,7 @@ public abstract class AbstractDispatchService implements DispatchService {
             AsynUpdateParam param = new AsynUpdateParam();
             param.setBizId(asynCmd.getBizId());
             param.setStatus(AsynStatus.INIT.getStatus());
-            param.setStatus(AsynStatus.EXECUTE.getStatus());
+            param.setWhereAsynStatus(AsynStatus.EXECUTE.getStatus());
             param.setReset(true);
             asynExecuterService.updateStatus(param);
             log.warn("asyn线程池异常",e);

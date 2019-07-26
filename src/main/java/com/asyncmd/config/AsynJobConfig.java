@@ -39,9 +39,9 @@ public class AsynJobConfig {
      */
     private String jobName;
     /**
-     * 执行任务执行频率 默认每隔3秒执行一次
+     * 执行任务执行频率 默认每隔1秒执行一次
      */
-    private String cron = "0/3 * * * * ?";
+    private String cron = "0/1 * * * * ?";
 
     /**
      * 重置状态任务执行频率 默认每隔60秒执行一次

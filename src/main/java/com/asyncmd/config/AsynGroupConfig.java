@@ -40,13 +40,13 @@ public class AsynGroupConfig {
 
 
 
-    private void setCorePoolSize(int corePoolSize){
+    public void setCorePoolSize(int corePoolSize){
         ThreadPoolTaskExecutorUtil.newInstance().setCorePoolSize(corePoolSize);
     }
-    private void setMaxPoolSize(int maxPoolSize){
+    public void setMaxPoolSize(int maxPoolSize){
         ThreadPoolTaskExecutorUtil.newInstance().setMaxPoolSize(maxPoolSize);
     }
-    private void setQueueCapacity(int queueCapacity){
+    public void setQueueCapacity(int queueCapacity){
         ThreadPoolTaskExecutorUtil.newInstance().setQueueCapacity(queueCapacity);
     }
     public void setExecuterFrequencys(String executerFrequencys) {
