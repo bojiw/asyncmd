@@ -184,6 +184,15 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
         -->
         <property name="tableNum" value="4"/>
         <!--非必填项-->
+        <!--执行线程池配置 根据自己应用来配置 start-->
+        <!--最大线程数 默认150-->
+        <property name="maxPoolSize" value="200"/>
+        <!--缓存队列长度 默认300-->
+        <property name="queueCapacity" value="400"/>
+        <!--最小线程池 默认10-->
+        <property name="corePoolSize" value="20"/>
+        <!--执行线程池配置 end-->
+        
         <!-- 调度中心调度执行相关配置 start -->
         <!-- 从数据库捞取未执行的异步命令多久捞取一次 默认是1秒捞取一次  0/3 * * * * ?代表3秒捞取一次 如果是为了提高消费速度 推荐通过设置分表数量和线程池大小来配置-->
         <property name="cron" value="0/3 * * * * ?"/>
