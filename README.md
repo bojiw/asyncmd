@@ -157,6 +157,10 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
       asynExecuterFacade.saveExecuterAsynCmd(asynCmd);
 
 ```
+## 注意点
+- 为了保证可靠性 当出现极端情况下 比如执行器执行成功了 修改命令状态时系统挂了 会出现重复执行的情况 所以执行器需要保证幂等
+- 如果应用系统已经使用了quartz 需要版本为2.1.7以上
+
 ## 如何保证高可用
 异步命令组件里主要是依靠elasticjob的故障转移和分片来保证高可用
 [http://elasticjob.io/docs/elastic-job-lite/00-overview/intro/]()
