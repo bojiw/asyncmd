@@ -73,8 +73,7 @@ public class AsynRunnable implements Runnable {
             }else {
                 asynUpdateParam.setStatus(AsynStatus.INIT.getStatus());
                 //默认取第一个执行器配置
-                asynUpdateParam.setNextTime(asynExecuterService.getNextTime(
-                        asynExecuterList.get(0).getExecuterFrequencyList(),asynCmd));
+                asynUpdateParam.setNextTime(asynExecuterService.getNextTime(asynCmd));
 
             }
             asynUpdateParam.setBizId(asynCmd.getBizId());

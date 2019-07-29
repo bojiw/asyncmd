@@ -51,8 +51,7 @@ public class AsynRestJobManagerImpl implements AsynRestJobManager {
                 asynUpdateParam.setBizId(asynCmd.getBizId());
                 asynUpdateParam.setStatus(AsynStatus.INIT.getStatus());
                 asynUpdateParam.setWhereAsynStatus(AsynStatus.EXECUTE.getStatus());
-                List<AbstractAsynExecuter<? extends AsynCmd>> abstractAsynExecuters = AsynContainerUtil.getAsynExecuterMap().get(asynCmd.getClass());
-                asynUpdateParam.setNextTime(asynExecuterService.getNextTime(abstractAsynExecuters.get(0).getExecuterFrequencyList(),asynCmd));
+                asynUpdateParam.setNextTime(asynExecuterService.getNextTime(asynCmd));
                 executeUpdates.add(asynUpdateParam);
             }else {
                 error.add(asynCmd);
