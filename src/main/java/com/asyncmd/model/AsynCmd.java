@@ -20,7 +20,7 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
     public static final String default_create_name = "system";
 
     /**
-     * 唯一id 需要唯一 如果业务没有好的唯一算法 可以使用SnowflakeIdWorkerUtil工具类生成
+     * 唯一id
      */
     private Long cmdId;
 
