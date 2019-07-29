@@ -11,7 +11,7 @@ public enum DispatchMode {
 
     DISPATCH("DISPATCH","调度中心调度"),
     ASYN("ASYN","异步执行"),
-    ASY("ASY","同步执行");
+    SYN("SYN","同步执行");
 
 
 
