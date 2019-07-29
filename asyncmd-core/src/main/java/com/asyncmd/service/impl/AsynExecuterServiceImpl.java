@@ -1,6 +1,7 @@
 
 package com.asyncmd.service.impl;
 
+import com.asyncmd.config.AsynCmdConfig;
 import com.asyncmd.config.AsynGroupConfig;
 import com.asyncmd.dao.AsynCmdDAO;
 import com.asyncmd.dao.AsynCmdHistoryDAO;
@@ -13,6 +14,8 @@ import com.asyncmd.model.AsynCmdHistoryDO;
 import com.asyncmd.model.AsynUpdateParam;
 import com.asyncmd.model.Frequency;
 import com.asyncmd.service.AsynExecuterService;
+import com.asyncmd.utils.AsynContainerUtil;
+import com.asyncmd.utils.FrequencyUtil;
 import com.asyncmd.utils.LocalHostUtil;
 import com.asyncmd.utils.TransactionTemplateUtil;
 import com.asyncmd.utils.convert.AsynCmdConvert;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -47,6 +51,7 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
      * @param asynCmd
      * @return
      */
+    @Override
     public long saveCmd(AsynCmd asynCmd){
         AsynCmdDO asynCmdDO = AsynCmdConvert.toDo(asynCmd);
         return asynCmdDAO.saveCmd(asynCmdDO);
@@ -59,6 +64,7 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
      * 备份异步命令
      * @param asynCmds
      */
+    @Override
     public void backupCmd(final Integer tableIndex, final List<AsynCmd> asynCmds){
         final List<String> bizIds = Lists.newArrayList();
         final List<AsynCmdHistoryDO> asynCmdHistoryDOS = Lists.newArrayList();
@@ -82,6 +88,7 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
         });
     }
 
+    @Override
     public boolean updateStatus(AsynUpdateParam param) {
         buildUpdateParam(param);
         long sum = asynCmdDAO.updateStatus(param);
@@ -91,6 +98,7 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
         return false;
     }
 
+    @Override
     public boolean batchUpdateStatus(AsynUpdateParam param, Integer tableIndex) {
         buildUpdateParam(param);
 
@@ -102,6 +110,7 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
 
     }
 
+    @Override
     public List<AsynCmd> queryAsynCmd(Integer limit,int tableIndex,AsynStatus status,Date whereNextTime) {
 
         Boolean desc = asynGroupConfig.getAsynConfig().getDesc();
@@ -110,9 +119,13 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
     }
 
 
-    public Date getNextTime(List<Frequency> executerFrequencyList,AsynCmd asynCmd) {
+    @Override
+    public Date getNextTime(AsynCmd asynCmd) {
         int retry = asynCmd.getExecuteNum() - 1;
-        if (!CollectionUtils.isEmpty(executerFrequencyList)){
+        //获取异步命令对象配置 如果没有单独给异步命令对象设置调度频率 则获取全局配置的调度频率
+        AsynCmdConfig asynCmdConfig = AsynContainerUtil.getAsynCmdConfig(asynCmd.getClass());
+        if (!CollectionUtils.isEmpty(asynCmdConfig.getExecuterFrequencyList())){
+            List<Frequency> executerFrequencyList = asynCmdConfig.getExecuterFrequencyList();
             return nextTime(retry,executerFrequencyList,asynCmd);
         }
         List<Frequency> groupExecuterFrequencys = asynGroupConfig.getAsynConfig().getExecuterFrequency();
@@ -129,6 +142,7 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
         return frequency.getNextTime(asynCmd.getNextTime());
     }
 
+    @Override
     public AsynCmd getAsynCmdByBizId(String bizId,Class<? extends AsynCmd> asynCmdClass) {
         return AsynCmdConvert.toCmd(asynCmdDAO.getAsynCmdByBizId(bizId),asynCmdClass);
     }

@@ -15,13 +15,14 @@ import java.util.List;
 public class CenterDispatchServiceImpl extends AbstractDispatchService {
 
     @Override
-    public AsynCmd buildAsynCmd(AsynCmd asynCmd, AbstractAsynExecuter<? extends AsynCmd> asynExecuter) {
-        super.buildAsynCmd(asynCmd, asynExecuter);
+    public AsynCmd buildAsynCmd(AsynCmd asynCmd) {
+        super.buildAsynCmd(asynCmd);
         asynCmd.setStatus(AsynStatus.INIT.getStatus());
         asynCmd.setExecuteNum(0);
         return asynCmd;
     }
 
+    @Override
     public void dispatch(AsynCmd asynCmd, List<AbstractAsynExecuter<? extends AsynCmd>> asynExecuterList) {
 
     }

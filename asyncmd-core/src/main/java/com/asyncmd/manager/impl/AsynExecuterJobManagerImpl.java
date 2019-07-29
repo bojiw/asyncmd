@@ -9,7 +9,7 @@ import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynUpdateParam;
 import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.service.impl.AsynDispatchServiceImpl;
-import com.asyncmd.utils.AsynExecuterUtil;
+import com.asyncmd.utils.AsynContainerUtil;
 import com.asyncmd.utils.ThreadPoolTaskExecutorUtil;
 import com.asyncmd.utils.TransactionTemplateUtil;
 import com.asyncmd.utils.convert.AsynCmdConvert;
@@ -44,6 +44,7 @@ public class AsynExecuterJobManagerImpl implements AsynExecuterJobManager {
     @Autowired
     private AsynDispatchServiceImpl asynDispatchService;
 
+    @Override
     public void executer(int tableIndex) {
 
         asynExecuter(tableIndex);
@@ -119,7 +120,7 @@ public class AsynExecuterJobManagerImpl implements AsynExecuterJobManager {
         for (AsynCmd asynCmd : asynCmdList){
             //内存中的执行次数+1
             asynCmd.setExecuteNum(asynCmd.getExecuteNum() + 1);
-            List<AbstractAsynExecuter<? extends AsynCmd>> abstractAsynExecuters = AsynExecuterUtil.getAsynExecuterMap().get(asynCmd.getClass());
+            List<AbstractAsynExecuter<? extends AsynCmd>> abstractAsynExecuters = AsynContainerUtil.getAsynExecuterMap().get(asynCmd.getClass());
             if (!asynDispatchService.asynExecuter(asynCmd,abstractAsynExecuters)){
                 failList.add(asynCmd);
             }

@@ -1,6 +1,7 @@
 
 package com.asyncmd.manager.impl;
 
+import com.asyncmd.config.AsynCmdConfig;
 import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
@@ -9,7 +10,7 @@ import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.service.DispatchService;
-import com.asyncmd.utils.AsynExecuterUtil;
+import com.asyncmd.utils.AsynContainerUtil;
 import com.asyncmd.utils.DispatchFactory;
 import com.asyncmd.utils.ParadigmUtil;
 import org.apache.commons.logging.Log;
@@ -48,26 +49,29 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
 
         Class<? extends AsynCmd> classCmd = getAsynCmdObject(asynExecuter);
         //效验
-        vaildAsynCmd(classCmd,asynExecuter);
+        AsynCmd asynCmd = vaildAsynCmd(classCmd, asynExecuter);
+        //保存异步命令对象配置
+        AsynContainerUtil.put(classCmd,asynCmd);
+
         //注册
-        AsynExecuterUtil.put(classCmd,asynExecuter);
-        AsynExecuterUtil.getAsynCmdNameMapping().put(classCmd.getSimpleName(),classCmd);
+        AsynContainerUtil.put(classCmd,asynExecuter);
+        AsynContainerUtil.getAsynCmdNameMapping().put(classCmd.getSimpleName(),classCmd);
 
     }
 
     @Override
     public void saveExecuterAsynCmd(AsynCmd asynCmd) {
         validation(asynCmd);
-        List<AbstractAsynExecuter<? extends AsynCmd>> asynExecuters = AsynExecuterUtil.getAsynExecuterMap().get(asynCmd.getClass());
+        List<AbstractAsynExecuter<? extends AsynCmd>> asynExecuters = AsynContainerUtil.getAsynExecuterMap().get(asynCmd.getClass());
         if (CollectionUtils.isEmpty(asynExecuters)){
             throw new AsynException(AsynExCode.ILLEGAL,"根据asynCmd获取不到对应的执行器,检查执行器是否有配置由spring管理:" + asynCmd.getClass().getName());
         }
-        DispatchMode dispatchMode = asynExecuters.get(0).getDispatchMode();
-        if (dispatchMode == null){
-            throw new AsynException(AsynExCode.ILLEGAL,asynExecuters.get(0).getClass().getSimpleName() + "的dispatchMode不能为空");
+        AsynCmdConfig asynCmdConfig = AsynContainerUtil.getAsynCmdConfig(asynCmd.getClass());
+        if (asynCmdConfig.getDispatchMode() == null){
+            throw new AsynException(AsynExCode.ILLEGAL,asynCmd.getClass().getSimpleName() + "的dispatchMode不能为空");
         }
-        DispatchService dispatchService = dispatchFactory.getDispatchService(dispatchMode.getStatus());
-        dispatchService.buildAsynCmd(asynCmd,asynExecuters.get(0));
+        DispatchService dispatchService = dispatchFactory.getDispatchService(asynCmdConfig.getDispatchMode().getStatus());
+        dispatchService.buildAsynCmd(asynCmd);
         try {
             asynExecuterService.saveCmd(asynCmd);
         }catch (org.springframework.dao.DuplicateKeyException e){
@@ -97,10 +101,10 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
      * 效验异步命令对象是否能正常初始化
      * @param classCmd
      */
-    private void vaildAsynCmd(Class classCmd,AbstractAsynExecuter<? extends AsynCmd> asynExecuter){
+    private AsynCmd vaildAsynCmd(Class<? extends AsynCmd> classCmd,AbstractAsynExecuter<? extends AsynCmd> asynExecuter){
 
         try {
-            classCmd.newInstance();
+            return classCmd.newInstance();
 
         }catch (Exception e){
             log.error("执行器上的asynCmd初始化异常:" + asynExecuter.getClass().getName());

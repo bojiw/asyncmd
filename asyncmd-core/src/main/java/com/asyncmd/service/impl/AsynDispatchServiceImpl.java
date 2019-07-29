@@ -16,6 +16,7 @@ public class AsynDispatchServiceImpl extends AbstractDispatchService{
 
 
 
+    @Override
     public void dispatch(AsynCmd asynCmd,List<AbstractAsynExecuter<? extends AsynCmd>> asynExecuterList) {
         asynExecuter(asynCmd,asynExecuterList);
     }

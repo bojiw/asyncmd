@@ -19,8 +19,7 @@ public interface DispatchService {
     /**
      * 拼装异步命令
      * @param asynCmd
-     * @param asynExecuter
      * @return
      */
-    AsynCmd buildAsynCmd(AsynCmd asynCmd,AbstractAsynExecuter<? extends AsynCmd> asynExecuter);
+    AsynCmd buildAsynCmd(AsynCmd asynCmd);
 }

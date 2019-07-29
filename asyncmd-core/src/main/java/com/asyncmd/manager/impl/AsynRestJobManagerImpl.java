@@ -8,7 +8,7 @@ import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynUpdateParam;
 import com.asyncmd.service.AsynExecuterService;
-import com.asyncmd.utils.AsynExecuterUtil;
+import com.asyncmd.utils.AsynContainerUtil;
 import com.asyncmd.utils.TransactionTemplateUtil;
 import com.asyncmd.utils.convert.AsynCmdConvert;
 import com.google.common.collect.Lists;
@@ -35,6 +35,7 @@ public class AsynRestJobManagerImpl implements AsynRestJobManager {
     @Autowired
     private AsynGroupConfig asynGroupConfig;
 
+    @Override
     public void rest(int tableIndex) {
         //把已经执行1分钟的异步命令查询出来
         List<AsynCmd> asynCmdList = asynExecuterService.queryAsynCmd(100, tableIndex, AsynStatus.EXECUTE,getRestDate());
@@ -50,7 +51,7 @@ public class AsynRestJobManagerImpl implements AsynRestJobManager {
                 asynUpdateParam.setBizId(asynCmd.getBizId());
                 asynUpdateParam.setStatus(AsynStatus.INIT.getStatus());
                 asynUpdateParam.setWhereAsynStatus(AsynStatus.EXECUTE.getStatus());
-                List<AbstractAsynExecuter<? extends AsynCmd>> abstractAsynExecuters = AsynExecuterUtil.getAsynExecuterMap().get(asynCmd.getClass());
+                List<AbstractAsynExecuter<? extends AsynCmd>> abstractAsynExecuters = AsynContainerUtil.getAsynExecuterMap().get(asynCmd.getClass());
                 asynUpdateParam.setNextTime(asynExecuterService.getNextTime(abstractAsynExecuters.get(0).getExecuterFrequencyList(),asynCmd));
                 executeUpdates.add(asynUpdateParam);
             }else {

@@ -47,10 +47,10 @@ public interface AsynExecuterService {
 
     /**
      * 获取下一次执行时间
-     * @param executerFrequencyList
+     * @param asynCmd
      * @return
      */
-    Date getNextTime(List<Frequency> executerFrequencyList,AsynCmd asynCmd);
+    Date getNextTime(AsynCmd asynCmd);
 
     /**
      * 根据bizId获取异步命令

@@ -24,6 +24,7 @@ import java.util.List;
 public class AsynCmdDAOImpl implements AsynCmdDAO {
 
 
+    @Override
     public long saveCmd(AsynCmdDO asynCmdDO) {
         String tableName = SubTableUtil.getTableName(null, asynCmdDO.getBizId(), AsynCmdDO.TABLE_NAME);
 
@@ -33,21 +34,22 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
                 asynCmdDO.getCreateIp(),asynCmdDO.getCreateName(),asynCmdDO.getExecuteNum(),asynCmdDO.getNextTime(),asynCmdDO.getStatus(),
                 asynCmdDO.getUpdateHostName(),asynCmdDO.getUpdateIp(),asynCmdDO.getSuccessExecuters(),new Date(),new Date()});
     }
-
+    @Override
     public long delCmd(String bizId) {
         String tableName = SubTableUtil.getTableName(null, bizId, AsynCmdDO.TABLE_NAME);
         String sql = "DELETE FROM " + tableName + " WHERE biz_id=?";
         return JdbcTemplateUtil.newInstance().update(sql,new Object[]{bizId});
     }
-
+    @Override
     public long batchDelCmd(Integer tableIndex, final List<String> bizIds) {
         String tableName = SubTableUtil.getTableName(tableIndex, null, AsynCmdDO.TABLE_NAME);
         String sql = "DELETE FROM " + tableName + " WHERE biz_id=?";
         int[] ints = JdbcTemplateUtil.newInstance().batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
             public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
                 preparedStatement.setString(1, bizIds.get(i));
             }
-
+            @Override
             public int getBatchSize() {
                 return bizIds.size();
             }
@@ -57,7 +59,7 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
         }
         return ints.length;
     }
-
+    @Override
     public long updateStatus(AsynUpdateParam asynUpdateParam) {
         String tableName = SubTableUtil.getTableName(null, asynUpdateParam.getBizId(), AsynCmdDO.TABLE_NAME);
         List<Object> param = Lists.newArrayList();
@@ -77,6 +79,7 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
      * @param asynUpdateParam
      * @return
      */
+
     private String getSqlBuildParam(String tableName,List<Object> param,AsynUpdateParam asynUpdateParam){
         StringBuffer sql = new StringBuffer();
         sql.append("UPDATE ").append(tableName).append(" set status = ?,");
@@ -105,12 +108,13 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
         param.add(asynUpdateParam.getWhereAsynStatus());
         return sql.toString();
     }
-
+    @Override
     public long batchUpdateStatus(Integer tableIndex,final AsynUpdateParam asynUpdateParam) {
         String tableName = SubTableUtil.getTableName(tableIndex,null, AsynCmdDO.TABLE_NAME);
         final List<Object> param = Lists.newArrayList();
         String sql = getSqlBuildParam(tableName, param, asynUpdateParam);
         int[] ints = JdbcTemplateUtil.newInstance().batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
             public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
                 String bizId = asynUpdateParam.getBizIds().get(i);
                 for (int j = 0;j < param.size();j++) {
@@ -118,7 +122,7 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
                 }
                 preparedStatement.setString(param.size() + 1, bizId);
             }
-
+            @Override
             public int getBatchSize() {
                 return asynUpdateParam.getBizIds().size();
             }
@@ -129,7 +133,7 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
         return ints.length;
     }
 
-
+    @Override
     public List<AsynCmdDO> queryAsynCmd(Integer tableIndex, String status, Integer limit, Date executerTime, Boolean desc) {
         String tableName = SubTableUtil.getTableName(tableIndex,null, AsynCmdDO.TABLE_NAME);
         StringBuffer sql = getSelectBase(tableName);
@@ -151,6 +155,7 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
                 .append("success_executers from ").append(tableName);
         return sql;
     }
+    @Override
     public AsynCmdDO getAsynCmdByBizId(String bizId) {
         String tableName = SubTableUtil.getTableName(null,bizId, AsynCmdDO.TABLE_NAME);
         StringBuffer sql = getSelectBase(tableName);

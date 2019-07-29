@@ -8,7 +8,7 @@ import com.asyncmd.exception.AsynException;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynCmdDO;
 import com.asyncmd.model.AsynCmdHistoryDO;
-import com.asyncmd.utils.AsynExecuterUtil;
+import com.asyncmd.utils.AsynContainerUtil;
 import com.google.common.collect.Lists;
 import org.springframework.util.CollectionUtils;
 
@@ -50,7 +50,7 @@ public class AsynCmdConvert {
         }
         List<AsynCmd> asynCmdList = Lists.newArrayList();
         for (AsynCmdDO asynCmdDO : asynCmdDOs){
-            Class<? extends AsynCmd> asynClass = AsynExecuterUtil.getAsynCmdNameMapping().get(asynCmdDO.getCmdType());
+            Class<? extends AsynCmd> asynClass = AsynContainerUtil.getAsynCmdNameMapping().get(asynCmdDO.getCmdType());
             asynCmdList.add(toCmd(asynCmdDO, asynClass));
         }
         return asynCmdList;

@@ -53,7 +53,7 @@ public abstract class AbstractDispatchService implements DispatchService {
 
 
     @Override
-    public AsynCmd buildAsynCmd(AsynCmd asynCmd, AbstractAsynExecuter<? extends AsynCmd> asynExecuter) {
+    public AsynCmd buildAsynCmd(AsynCmd asynCmd) {
         asynCmd.setCmdType(asynCmd.getClass().getSimpleName());
         if (asynCmd.getNextTime() == null){
             asynCmd.setNextTime(new Date());

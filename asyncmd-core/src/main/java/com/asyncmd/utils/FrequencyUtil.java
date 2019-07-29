@@ -3,6 +3,7 @@ package com.asyncmd.utils;
 
 import com.asyncmd.model.Frequency;
 import com.google.common.collect.Lists;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -13,6 +14,9 @@ import java.util.List;
 public class FrequencyUtil {
 
     public static List<Frequency> createFrequencys(String executerFrequencys){
+        if (StringUtils.isEmpty(executerFrequencys)){
+            return Lists.newArrayList();
+        }
         List<Frequency> executerFrequencyList = Lists.newArrayList();
         String[] frequencys = executerFrequencys.split(",");
         for (String frequency : frequencys){
