@@ -41,8 +41,8 @@
 ```
       <dependency>
           <groupId>com.bojiw</groupId>
-          <artifactId>asyncmd</artifactId>
-          <version>1.1</version>
+          <artifactId>asyncmd-core</artifactId>
+          <version>1.4</version>
       </dependency>
 ```
 2、在spring的xml文件中 引入xml文件
