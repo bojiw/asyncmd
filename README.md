@@ -287,6 +287,38 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
     }
 ```
 
+## 模型
+asynCmdDB(异步命令对象)
+
+|  字段名 |  描述 |
+| :------------ | :------------ |
+| cmdId  |  单表唯一id由表自增 |
+| cmdType  | 异步命令类型 异步命令对象类的名称  |
+| bizId  | 业务id 全局唯一 根据这个ID做hash然后取余获取分表位 计算逻辑和hashmap计算下标为相同  |
+| content  | 业务上下文 业务对象AsynBizObject的json数据  |
+| executeNum  | 异步命令对象执行次数 重试一次加1  |
+| nextTime  | 下一次执行时间 根据设置的重试频率来计算  |
+| status  | 状态 分为"INIT","初始化" "EXECUTE","执行中" "SUCCESS","成功" "ERROR","失败"  |
+| createHostName  | 执行插入异步命令服务器的主机名 方便排查问  |
+| createIp  | 执行插入异步命令服务器的ip地址 方便排查问题  |
+| updateHostName  | 更新异步命令服务器的主机名 方便排查问题   |
+| updateIp  | 更新异步命令服务器的ip地址 方便排查问题  |
+| createName  | 创建异步命令的人 默认system   |
+| successExecuters  | 执行成功的异步命令执行器类名 如果一个异步命令对象对应多个异步命令执行器 通过这个可以看有成功执行的异步命令对象   |
+| gmtCreate  | 创建时间  |
+| gmtModify  | 修改时间  |
+
+AsynCmdHistoryDO异步命令历史模型 字段和内容和异步命令对象模型一样 只有创建时间和更新时间不同
+
+## 三种调度方式
+异步调度
+![image](http://qiniu.bojiw.com/20197/2019730202546image.png)
+调度中心调度
+![image](http://qiniu.bojiw.com/20197/2019730203025image.png)
+同步调度
+![image](http://qiniu.bojiw.com/20197/2019730203249image.png)
+
+
 ## 性能和调优
 #### 默认配置性能测试
 这个测试结果只是作为一个参考 实际使用会有一定的差别
@@ -305,6 +337,5 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
 #### 调优
 主要是对下面四个参数进行调整
 需要 表数量*每次捞取的数量<线程池最大线程数(需要根据自己业务情况来设置 不是越多越好)+缓存队列(根据执行器平均处理时间来设置 可以配合多久扫表执行时间来调整)
-
 
 
