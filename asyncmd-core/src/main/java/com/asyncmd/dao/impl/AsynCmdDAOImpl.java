@@ -101,8 +101,12 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
             param.add(asynUpdateParam.getUpdateHostName());
         }
         if (asynUpdateParam.getUpdateIp() != null && asynUpdateParam.getUpdateIp().length() > 0){
-            sql.append("update_ip = ?");
+            sql.append("update_ip = ?,");
             param.add(asynUpdateParam.getUpdateIp());
+        }
+        if (asynUpdateParam.getNextTime() != null){
+            sql.append("next_time = ?");
+            param.add(asynUpdateParam.getNextTime());
         }
         sql.append(" where status = ? and biz_id = ?  ");
         param.add(asynUpdateParam.getWhereAsynStatus());
