@@ -82,30 +82,30 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
 
     private String getSqlBuildParam(String tableName,List<Object> param,AsynUpdateParam asynUpdateParam){
         StringBuffer sql = new StringBuffer();
-        sql.append("UPDATE ").append(tableName).append(" set status = ?,");
+        sql.append("UPDATE ").append(tableName).append(" set status = ?");
         param.add(asynUpdateParam.getStatus());
-        sql.append(" gmt_modify=?,");
+        sql.append(" ,gmt_modify=?");
         param.add(new Date());
         if (asynUpdateParam.getExecuter() != null && asynUpdateParam.getExecuter()){
-            sql.append(" execute_num = execute_num + 1,");
+            sql.append(" ,execute_num = execute_num + 1");
         }
         if (asynUpdateParam.getReset() != null && asynUpdateParam.getReset()){
-            sql.append(" execute_num = execute_num + 1,");
+            sql.append(" ,execute_num = execute_num + 1");
         }
         if (asynUpdateParam.getSuccessExecutes() != null && asynUpdateParam.getSuccessExecutes().length() > 0){
-            sql.append("success_executers = ?,");
+            sql.append(",success_executers = ?");
             param.add(asynUpdateParam.getSuccessExecutes());
         }
         if (asynUpdateParam.getUpdateHostName() != null && asynUpdateParam.getUpdateHostName().length() > 0){
-            sql.append("update_host_name = ?,");
+            sql.append(",update_host_name = ?");
             param.add(asynUpdateParam.getUpdateHostName());
         }
         if (asynUpdateParam.getUpdateIp() != null && asynUpdateParam.getUpdateIp().length() > 0){
-            sql.append("update_ip = ?,");
+            sql.append(",update_ip = ?");
             param.add(asynUpdateParam.getUpdateIp());
         }
         if (asynUpdateParam.getNextTime() != null){
-            sql.append("next_time = ?");
+            sql.append(",next_time = ?");
             param.add(asynUpdateParam.getNextTime());
         }
         sql.append(" where status = ? and biz_id = ?  ");

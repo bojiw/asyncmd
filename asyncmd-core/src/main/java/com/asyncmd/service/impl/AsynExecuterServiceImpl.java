@@ -121,7 +121,7 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
 
     @Override
     public Date getNextTime(AsynCmd asynCmd) {
-        int retry = asynCmd.getExecuteNum() - 1;
+        int retry = asynCmd.getExecuteNum();
         //获取异步命令对象配置 如果没有单独给异步命令对象设置调度频率 则获取全局配置的调度频率
         AsynCmdConfig asynCmdConfig = AsynContainerUtil.getAsynCmdConfig(asynCmd.getClass());
         if (!CollectionUtils.isEmpty(asynCmdConfig.getExecuterFrequencyList())){
@@ -137,7 +137,7 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
         if (executerFrequencyList.size() < retry){
             frequency = executerFrequencyList.get(executerFrequencyList.size() - 1);
         }else {
-            frequency = executerFrequencyList.get(retry);
+            frequency = executerFrequencyList.get(retry - 1);
         }
         return frequency.getNextTime(asynCmd.getNextTime());
     }
