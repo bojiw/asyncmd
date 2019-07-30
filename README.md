@@ -240,28 +240,43 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
 ```
 
 对不同异步命令对象进行个性化对配置
+```
+public class SmsAsynCmd extends AsynCmd<SmsBiz> {
 
-```
-    <!-- 如果一个异步命令对象有多个异步命令执行器 则取最大执行器的配置 -->
-    <bean id="smsExecuter" class="com.asyncmdDemo.asyn.asynexecuter.SmsExecuter">
-        <!--调度方式 默认为异步调度 对应的调度枚举类DispatchMode-->
-        <property name="dispatchMode" value="DISPATCH"/>
-        <!-- 重试频率 -->
-        <property name="executerFrequencys" value="5s,10s,1h"/>
-        <!-- 排序值 越大越早执行  -->
-        <property name="sort" value="110"/>
-    </bean>
-    
-```
-也可以java代码设置
-```
-    @Service
-public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
+    public static final String name = "sms";
+
+    /**
+     * 设置调度模式为调度中心调度 默认异步执行
+     * @return
+     */
     @Override
     public DispatchMode getDispatchMode() {
         return DispatchMode.DISPATCH;
     }
 
+    /**
+     * 设置调度频率
+     * @return
+     */
+    @Override
+    public String getExecuterFrequencys() {
+        return "4s,4s,4m";
+    }
+    /**
+     * 需要返回业务对象类 组件里要用
+     * @return
+     */
+    @Override
+    protected Class getObject() {
+        return SmsBiz.class;
+    }
+}
+```
+
+设置异步命令执行器的排序值 数值越大 越早执行 默认100
+```
+    @Service
+public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
     /**
      * 只有赠送成功才会进行通知 所以设置push通知处理器最后一个执行
      * @return
