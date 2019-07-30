@@ -23,7 +23,7 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
     /**
      * 调度模式 默认为异步调度
      */
-    private DispatchMode dispatchMode = DispatchMode.ASYN;
+    protected DispatchMode dispatchMode = DispatchMode.ASYN;
     /**
      * 如果有特别的异步命令不想要用全局重试频率 可以设置
      * 重试执行频率 5s,10s,1m,1h
@@ -264,15 +264,7 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
         return executerFrequencys;
     }
 
-    public void setExecuterFrequencys(String executerFrequencys) {
-        this.executerFrequencys = executerFrequencys;
-    }
-
     public DispatchMode getDispatchMode() {
         return dispatchMode;
-    }
-
-    public void setDispatchMode(DispatchMode dispatchMode) {
-        this.dispatchMode = dispatchMode;
     }
 }
