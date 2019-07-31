@@ -17,6 +17,7 @@ public enum AsynExCode {
     CRON_ILLEGAL(2003,"cron格式异常,请检测是否为正确的cron表达式"),
     DATASOURCE_NULL(2004,"datasource不能为空"),
     ZOOKEEPER_NULL(2005,"zookeeper地址不能为空"),
+    ENV_NULL(2006,"env环境参数不能为空"),
     ;
 
     private Integer code;

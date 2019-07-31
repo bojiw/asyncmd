@@ -39,7 +39,7 @@ public class AsynConfig {
     /**
      * 异步命令是否要先进后出 默认先进先出 注意这个只针对一张表的情况
      */
-    private Boolean desc = false;
+    private boolean desc = false;
 
     /**
      * 重试执行频率 5s,10s,1m,1h
@@ -51,11 +51,20 @@ public class AsynConfig {
 
     private String executerFrequencys;
 
+    /**
+     * 所在环境 主要为了解决预发环境只处理预发生产的命令 正式环境只处理正式环境的命令 本地运行和开发环境也可以做区分
+     */
+    private String env;
+
     private AsynJobConfig asynJobConfig = new AsynJobConfig();
 
 
 
     public void initConfig(){
+        if (StringUtils.isEmpty(env)){
+            log.error(AsynExCode.ENV_NULL.getMessage());
+            throw new AsynException(AsynExCode.ENV_NULL);
+        }
         beforeInit();
         if (StringUtils.isEmpty(executerFrequencys)){
             log.error(AsynExCode.EXECUTER_FREQUENCY_ILLEGAL.getMessage());
@@ -105,13 +114,19 @@ public class AsynConfig {
         this.retryNum = retryNum;
     }
 
-    public void setDesc(Boolean desc) {
+    public void setDesc(boolean desc) {
         this.desc = desc;
     }
 
-    public Boolean getDesc() {
+    public boolean getDesc() {
         return desc;
     }
 
+    public String getEnv() {
+        return env;
+    }
 
+    public void setEnv(String env) {
+        this.env = env;
+    }
 }

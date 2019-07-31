@@ -19,6 +19,8 @@ import java.util.List;
  */
 @Service
 public class AsynCmdHistoryDAOImpl implements AsynCmdHistoryDAO {
+
+    @Override
     public long saveCmd(AsynCmdHistoryDO asynCmdHistoryDO) {
         String tableName = SubTableUtil.getTableName(null, asynCmdHistoryDO.getBizId(), AsynCmdHistoryDO.TABLE_NAME);
 
@@ -30,12 +32,14 @@ public class AsynCmdHistoryDAOImpl implements AsynCmdHistoryDAO {
 
     }
 
+    @Override
     public long batchSaveCmd(Integer tableIndex,final List<AsynCmdHistoryDO> asynCmdHistoryDOs) {
         String tableName = SubTableUtil.getTableName(tableIndex, null, AsynCmdHistoryDO.TABLE_NAME);
 
         String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,gmt_create,gmt_modify) " +
                 " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         int[] ints = JdbcTemplateUtil.newInstance().batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
             public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
                 AsynCmdHistoryDO asynCmdHistoryDO = asynCmdHistoryDOs.get(i);
                 preparedStatement.setString(1, asynCmdHistoryDO.getCmdType());
@@ -60,6 +64,7 @@ public class AsynCmdHistoryDAOImpl implements AsynCmdHistoryDAO {
 
             }
 
+            @Override
             public int getBatchSize() {
                 return asynCmdHistoryDOs.size();
             }

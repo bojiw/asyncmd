@@ -104,4 +104,8 @@ public class AsynGroupConfig {
     public void setBackupCron(String backupCron) {
         asynConfig.getAsynJobConfig().getAsynBackupConfig().setBackupCron(backupCron);
     }
+
+    public void setEnv(String env){
+        asynConfig.setEnv(env);
+    }
 }
