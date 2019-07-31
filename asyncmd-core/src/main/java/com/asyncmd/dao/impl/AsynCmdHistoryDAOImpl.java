@@ -37,7 +37,7 @@ public class AsynCmdHistoryDAOImpl implements AsynCmdHistoryDAO {
         String tableName = SubTableUtil.getTableName(tableIndex, null, AsynCmdHistoryDO.TABLE_NAME);
 
         String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,env,gmt_create,gmt_modify) " +
-                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         int[] ints = JdbcTemplateUtil.newInstance().batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {

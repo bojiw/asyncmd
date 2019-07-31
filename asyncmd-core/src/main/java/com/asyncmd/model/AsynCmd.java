@@ -21,19 +21,6 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
     public static final String default_create_name = "system";
 
     /**
-     * 调度模式 默认为异步调度
-     */
-    protected DispatchMode dispatchMode = DispatchMode.ASYN;
-    /**
-     * 如果有特别的异步命令不想要用全局重试频率 可以设置
-     * 重试执行频率 5s,10s,1m,1h
-     * 代表第一次重试5秒以后执行 第二次10秒以后执行 第三次1分钟以后执行 第四次1小时以后执行 之后都是间隔1小时执行
-     * 执行频率 5s,10s,20s
-     * 代表第一次重试5秒以后执行 第二次10秒以后执行 第三次20秒以后执行
-     */
-    protected String executerFrequencys;
-
-    /**
      * 唯一id
      */
     private Long cmdId;
@@ -265,19 +252,11 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
         successExecuters.add(successExecuter);
     }
 
-    public String getExecuterFrequencys() {
-        return executerFrequencys;
-    }
-
-    public DispatchMode getDispatchMode() {
-        return dispatchMode;
-    }
-
-    public String getEnv() {
+    final public String getEnv() {
         return env;
     }
 
-    public void setEnv(String env) {
+    final public void setEnv(String env) {
         this.env = env;
     }
 }

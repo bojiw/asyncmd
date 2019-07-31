@@ -19,7 +19,7 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
     /**
      * 异步命令器执行顺序 越大越早执行 获取异步命令的相关配置默认取第一个
      */
-    protected int sort = 100;
+    private int sort = 100;
 
     /**
      * 由子类执行具体逻辑
@@ -34,16 +34,17 @@ public abstract class AbstractAsynExecuter<T extends AsynCmd> implements Initial
      */
     @Override
     final public void afterPropertiesSet() throws Exception {
+        //读取注解上的配置
+        AsynExecuterConf annotation = this.getClass().getAnnotation(AsynExecuterConf.class);
+        if (annotation != null){
+            sort = annotation.sort();
+        }
         //注册到容器中
         asynExecuterFacade.registerAsynExecuter(this);
     }
 
-    protected int getSort(){
+    final public int getSort(){
         return sort;
-    }
-
-    public void setSort(int sort) {
-        this.sort = sort;
     }
 
 }

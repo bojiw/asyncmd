@@ -4,6 +4,7 @@ package com.asyncmd.utils;
 import com.asyncmd.config.AsynCmdConfig;
 import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
+import com.asyncmd.model.AsynCmdConf;
 import com.asyncmd.model.AsynExecuterComparator;
 import com.google.common.collect.Lists;
 import org.springframework.util.CollectionUtils;
@@ -51,13 +52,16 @@ public class AsynContainerUtil {
         abstractAsynExecuters.add(asynExecuter);
     }
 
-    public static void put(Class<? extends AsynCmd> classCmd,AsynCmd asynCmd){
+    public static void put(Class<? extends AsynCmd> classCmd){
         AsynCmdConfig asynCmdConfig = new AsynCmdConfig();
-        if (asynCmd.getDispatchMode() != null){
-            asynCmdConfig.setDispatchMode(asynCmd.getDispatchMode());
+        AsynCmdConf asynCmdConf = classCmd.getAnnotation(AsynCmdConf.class);
+        if (asynCmdConf == null){
+            asynCmdConfigContainer.put(classCmd,asynCmdConfig);
+            return;
         }
-        if (!StringUtils.isEmpty(asynCmd.getExecuterFrequencys())){
-            asynCmdConfig.setExecuterFrequencyList(FrequencyUtil.createFrequencys(asynCmd.getExecuterFrequencys()));
+        asynCmdConfig.setDispatchMode(asynCmdConf.dispatchMode());
+        if (!StringUtils.isEmpty(asynCmdConf.executerFrequency())){
+            asynCmdConfig.setExecuterFrequencyList(FrequencyUtil.createFrequencys(asynCmdConf.executerFrequency()));
         }
         asynCmdConfigContainer.put(classCmd,asynCmdConfig);
     }

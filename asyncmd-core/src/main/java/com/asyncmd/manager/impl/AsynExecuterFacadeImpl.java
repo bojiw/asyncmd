@@ -49,9 +49,9 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
 
         Class<? extends AsynCmd> classCmd = getAsynCmdObject(asynExecuter);
         //效验
-        AsynCmd asynCmd = vaildAsynCmd(classCmd, asynExecuter);
+        vaildAsynCmd(classCmd, asynExecuter);
         //保存异步命令对象配置
-        AsynContainerUtil.put(classCmd,asynCmd);
+        AsynContainerUtil.put(classCmd);
 
         //注册
         AsynContainerUtil.put(classCmd,asynExecuter);
@@ -101,11 +101,10 @@ public class AsynExecuterFacadeImpl implements AsynExecuterFacade {
      * 效验异步命令对象是否能正常初始化
      * @param classCmd
      */
-    private AsynCmd vaildAsynCmd(Class<? extends AsynCmd> classCmd,AbstractAsynExecuter<? extends AsynCmd> asynExecuter){
+    private void vaildAsynCmd(Class<? extends AsynCmd> classCmd,AbstractAsynExecuter<? extends AsynCmd> asynExecuter){
 
         try {
-            return classCmd.newInstance();
-
+            classCmd.newInstance();
         }catch (Exception e){
             log.error("执行器上的asynCmd初始化异常:" + asynExecuter.getClass().getName());
             throw new AsynException(AsynExCode.ILLEGAL);

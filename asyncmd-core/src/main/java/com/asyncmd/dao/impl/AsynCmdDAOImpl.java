@@ -30,7 +30,7 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
         String tableName = SubTableUtil.getTableName(null, asynCmdDO.getBizId(), AsynCmdDO.TABLE_NAME);
 
         String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,env,gmt_create,gmt_modify) " +
-                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         return JdbcTemplateUtil.newInstance().update(sql,new Object[]{asynCmdDO.getCmdType(),asynCmdDO.getContent(),asynCmdDO.getBizId(),asynCmdDO.getCreateHostName(),
                 asynCmdDO.getCreateIp(),asynCmdDO.getCreateName(),asynCmdDO.getExecuteNum(),asynCmdDO.getNextTime(),asynCmdDO.getStatus(),
                 asynCmdDO.getUpdateHostName(),asynCmdDO.getUpdateIp(),asynCmdDO.getSuccessExecuters(),asynCmdDO.getEnv(),new Date(),new Date()});
@@ -148,10 +148,12 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
         }
         if (param.getLimit() != null){
             sql.append(" limit ?");
+            return JdbcTemplateUtil.newInstance().query(sql.toString(),
+                    new Object[]{param.getStatus(),param.getExecuterTime(),param.getEnv(),param.getLimit()},new AsynCmdRowMapper());
         }
 
         return JdbcTemplateUtil.newInstance().query(sql.toString(),
-                new Object[]{param.getStatus(),param.getExecuterTime(),param.getEnv(),param.getLimit()},new AsynCmdRowMapper());
+                new Object[]{param.getStatus(),param.getExecuterTime(),param.getEnv()},new AsynCmdRowMapper());
     }
 
     private StringBuffer getSelectBase(String tableName){
