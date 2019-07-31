@@ -2,13 +2,15 @@
 
 # asyncmd
 ## 前言
-以前有幸看过网商银行的一个异步命令组件源码 感觉功能比较实用 可以在挺多场景上使用 尤其现在领域驱动设计目前比较火 配合这个组件可以对领域内事件更好的支持 因为看目前也没有对应的开源组件 所以自己准备开发一个异步命令组件 核心功能的设计思路主要参考以前看过的异步命令组件
+以前有幸看过网商银行的一个异步命令组件源码 感觉功能比较实用 可以在挺多场景上使用 尤其现在领域驱动设计目前比较火 配合这个组件可以对领域内事件更好的支持 因为看目前也没有对应的开源组件 所以准备自己开发一个异步命令组件
+**QQ交流群 709378280**
 ## 使用demo
-[https://github.com/bojiw/asyncmdDemo](异步命令组件demo)
+https://github.com/bojiw/asyncmdDemo
 #### 异步命令组件核心功能
 就是把一些耗时比较高并且可以异步处理的同步请求转换为异步处理来提高并发,并且把命令内容保存到数据库表中来提高数据可靠性并且通过重试来保证数据的最终一致性
-![image](http://qiniu.bojiw.com/20197/2019729203051image.png)
-###### 注意：这个目前只是一个组件 只需要引入jar包 并且在自己的应用库中创建异步命令表 指定zookeeper地址就可以使用 并不是集中式单独部署一台应用进行使用 这样可以保证一个应用的异步命令积压或者使用有问题 不会影响到其他应用 也变相的把压力分摊到不同的应用中
+![image](http://qiniu.bojiw.com/20197/201972920313image.png)
+
+**注意：这个目前只是一个组件 只需要引入jar包 并且在自己的应用库中创建异步命令表 指定zookeeper地址就可以使用 并不是集中式单独部署一台应用进行使用 这样可以保证一个应用的异步命令积压或者使用有问题 不会影响到其他应用 也变相的把压力分摊到不同的应用中**
 
 #### 使用逻辑
 新建一个异步命令对象 一个异步命令执行器 把请求传过来的数据保存到这个异步命令对象中 调用组件到一个服务 就会把对象保存到表中 并且异步的执行创建的异步命令执行器 会把异步命令对象作为入参传进去 使用者只要在异步命令执行器中把后续逻辑写好就可以 重试之类的机制组件会自动完成
@@ -22,7 +24,8 @@
 [https://blog.csdn.net/weixin_33759269/article/details/91386492]()
 #### 下图为异步命令组件在目前主流的三种领域事件发送方式里的应用 目前领域外的事件更多的是采用第二种直接使用mq 异步命令组件主要是第三种情况使用比较多
 
-![image](http://qiniu.bojiw.com/20197/201972920313image.png)
+![image](http://qiniu.bojiw.com/20197/2019729203051image.png)
+
 
 ### 使用场景二
 一般很多大公司的开放平台有些接口因为内部逻辑非常复杂 处理比较耗时 都是采用接收请求 保存起来 然后立刻返回调用方发送成功的结果 再异步慢慢处理 处理完以后再会回调调用方 也可能是默认肯定成功 这种就可以使用异步命令组件来实现 以前我们和一家公司合作 互相提供接口进行调用 因为另一家公司有一些老系统逻辑处理很慢 常常因为处理不过来导致连接超时 如果使用这个组件就可以先接收 然后再处理
@@ -42,7 +45,7 @@
       <dependency>
           <groupId>com.bojiw</groupId>
           <artifactId>asyncmd-core</artifactId>
-          <version>1.5</version>
+          <version>1.6</version>
       </dependency>
 ```
 2、在spring的xml文件中 引入xml文件
@@ -240,28 +243,43 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
 ```
 
 对不同异步命令对象进行个性化对配置
+```
+public class SmsAsynCmd extends AsynCmd<SmsBiz> {
 
-```
-    <!-- 如果一个异步命令对象有多个异步命令执行器 则取最大执行器的配置 -->
-    <bean id="smsExecuter" class="com.asyncmdDemo.asyn.asynexecuter.SmsExecuter">
-        <!--调度方式 默认为异步调度 对应的调度枚举类DispatchMode-->
-        <property name="dispatchMode" value="DISPATCH"/>
-        <!-- 重试频率 -->
-        <property name="executerFrequencys" value="5s,10s,1h"/>
-        <!-- 排序值 越大越早执行  -->
-        <property name="sort" value="110"/>
-    </bean>
-    
-```
-也可以java代码设置
-```
-    @Service
-public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
+    public static final String name = "sms";
+
+    /**
+     * 设置调度模式为调度中心调度 默认异步执行
+     * @return
+     */
     @Override
     public DispatchMode getDispatchMode() {
         return DispatchMode.DISPATCH;
     }
 
+    /**
+     * 设置调度频率
+     * @return
+     */
+    @Override
+    public String getExecuterFrequencys() {
+        return "4s,4s,4m";
+    }
+    /**
+     * 需要返回业务对象类 组件里要用
+     * @return
+     */
+    @Override
+    protected Class getObject() {
+        return SmsBiz.class;
+    }
+}
+```
+
+设置异步命令执行器的排序值 数值越大 越早执行 默认100
+```
+    @Service
+public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
     /**
      * 只有赠送成功才会进行通知 所以设置push通知处理器最后一个执行
      * @return
@@ -271,6 +289,39 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
         return 90;
     }
 ```
+
+## 模型
+asynCmdDB(异步命令对象)
+
+|  字段名 |  描述 |
+| :------------ | :------------ |
+| cmdId  |  单表唯一id由表自增 |
+| cmdType  | 异步命令类型 异步命令对象类的名称  |
+| bizId  | 业务id 全局唯一 根据这个ID做hash然后取余获取分表位 计算逻辑和hashmap计算下标为相同  |
+| content  | 业务上下文 业务对象AsynBizObject的json数据  |
+| executeNum  | 异步命令对象执行次数 重试一次加1  |
+| nextTime  | 下一次执行时间 根据设置的重试频率来计算  |
+| status  | 状态 分为"INIT","初始化" "EXECUTE","执行中" "SUCCESS","成功" "ERROR","失败"  |
+| createHostName  | 执行插入异步命令服务器的主机名 方便排查问  |
+| createIp  | 执行插入异步命令服务器的ip地址 方便排查问题  |
+| updateHostName  | 更新异步命令服务器的主机名 方便排查问题   |
+| updateIp  | 更新异步命令服务器的ip地址 方便排查问题  |
+| createName  | 创建异步命令的人 默认system   |
+| successExecuters  | 执行成功的异步命令执行器类名 如果一个异步命令对象对应多个异步命令执行器 通过这个可以看有成功执行的异步命令对象   |
+| gmtCreate  | 创建时间  |
+| gmtModify  | 修改时间  |
+
+AsynCmdHistoryDO异步命令历史模型 字段和内容和异步命令对象模型一样 只有创建时间和更新时间不同
+
+## 三种调度方式
+DispatchMode
+异步调度
+![image](http://qiniu.bojiw.com/20197/2019730202546image.png)
+调度中心调度
+![image](http://qiniu.bojiw.com/20197/2019730203025image.png)
+同步调度
+![image](http://qiniu.bojiw.com/20197/2019730203249image.png)
+
 
 ## 性能和调优
 #### 默认配置性能测试
@@ -286,10 +337,9 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
 总共花费4分钟消费完所有命令
 
 消费挤压命令逻辑为
-每隔1秒 就会从命令表中捞取30条数据 4张表 20*4=80 代表1秒钟处理80数据 如果想提高消费速度 分成16张表则16*20=320 每隔1秒处理320条数据 表的数量越多 消费速度越快 不过也还是需要依赖线程池 如果捞取的数量大于线程池的数量 则会多余 所以表数量需要和线程池的数量最对应调整
+每隔1秒 就会从命令表中捞取30条数据 4张表 20 * 4=80 代表1秒钟处理80数据 如果想提高消费速度 分成16张表则16 * 20=320 每隔1秒处理320条数据 表的数量越多 消费速度越快 不过也还是需要依赖线程池 如果捞取的数量大于线程池的数量 则会多余 所以表数量需要和线程池的数量最对应调整
 #### 调优
-主要是对下面四个参数进行调整
-需要 表数量*每次捞取的数量<线程池最大线程数(需要根据自己业务情况来设置 不是越多越好)+缓存队列(根据执行器平均处理时间来设置 可以配合多久扫表执行时间来调整)
-
+主要是对下面四个参数进行调整需要 
+###### 表数量*每次捞取的数量<线程池最大线程数(需要根据自己业务情况来设置 不是越多越好)+缓存队列(根据执行器平均处理时间来设置 可以配合多久扫表执行时间来调整)
 
 
