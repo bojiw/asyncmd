@@ -314,6 +314,7 @@ asynCmdDB(异步命令对象)
 AsynCmdHistoryDO异步命令历史模型 字段和内容和异步命令对象模型一样 只有创建时间和更新时间不同
 
 ## 三种调度方式
+DispatchMode
 异步调度
 ![image](http://qiniu.bojiw.com/20197/2019730202546image.png)
 调度中心调度
