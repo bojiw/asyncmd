@@ -67,6 +67,7 @@ public abstract class AbstractDispatchService implements DispatchService {
         asynCmd.setCreateIp(LocalHostUtil.getIp());
         asynCmd.setUpdateHostName(LocalHostUtil.getHostName());
         asynCmd.setUpdateIp(LocalHostUtil.getIp());
+        asynCmd.setEnv(asynGroupConfig.getAsynConfig().getEnv());
         return asynCmd;
     }
 

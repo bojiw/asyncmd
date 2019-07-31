@@ -36,7 +36,7 @@ public class AsynCmdHistoryDAOImpl implements AsynCmdHistoryDAO {
     public long batchSaveCmd(Integer tableIndex,final List<AsynCmdHistoryDO> asynCmdHistoryDOs) {
         String tableName = SubTableUtil.getTableName(tableIndex, null, AsynCmdHistoryDO.TABLE_NAME);
 
-        String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,gmt_create,gmt_modify) " +
+        String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,env,gmt_create,gmt_modify) " +
                 " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         int[] ints = JdbcTemplateUtil.newInstance().batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
@@ -57,10 +57,11 @@ public class AsynCmdHistoryDAOImpl implements AsynCmdHistoryDAO {
                 preparedStatement.setString(10, asynCmdHistoryDO.getUpdateHostName());
                 preparedStatement.setString(11, asynCmdHistoryDO.getUpdateIp());
                 preparedStatement.setString(12, asynCmdHistoryDO.getSuccessExecuters());
+                preparedStatement.setString(13,asynCmdHistoryDO.getEnv());
                 Date gmtCreate = new Date(System.currentTimeMillis());
-                preparedStatement.setDate(13, gmtCreate);
+                preparedStatement.setDate(14, gmtCreate);
                 Date gmtModify = new Date(asynCmdHistoryDO.getGmtModify().getTime());
-                preparedStatement.setDate(14, gmtModify);
+                preparedStatement.setDate(15, gmtModify);
 
             }
 

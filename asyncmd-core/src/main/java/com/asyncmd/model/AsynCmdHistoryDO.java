@@ -92,6 +92,11 @@ public class AsynCmdHistoryDO implements Serializable {
      */
     private String successExecuters;
 
+    /**
+     * 所在环境 预发和正式环境需要不同 对正式环境和预发环境做隔离 本地环境和开发环境也可以做隔离
+     */
+    private String env;
+
     public Long getCmdId() {
         return cmdId;
     }
@@ -210,5 +215,13 @@ public class AsynCmdHistoryDO implements Serializable {
 
     public void setSuccessExecuters(String successExecuters) {
         this.successExecuters = successExecuters;
+    }
+
+    public String getEnv() {
+        return env;
+    }
+
+    public void setEnv(String env) {
+        this.env = env;
     }
 }

@@ -2,6 +2,7 @@
 package com.asyncmd.dao;
 
 import com.asyncmd.model.AsynCmdDO;
+import com.asyncmd.model.AsynQueryParam;
 import com.asyncmd.model.AsynUpdateParam;
 
 import java.util.Date;
@@ -61,11 +62,11 @@ public interface AsynCmdDAO {
 
     /**
      * 查询分表异步命令
-     * @param limit
-     * @param executerTime
+     * @param tableIndex
+     * @param param
      * @return
      */
-    List<AsynCmdDO> queryAsynCmd(Integer tableIndex,String status,Integer limit, Date executerTime,Boolean desc);
+    List<AsynCmdDO> queryAsynCmd(Integer tableIndex, AsynQueryParam param);
 
 
 

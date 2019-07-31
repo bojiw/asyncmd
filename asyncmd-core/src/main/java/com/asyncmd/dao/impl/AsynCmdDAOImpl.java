@@ -4,6 +4,7 @@ package com.asyncmd.dao.impl;
 import com.asyncmd.dao.AsynCmdDAO;
 import com.asyncmd.dao.mapper.AsynCmdRowMapper;
 import com.asyncmd.model.AsynCmdDO;
+import com.asyncmd.model.AsynQueryParam;
 import com.asyncmd.model.AsynUpdateParam;
 import com.asyncmd.utils.JdbcTemplateUtil;
 import com.asyncmd.utils.SubTableUtil;
@@ -28,11 +29,11 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
     public long saveCmd(AsynCmdDO asynCmdDO) {
         String tableName = SubTableUtil.getTableName(null, asynCmdDO.getBizId(), AsynCmdDO.TABLE_NAME);
 
-        String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,gmt_create,gmt_modify) " +
+        String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,env,gmt_create,gmt_modify) " +
                 " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         return JdbcTemplateUtil.newInstance().update(sql,new Object[]{asynCmdDO.getCmdType(),asynCmdDO.getContent(),asynCmdDO.getBizId(),asynCmdDO.getCreateHostName(),
                 asynCmdDO.getCreateIp(),asynCmdDO.getCreateName(),asynCmdDO.getExecuteNum(),asynCmdDO.getNextTime(),asynCmdDO.getStatus(),
-                asynCmdDO.getUpdateHostName(),asynCmdDO.getUpdateIp(),asynCmdDO.getSuccessExecuters(),new Date(),new Date()});
+                asynCmdDO.getUpdateHostName(),asynCmdDO.getUpdateIp(),asynCmdDO.getSuccessExecuters(),asynCmdDO.getEnv(),new Date(),new Date()});
     }
     @Override
     public long delCmd(String bizId) {
@@ -138,25 +139,26 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
     }
 
     @Override
-    public List<AsynCmdDO> queryAsynCmd(Integer tableIndex, String status, Integer limit, Date executerTime, Boolean desc) {
+    public List<AsynCmdDO> queryAsynCmd(Integer tableIndex, AsynQueryParam param) {
         String tableName = SubTableUtil.getTableName(tableIndex,null, AsynCmdDO.TABLE_NAME);
         StringBuffer sql = getSelectBase(tableName);
-        sql.append(" where status = ? and next_time <= ?");
-        if (desc != null){
+        sql.append(" where status = ? and next_time <= ? and env = ?");
+        if (param.getDesc() != null){
             sql.append(" order by gmt_create");
         }
-        if (limit != null){
+        if (param.getLimit() != null){
             sql.append(" limit ?");
         }
 
-        return JdbcTemplateUtil.newInstance().query(sql.toString(),new Object[]{status,executerTime,limit},new AsynCmdRowMapper());
+        return JdbcTemplateUtil.newInstance().query(sql.toString(),
+                new Object[]{param.getStatus(),param.getExecuterTime(),param.getEnv(),param.getLimit()},new AsynCmdRowMapper());
     }
 
     private StringBuffer getSelectBase(String tableName){
         StringBuffer sql = new StringBuffer();
         sql.append("select cmd_id,cmd_type,content,biz_id,create_host_name,create_ip,create_name,")
                 .append("execute_num,gmt_create,gmt_modify,next_time,status,update_host_name,update_ip,")
-                .append("success_executers from ").append(tableName);
+                .append("success_executers,env from ").append(tableName);
         return sql;
     }
     @Override

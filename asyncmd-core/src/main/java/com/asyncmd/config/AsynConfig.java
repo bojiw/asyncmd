@@ -72,7 +72,7 @@ public class AsynConfig {
         }
         executerFrequencyList = FrequencyUtil.createFrequencys(executerFrequencys);
 
-        asynJobConfig.init(tableNum);
+        asynJobConfig.init(tableNum,env);
     }
 
     private void beforeInit(){

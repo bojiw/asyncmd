@@ -18,6 +18,7 @@ public enum AsynExCode {
     DATASOURCE_NULL(2004,"datasource不能为空"),
     ZOOKEEPER_NULL(2005,"zookeeper地址不能为空"),
     ENV_NULL(2006,"env环境参数不能为空"),
+    JOB_NAME_NULL(2007,"jobName不能为空"),
     ;
 
     private Integer code;

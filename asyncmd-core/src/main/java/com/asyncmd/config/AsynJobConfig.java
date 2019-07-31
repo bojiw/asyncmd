@@ -52,11 +52,15 @@ public class AsynJobConfig {
 
 
 
-    public void init(int tableNum){
+    public void init(int tableNum,String env){
 
         try {
             //效验cron表达式是否正确
             CronExpression.validateExpression(cron);
+            CronExpression.validateExpression(restCron);
+            if (asynBackupConfig.getBackup()){
+                CronExpression.validateExpression(asynBackupConfig.getBackupCron());
+            }
         }catch (Exception e){
             log.error(AsynExCode.CRON_ILLEGAL.getMessage());
             throw new AsynException(AsynExCode.CRON_ILLEGAL);
@@ -65,14 +69,18 @@ public class AsynJobConfig {
             log.error(AsynExCode.ZOOKEEPER_NULL.getMessage());
             throw new AsynException(AsynExCode.ZOOKEEPER_NULL);
         }
+        if (StringUtils.isEmpty(jobName)){
+            log.error(AsynExCode.JOB_NAME_NULL.getMessage());
+            throw new AsynException(AsynExCode.JOB_NAME_NULL);
+        }
 
         //如果没有分表 则设置1个分片
         if (tableNum == 0){
             tableNum = 1;
         }
-        createExecuterJob(tableNum);
-        createRestJob(tableNum);
-        createBackupJob(tableNum);
+        createExecuterJob(tableNum,env);
+        createRestJob(tableNum,env);
+        createBackupJob(tableNum,env);
 
     }
 
@@ -80,8 +88,8 @@ public class AsynJobConfig {
      * 创建执行任务
      * @param tableNum
      */
-    private void createExecuterJob(int tableNum){
-        String newJobName = jobName + EXECUTE;
+    private void createExecuterJob(int tableNum,String env){
+        String newJobName = jobName + EXECUTE + env;
         // 定义作业核心配置
         JobCoreConfiguration simpleCoreConfig = JobCoreConfiguration.newBuilder(newJobName, cron, tableNum).build();
         SimpleJobConfiguration simpleJobConfig = new SimpleJobConfiguration(simpleCoreConfig, DispatchExecuterJob.class.getCanonicalName());
@@ -94,8 +102,8 @@ public class AsynJobConfig {
      * 创建状态重置任务 防止因为系统异常导致执行失败的任务一直无法变成初始化状态
      * @param tableNum
      */
-    private void createRestJob(int tableNum){
-        String newJobName = jobName + REST;
+    private void createRestJob(int tableNum,String env){
+        String newJobName = jobName + REST + env;
         // 定义作业核心配置
         JobCoreConfiguration simpleCoreConfig = JobCoreConfiguration.newBuilder(newJobName, restCron, tableNum).build();
         SimpleJobConfiguration simpleJobConfig = new SimpleJobConfiguration(simpleCoreConfig, DispatchRestJob.class.getCanonicalName());
@@ -108,12 +116,12 @@ public class AsynJobConfig {
      * 创建备份任务
      * @param tableNum
      */
-    private void createBackupJob(int tableNum){
+    private void createBackupJob(int tableNum,String env){
         //判断是否需要启动备份任务
         if (!asynBackupConfig.getBackup()){
             return;
         }
-        String newJobName = jobName + BACKUP;
+        String newJobName = jobName + BACKUP + env;
         // 定义作业核心配置
         JobCoreConfiguration simpleCoreConfig = JobCoreConfiguration.newBuilder(newJobName, asynBackupConfig.getBackupCron(), tableNum).build();
         SimpleJobConfiguration simpleJobConfig = new SimpleJobConfiguration(simpleCoreConfig, DispatchBackupJob.class.getCanonicalName());

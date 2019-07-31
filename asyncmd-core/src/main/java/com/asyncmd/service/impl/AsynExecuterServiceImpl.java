@@ -11,6 +11,7 @@ import com.asyncmd.exception.AsynException;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynCmdDO;
 import com.asyncmd.model.AsynCmdHistoryDO;
+import com.asyncmd.model.AsynQueryParam;
 import com.asyncmd.model.AsynUpdateParam;
 import com.asyncmd.model.Frequency;
 import com.asyncmd.service.AsynExecuterService;
@@ -114,7 +115,12 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
     public List<AsynCmd> queryAsynCmd(Integer limit,int tableIndex,AsynStatus status,Date whereNextTime) {
 
         Boolean desc = asynGroupConfig.getAsynConfig().getDesc();
-        List<AsynCmdDO> asynCmdDOS = asynCmdDAO.queryAsynCmd(tableIndex,status.getStatus(),limit, whereNextTime,desc);
+        AsynQueryParam param = new AsynQueryParam();
+        param.setDesc(desc);
+        param.setStatus(status.getStatus());
+        param.setExecuterTime(whereNextTime);
+        param.setEnv(asynGroupConfig.getAsynConfig().getEnv());
+        List<AsynCmdDO> asynCmdDOS = asynCmdDAO.queryAsynCmd(tableIndex,param);
         return AsynCmdConvert.toCmdList(asynCmdDOS);
     }
 
