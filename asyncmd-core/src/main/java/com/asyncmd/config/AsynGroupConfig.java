@@ -1,6 +1,7 @@
 
 package com.asyncmd.config;
 
+import com.asyncmd.callback.ErrorCallBack;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
 import com.asyncmd.utils.JdbcTemplateUtil;
@@ -19,6 +20,8 @@ public class AsynGroupConfig {
     private static Log log = LogFactory.getLog(AsynGroupConfig.class);
 
     private AsynConfig asynConfig;
+
+    private ErrorCallBack errorCallBack;
 
 
     public AsynGroupConfig(){
@@ -107,5 +110,13 @@ public class AsynGroupConfig {
 
     public void setEnv(String env){
         asynConfig.setEnv(env);
+    }
+
+    public void setErrorCallBack(ErrorCallBack errorCallBack) {
+        this.errorCallBack = errorCallBack;
+    }
+
+    public ErrorCallBack getErrorCallBack() {
+        return errorCallBack;
     }
 }

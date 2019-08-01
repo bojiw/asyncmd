@@ -2,6 +2,7 @@
 package com.asyncmd.utils;
 
 import com.asyncmd.config.AsynCmdConfig;
+import com.asyncmd.enums.DispatchMode;
 import com.asyncmd.model.AbstractAsynExecuter;
 import com.asyncmd.model.AsynCmd;
 import com.asyncmd.model.AsynCmdConf;
@@ -59,7 +60,9 @@ public class AsynContainerUtil {
             asynCmdConfigContainer.put(classCmd,asynCmdConfig);
             return;
         }
-        asynCmdConfig.setDispatchMode(asynCmdConf.dispatchMode());
+        if (asynCmdConf.dispatchMode() != DispatchMode.UNKNOWN){
+            asynCmdConfig.setDispatchMode(asynCmdConf.dispatchMode());
+        }
         if (!StringUtils.isEmpty(asynCmdConf.executerFrequency())){
             asynCmdConfig.setExecuterFrequencyList(FrequencyUtil.createFrequencys(asynCmdConf.executerFrequency()));
         }
