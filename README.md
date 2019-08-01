@@ -45,7 +45,7 @@ https://github.com/bojiw/asyncmdDemo
       <dependency>
           <groupId>com.bojiw</groupId>
           <artifactId>asyncmd-core</artifactId>
-          <version>1.6</version>
+          <version>1.7</version>
       </dependency>
 ```
 2、在spring的xml文件中 引入xml文件
