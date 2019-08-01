@@ -59,6 +59,8 @@ https://github.com/bojiw/asyncmdDemo
         <!--必填项-->
         <!--定时任务名称 重点：需要不同工程不一样 推荐用应用名称来命名 如果多个项目定义的相同 定时任务会有问题-->
         <property name="jobName" value="demo-asyn"/>
+        <!-- 所在环境 会保存到表中 这样就可以解决预发环境的命令只会在预发环境上执行 做到不同环境之间哪怕用的数据库一样 也可以隔离 本地运行可以用自己名字来设置 这样本地生产的命令只会本地消费 -->
+        <property name="env" value="dev"/>
         <!--zookeeper地址-->
         <property name="zookeeperUrl" value="127.0.0.1:2181"/>
         <!--数据源 -->
@@ -239,32 +241,19 @@ public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
         <!--配置备份任务一次最多每张表处理多少条数据 默认是10w条数据 10代表处理1w条数据-->
         <property name="maxNo" value="10"/>
         <!-- 备份定时任务相关配置 end-->
+        
+        <!--设置全局异常回调 每次异步命令执行异常都会回调里面都方法-->
+        <property name="errorCallBack" ref="asynCmdErrorCallBack"/>
     </bean>
 ```
 
 对不同异步命令对象进行个性化对配置
 ```
+//如果有需要对某个异步命令对象做个性化设置 可以通过注解的方式 设置调度方式为调度中心调度 设置调度频率为 4s,4s,4m
+@AsynCmdConf(dispatchMode = DispatchMode.DISPATCH,executerFrequency = "4s,4s")
 public class SmsAsynCmd extends AsynCmd<SmsBiz> {
 
     public static final String name = "sms";
-
-    /**
-     * 设置调度模式为调度中心调度 默认异步执行
-     * @return
-     */
-    @Override
-    public DispatchMode getDispatchMode() {
-        return DispatchMode.DISPATCH;
-    }
-
-    /**
-     * 设置调度频率
-     * @return
-     */
-    @Override
-    public String getExecuterFrequencys() {
-        return "4s,4s,4m";
-    }
     /**
      * 需要返回业务对象类 组件里要用
      * @return
@@ -278,16 +267,11 @@ public class SmsAsynCmd extends AsynCmd<SmsBiz> {
 
 设置异步命令执行器的排序值 数值越大 越早执行 默认100
 ```
-    @Service
+//设置排序值为90
+@AsynExecuterConf(sort = 90)
+@Service
 public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
-    /**
-     * 只有赠送成功才会进行通知 所以设置push通知处理器最后一个执行
-     * @return
-     */
-    @Override
-    protected int getSort() {
-        return 90;
-    }
+
 ```
 
 ## 模型
@@ -308,6 +292,7 @@ asynCmdDB(异步命令对象)
 | updateIp  | 更新异步命令服务器的ip地址 方便排查问题  |
 | createName  | 创建异步命令的人 默认system   |
 | successExecuters  | 执行成功的异步命令执行器类名 如果一个异步命令对象对应多个异步命令执行器 通过这个可以看有成功执行的异步命令对象   |
+| env  | 所在环境  |
 | gmtCreate  | 创建时间  |
 | gmtModify  | 修改时间  |
 
