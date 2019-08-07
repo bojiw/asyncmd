@@ -120,10 +120,15 @@ public class AsynRunnable implements Runnable {
             }
             return s;
         } catch (Exception ex) {
-            return "获得Exception信息的工具类异常";
+            return "组件内部异常,获得Exception信息的工具类异常";
         }
     }
 
+    /**
+     * 更新状态为初始化或者失败
+     * @param e
+     * @return
+     */
     private AsynStatus updateStatus(Exception e){
         AsynUpdateParam asynUpdateParam = new AsynUpdateParam();
         AsynStatus asynStatus;
