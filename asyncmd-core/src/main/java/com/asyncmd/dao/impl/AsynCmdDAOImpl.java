@@ -11,6 +11,7 @@ import com.asyncmd.utils.SubTableUtil;
 import com.google.common.collect.Lists;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -171,7 +172,11 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
     public AsynCmdDO getAsynCmdByBizId(String bizId) {
         String tableName = SubTableUtil.getTableName(null,bizId, AsynCmdDO.TABLE_NAME);
         StringBuffer sql = getSelectBase(tableName);
-        sql.append("where biz_id=?");
-        return (AsynCmdDO)JdbcTemplateUtil.newInstance().queryForObject(sql.toString(),new Object[]{bizId},new AsynCmdRowMapper());
+        sql.append(" where biz_id=?");
+        List<AsynCmdDO> query = JdbcTemplateUtil.newInstance().query(sql.toString(), new Object[]{bizId}, new AsynCmdRowMapper());
+        if (CollectionUtils.isEmpty(query)){
+            return null;
+        }
+        return query.get(0);
     }
 }

@@ -32,6 +32,8 @@ public class AsynCmdRowMapper implements RowMapper<AsynCmdDO> {
         asynCmdDO.setCmdType(resultSet.getString("cmd_type"));
         asynCmdDO.setBizId(resultSet.getString("biz_id"));
         asynCmdDO.setEnv(resultSet.getString("env"));
+        asynCmdDO.setException(resultSet.getString("exception"));
+        asynCmdDO.setRelyBizId(resultSet.getString("rely_biz_id"));
         return asynCmdDO;
     }
 }
