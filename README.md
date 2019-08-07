@@ -4,7 +4,7 @@
 ## 前言
 以前有幸看过网商银行的一个异步命令组件源码 感觉功能比较实用 可以在挺多场景上使用 尤其现在领域驱动设计目前比较火 配合这个组件可以对领域内事件更好的支持 因为看目前也没有对应的开源组件 所以准备自己开发一个异步命令组件
 **QQ交流群 709378280**
-## 使用demo
+## 快速使用参考demo
 https://github.com/bojiw/asyncmdDemo
 #### 异步命令组件核心功能
 就是把一些耗时比较高并且可以异步处理的同步请求转换为异步处理来提高并发,并且把命令内容保存到数据库表中来提高数据可靠性并且通过重试来保证数据的最终一致性
@@ -49,103 +49,6 @@ https://github.com/bojiw/asyncmdDemo
 ![image](http://qiniu.bojiw.com/20197/2019729203113image.png)
 
 
-## 详细配置项
-有两个地方可以配置 一个为全局配置项AsynGroupConfig 一个为设置个性化配置项AbstractAsynExecuter
-```
-    <bean id="asynGroupConfig" class="com.asyncmd.config.AsynGroupConfig">
-        <!--必填项-->
-        <!--定时任务名称 重点：需要不同工程不一样 推荐用应用名称来命名 如果多个项目定义的相同 定时任务会有问题-->
-        <property name="jobName" value="demo-asyn"/>
-        <!--zookeeper地址-->
-        <property name="zookeeperUrl" value="127.0.0.1:2181"/>
-        <!--数据源 -->
-        <property name="dataSource" ref="dataSource"/>
-        <!--
-             * 重试执行频率 5s,10s,1m,1h 频率建议不要小于3秒
-             * 代表第一次重试5秒以后执行 第二次10秒以后执行 第三次1分钟以后执行 第四次1小时以后执行 之后都是间隔1小时执行
-             * 执行频率 5s,10s,20s
-             * 代表第一次重试5秒以后执行 第二次10秒以后执行 第三次20秒以后执行
-             * 这个参数如果想不同异步命令频率不一样 可以在异步命令执行器也有参数可以设置
-        -->
-        <property name="executerFrequencys" value="10s,10s,1m"/>
-        <!--分表数量 推荐16 如果改了线程池数据 则需要根据下面优化环节进行调整 正式环境一定要填写 设置需要是2的倍数如 4 8 16 32 64 因为分表位计算是通过biz_id 然后和hashmap相同的计算下标的方式 & hash
-            4代表分了4张异步命令表
-            也代表有4个线程同时捞取4张异步命令表的数据进行执行 测试环境可以不填写
-            默认一张异步命令表 后台只会有一个线程捞取数据
-        -->
-        <property name="tableNum" value="4"/>
-        <!--非必填项-->
-        <!--执行线程池配置 根据自己应用来配置 start-->
-        <!--最大线程数 默认150-->
-        <property name="maxPoolSize" value="200"/>
-        <!--缓存队列长度 默认300-->
-        <property name="queueCapacity" value="400"/>
-        <!--最小线程池 默认10-->
-        <property name="corePoolSize" value="20"/>
-        <!--执行线程池配置 end-->
-        
-        <!-- 调度中心调度执行相关配置 start -->
-        <!-- 从数据库捞取未执行的异步命令多久捞取一次 默认是1秒捞取一次  0/3 * * * * ?代表3秒捞取一次 如果是为了提高消费速度 推荐通过设置分表数量和线程池大小来配置-->
-        <property name="cron" value="0/3 * * * * ?"/>
-        <!--异步命令是否要先进后出 默认先进先出 true代表后进先出 注意这个只针对一张表的情况 -->
-        <property name="desc" value="true"/>
-        <!--一次从一张表中捞取命令数量 默认20条数据 10代表捞取10条数据 如果是为了提高消费速度 推荐通过设置分表数量和线程池大小来配置 -->
-        <property name="limit" value="10"/>
-        <!--重试次数 默认重试12次 20代表重试20次-->
-        <property name="retryNum" value="20"/>
-
-        <!-- 调度中心调度执行相关配置 end -->
-
-        <!-- 异常情况如应用重启导致未成功执行的命令状态重置任务相关配置 start -->
-        <!--重置状态任务执行频率 默认每隔60秒执行一次-->
-        <property name="restCron" value="0/30 * * * * ?"/>
-        <!-- 异常情况如应用重启导致未成功执行的命令状态重置任务相关配置 end -->
-
-        <!-- 备份定时任务相关配置 start-->
-        <!--是否开启自动备份异步命令表的功能 开启需要在数据库中创建异步命令历史表 表的数量和异步命令表相同
-         默认每天凌晨2点钟开启定时任务把一个月以前的数据从异步命令表拷贝到异步命令历史表中 把异步命令表中备份成功的数据删除
-         最多每天同步每张表10w条数据 这样定时清理数据可以保证异步命令表的查询效率高
-         可以修改默认配置-->
-        <property name="backup" value="true"/>
-        <!--配置什么时候执行定时任务 默认每天凌晨2点-->
-        <property name="backupCron" value="0/3 * * * * ?"/>
-        <!--配置备份多久以前的数据 20代表把20天以前的异步命令表数据都清理 备份到异步命令历史表中-->
-        <property name="beforeDate" value="20"/>
-        <!--配置备份任务一次最多每张表处理多少条数据 默认是10w条数据 10代表处理1w条数据-->
-        <property name="maxNo" value="10"/>
-        <!-- 备份定时任务相关配置 end-->
-        
-        <!--设置全局异常回调 每次异步命令执行异常都会回调里面都方法-->
-        <property name="errorCallBack" ref="asynCmdErrorCallBack"/>
-    </bean>
-```
-
-对不同异步命令对象进行个性化对配置
-```
-//如果有需要对某个异步命令对象做个性化设置 可以通过注解的方式 设置调度方式为调度中心调度 设置调度频率为 4s,4s,4m
-@AsynCmdConf(dispatchMode = DispatchMode.DISPATCH,executerFrequency = "4s,4s")
-public class SmsAsynCmd extends AsynCmd<SmsBiz> {
-
-    public static final String name = "sms";
-    /**
-     * 需要返回业务对象类 组件里要用
-     * @return
-     */
-    @Override
-    protected Class getObject() {
-        return SmsBiz.class;
-    }
-}
-```
-
-设置异步命令执行器的排序值 数值越大 越早执行 默认100
-```
-//设置排序值为90
-@AsynExecuterConf(sort = 90)
-@Service
-public class SmsExecuter extends AbstractAsynExecuter<SmsAsynCmd> {
-
-```
 
 ## 模型
 asynCmdDB(异步命令对象)
