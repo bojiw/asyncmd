@@ -29,11 +29,11 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
     public long saveCmd(AsynCmdDO asynCmdDO) {
         String tableName = SubTableUtil.getTableName(null, asynCmdDO.getBizId(), AsynCmdDO.TABLE_NAME);
 
-        String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,env,exception,gmt_create,gmt_modify) " +
-                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,env,exception,rely_biz_id,gmt_create,gmt_modify) " +
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         return JdbcTemplateUtil.newInstance().update(sql,new Object[]{asynCmdDO.getCmdType(),asynCmdDO.getContent(),asynCmdDO.getBizId(),asynCmdDO.getCreateHostName(),
                 asynCmdDO.getCreateIp(),asynCmdDO.getCreateName(),asynCmdDO.getExecuteNum(),asynCmdDO.getNextTime(),asynCmdDO.getStatus(),
-                asynCmdDO.getUpdateHostName(),asynCmdDO.getUpdateIp(),asynCmdDO.getSuccessExecuters(),asynCmdDO.getEnv(),asynCmdDO.getException(),new Date(),new Date()});
+                asynCmdDO.getUpdateHostName(),asynCmdDO.getUpdateIp(),asynCmdDO.getSuccessExecuters(),asynCmdDO.getEnv(),asynCmdDO.getException(),asynCmdDO.getRelyBizId(),new Date(),new Date()});
     }
     @Override
     public long delCmd(String bizId) {
@@ -164,7 +164,7 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
         StringBuffer sql = new StringBuffer();
         sql.append("select cmd_id,cmd_type,content,biz_id,create_host_name,create_ip,create_name,")
                 .append("execute_num,gmt_create,gmt_modify,next_time,status,update_host_name,update_ip,")
-                .append("success_executers,env,exception from ").append(tableName);
+                .append("success_executers,env,exception,rely_biz_id from ").append(tableName);
         return sql;
     }
     @Override

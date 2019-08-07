@@ -56,6 +56,9 @@ public class AsynRunnable implements Runnable {
     public void run() {
 
         try {
+            if (!asynExecuterService.relyAsynCmdSuccess(asynCmd.getRelyBizId())){
+                throw new AsynException(AsynExCode.RELY_NO_EXECUTER);
+            }
             for (AbstractAsynExecuter asynExecuter : asynExecuterList){
                 //如果已经成功执行可以不执行
                 if (isSuccess(asynExecuter,asynCmd)){

@@ -24,11 +24,11 @@ public class AsynCmdHistoryDAOImpl implements AsynCmdHistoryDAO {
     public long saveCmd(AsynCmdHistoryDO asynCmdHistoryDO) {
         String tableName = SubTableUtil.getTableName(null, asynCmdHistoryDO.getBizId(), AsynCmdHistoryDO.TABLE_NAME);
 
-        String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,env,exception,gmt_create,gmt_modify) " +
-                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,env,exception,rely_biz_id,gmt_create,gmt_modify) " +
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         return JdbcTemplateUtil.newInstance().update(sql,new Object[]{asynCmdHistoryDO.getCmdType(),asynCmdHistoryDO.getContent(),asynCmdHistoryDO.getBizId(),asynCmdHistoryDO.getCreateHostName(),
                 asynCmdHistoryDO.getCreateIp(),asynCmdHistoryDO.getCreateName(),asynCmdHistoryDO.getExecuteNum(),asynCmdHistoryDO.getNextTime(),asynCmdHistoryDO.getStatus(),
-                asynCmdHistoryDO.getUpdateHostName(),asynCmdHistoryDO.getUpdateIp(),asynCmdHistoryDO.getSuccessExecuters(),asynCmdHistoryDO.getEnv(),asynCmdHistoryDO.getException(),new java.util.Date(),new java.util.Date()});
+                asynCmdHistoryDO.getUpdateHostName(),asynCmdHistoryDO.getUpdateIp(),asynCmdHistoryDO.getSuccessExecuters(),asynCmdHistoryDO.getEnv(),asynCmdHistoryDO.getException(),asynCmdHistoryDO.getRelyBizId(),new java.util.Date(),new java.util.Date()});
 
     }
 
@@ -36,8 +36,8 @@ public class AsynCmdHistoryDAOImpl implements AsynCmdHistoryDAO {
     public long batchSaveCmd(Integer tableIndex,final List<AsynCmdHistoryDO> asynCmdHistoryDOs) {
         String tableName = SubTableUtil.getTableName(tableIndex, null, AsynCmdHistoryDO.TABLE_NAME);
 
-        String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,env,exception,gmt_create,gmt_modify) " +
-                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,env,exception,rely_biz_id,gmt_create,gmt_modify) " +
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         int[] ints = JdbcTemplateUtil.newInstance().batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
@@ -59,10 +59,11 @@ public class AsynCmdHistoryDAOImpl implements AsynCmdHistoryDAO {
                 preparedStatement.setString(12, asynCmdHistoryDO.getSuccessExecuters());
                 preparedStatement.setString(13,asynCmdHistoryDO.getEnv());
                 preparedStatement.setString(14,asynCmdHistoryDO.getException());
+                preparedStatement.setString(15,asynCmdHistoryDO.getRelyBizId());
                 Date gmtCreate = new Date(System.currentTimeMillis());
-                preparedStatement.setDate(15, gmtCreate);
+                preparedStatement.setDate(16, gmtCreate);
                 Date gmtModify = new Date(asynCmdHistoryDO.getGmtModify().getTime());
-                preparedStatement.setDate(16, gmtModify);
+                preparedStatement.setDate(17, gmtModify);
 
             }
 

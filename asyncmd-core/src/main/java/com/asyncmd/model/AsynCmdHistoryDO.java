@@ -102,6 +102,11 @@ public class AsynCmdHistoryDO implements Serializable {
      */
     private String exception;
 
+    /**
+     * 依赖的业务id
+     */
+    private String relyBizId;
+
 
     public Long getCmdId() {
         return cmdId;
@@ -237,5 +242,13 @@ public class AsynCmdHistoryDO implements Serializable {
 
     public void setException(String exception) {
         this.exception = exception;
+    }
+
+    public String getRelyBizId() {
+        return relyBizId;
+    }
+
+    public void setRelyBizId(String relyBizId) {
+        this.relyBizId = relyBizId;
     }
 }

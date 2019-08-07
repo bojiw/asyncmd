@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : utf-8
 
- Date: 08/01/2019 19:40:24 PM
+ Date: 08/07/2019 18:32:07 PM
 */
 
 SET NAMES utf8mb4;
@@ -38,11 +38,13 @@ CREATE TABLE `asyn_cmd00` (
   `update_ip` varchar(255) DEFAULT NULL,
   `success_executers` varchar(255) DEFAULT NULL,
   `env` varchar(255) DEFAULT NULL COMMENT '所在环境',
+  `exception` varchar(1024) DEFAULT NULL COMMENT '异常信息',
+  `rely_biz_id` varchar(255) DEFAULT NULL COMMENT '依赖的异步命令业务id',
   PRIMARY KEY (`cmd_id`),
   UNIQUE KEY `biz` (`biz_id`) USING BTREE,
   KEY `gmt_create` (`gmt_create`) USING BTREE,
   KEY `status_next_time` (`status`,`next_time`,`env`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=98832 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=98835 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `asyn_cmd01`
@@ -65,11 +67,13 @@ CREATE TABLE `asyn_cmd01` (
   `update_ip` varchar(255) DEFAULT NULL,
   `success_executers` varchar(255) DEFAULT NULL,
   `env` varchar(255) DEFAULT NULL COMMENT '所在环境',
+  `exception` varchar(1024) DEFAULT NULL COMMENT '异常信息',
+  `rely_biz_id` varchar(255) DEFAULT NULL COMMENT '依赖的异步命令业务id',
   PRIMARY KEY (`cmd_id`),
   UNIQUE KEY `biz` (`biz_id`) USING BTREE,
   KEY `gmt_create` (`gmt_create`) USING BTREE,
   KEY `status_next_time` (`status`,`next_time`,`env`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `asyn_cmd02`
@@ -92,6 +96,8 @@ CREATE TABLE `asyn_cmd02` (
   `update_ip` varchar(255) DEFAULT NULL,
   `success_executers` varchar(255) DEFAULT NULL,
   `env` varchar(255) DEFAULT NULL COMMENT '所在环境',
+  `exception` varchar(1024) DEFAULT NULL COMMENT '异常信息',
+  `rely_biz_id` varchar(255) DEFAULT NULL COMMENT '依赖的异步命令业务id',
   PRIMARY KEY (`cmd_id`),
   UNIQUE KEY `biz` (`biz_id`) USING BTREE,
   KEY `gmt_create` (`gmt_create`) USING BTREE,
@@ -119,11 +125,13 @@ CREATE TABLE `asyn_cmd03` (
   `update_ip` varchar(255) DEFAULT NULL,
   `success_executers` varchar(255) DEFAULT NULL,
   `env` varchar(255) DEFAULT NULL COMMENT '所在环境',
+  `exception` varchar(1024) DEFAULT NULL COMMENT '异常信息',
+  `rely_biz_id` varchar(255) DEFAULT NULL COMMENT '依赖的异步命令业务id',
   PRIMARY KEY (`cmd_id`),
   UNIQUE KEY `biz` (`biz_id`) USING BTREE,
   KEY `gmt_create` (`gmt_create`) USING BTREE,
   KEY `status_next_time` (`status`,`next_time`,`env`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `asyn_cmd_history00`
@@ -146,6 +154,8 @@ CREATE TABLE `asyn_cmd_history00` (
   `update_ip` varchar(255) DEFAULT NULL,
   `success_executers` varchar(255) DEFAULT NULL,
   `env` varchar(255) DEFAULT NULL,
+  `exception` varchar(1024) DEFAULT NULL,
+  `rely_biz_id` varchar(255) DEFAULT NULL COMMENT '依赖的异步命令业务id',
   PRIMARY KEY (`cmd_id`),
   UNIQUE KEY `biz` (`biz_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8;
@@ -171,6 +181,8 @@ CREATE TABLE `asyn_cmd_history01` (
   `update_ip` varchar(255) DEFAULT NULL,
   `success_executers` varchar(255) DEFAULT NULL,
   `env` varchar(255) DEFAULT NULL,
+  `exception` varchar(1024) DEFAULT NULL,
+  `rely_biz_id` varchar(255) DEFAULT NULL COMMENT '依赖的异步命令业务id',
   PRIMARY KEY (`cmd_id`),
   UNIQUE KEY `biz` (`biz_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -196,6 +208,8 @@ CREATE TABLE `asyn_cmd_history02` (
   `update_ip` varchar(255) DEFAULT NULL,
   `success_executers` varchar(255) DEFAULT NULL,
   `env` varchar(255) DEFAULT NULL,
+  `exception` varchar(1024) DEFAULT NULL,
+  `rely_biz_id` varchar(255) DEFAULT NULL COMMENT '依赖的异步命令业务id',
   PRIMARY KEY (`cmd_id`),
   UNIQUE KEY `biz` (`biz_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -221,6 +235,8 @@ CREATE TABLE `asyn_cmd_history03` (
   `update_ip` varchar(255) DEFAULT NULL,
   `success_executers` varchar(255) DEFAULT NULL,
   `env` varchar(255) DEFAULT NULL,
+  `exception` varchar(1024) DEFAULT NULL,
+  `rely_biz_id` varchar(255) DEFAULT NULL COMMENT '依赖的异步命令业务id',
   PRIMARY KEY (`cmd_id`),
   UNIQUE KEY `biz` (`biz_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

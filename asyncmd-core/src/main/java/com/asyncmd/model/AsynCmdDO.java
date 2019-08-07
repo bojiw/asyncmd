@@ -99,6 +99,10 @@ public class AsynCmdDO implements Serializable {
      * 异常信息
      */
     private String exception;
+    /**
+     * 依赖的业务id
+     */
+    private String relyBizId;
 
 
     public AsynCmdDO(){
@@ -240,5 +244,13 @@ public class AsynCmdDO implements Serializable {
 
     public void setException(String exception) {
         this.exception = exception;
+    }
+
+    public String getRelyBizId() {
+        return relyBizId;
+    }
+
+    public void setRelyBizId(String relyBizId) {
+        this.relyBizId = relyBizId;
     }
 }

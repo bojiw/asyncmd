@@ -111,6 +111,11 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
     private String exception;
 
     /**
+     * 依赖的业务id
+     */
+    private String relyBizId;
+
+    /**
      * 获取范型类型 由子类返回
      * @return
      */
@@ -273,5 +278,13 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
 
     public void setException(String exception) {
         this.exception = exception;
+    }
+
+    public String getRelyBizId() {
+        return relyBizId;
+    }
+
+    public void setRelyBizId(String relyBizId) {
+        this.relyBizId = relyBizId;
     }
 }
