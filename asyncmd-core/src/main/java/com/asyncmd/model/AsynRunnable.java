@@ -12,6 +12,8 @@ import com.asyncmd.utils.CountException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 /**
@@ -71,7 +73,7 @@ public class AsynRunnable implements Runnable {
             asynExecuterService.updateStatus(param);
         }catch (Exception e){
             //失败更新状态为初始化或错误 初始化状态则由调度中心调度
-            AsynStatus asynStatus = updateStatus();
+            AsynStatus asynStatus = updateStatus(e);
             if (countNotNull()){
                 countException.setException(new AsynException(AsynExCode.SYS_ERROR,e));
             }
@@ -83,7 +85,25 @@ public class AsynRunnable implements Runnable {
         }
     }
 
-    private AsynStatus updateStatus(){
+    private String getException(Exception e){
+
+        try {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String s = sw.toString();
+            sw.close();
+            pw.close();
+            if (s.length() > AsynCmd.EXCEPTION){
+                return s.substring(0, AsynCmd.EXCEPTION);
+            }
+            return s;
+        } catch (Exception ex) {
+            return "获得Exception信息的工具类异常";
+        }
+    }
+
+    private AsynStatus updateStatus(Exception e){
         AsynUpdateParam asynUpdateParam = new AsynUpdateParam();
         AsynStatus asynStatus;
         if (asynCmd.getExecuteNum() >= asynGroupConfig.getAsynConfig().getRetryNum()){
@@ -100,7 +120,7 @@ public class AsynRunnable implements Runnable {
         asynUpdateParam.setBizId(asynCmd.getBizId());
         asynUpdateParam.setWhereAsynStatus(AsynStatus.EXECUTE.getStatus());
         asynUpdateParam.setSuccessExecutes(JSON.toJSONString(asynCmd.getSuccessExecuters()));
-
+        asynUpdateParam.setException(getException(e));
         asynExecuterService.updateStatus(asynUpdateParam);
         return asynStatus;
     }

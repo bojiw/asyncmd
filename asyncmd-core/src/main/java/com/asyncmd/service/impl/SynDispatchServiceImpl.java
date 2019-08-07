@@ -23,6 +23,7 @@ import java.util.List;
 public class SynDispatchServiceImpl extends AbstractDispatchService{
     private Log log = LogFactory.getLog(this.getClass());
 
+    @Override
     public void dispatch(AsynCmd asynCmd, List<AbstractAsynExecuter<? extends AsynCmd>> asynExecuterList) {
         asyExecuter(asynExecuterList,asynCmd);
     }

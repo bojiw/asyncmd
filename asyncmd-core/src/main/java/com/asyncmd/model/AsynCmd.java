@@ -20,6 +20,8 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
 
     public static final String default_create_name = "system";
 
+    public static final Integer EXCEPTION = 1000;
+
     /**
      * 唯一id
      */
@@ -102,6 +104,11 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
      * 所在环境 预发和正式环境需要不同 对正式环境和预发环境做隔离 本地环境和开发环境也可以做隔离
      */
     private String env;
+
+    /**
+     * 异常信息
+     */
+    private String exception;
 
     /**
      * 获取范型类型 由子类返回
@@ -258,5 +265,13 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
 
     final public void setEnv(String env) {
         this.env = env;
+    }
+
+    public String getException() {
+        return exception;
+    }
+
+    public void setException(String exception) {
+        this.exception = exception;
     }
 }

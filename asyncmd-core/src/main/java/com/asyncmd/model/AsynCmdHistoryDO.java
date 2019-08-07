@@ -97,6 +97,12 @@ public class AsynCmdHistoryDO implements Serializable {
      */
     private String env;
 
+    /**
+     * 异常信息
+     */
+    private String exception;
+
+
     public Long getCmdId() {
         return cmdId;
     }
@@ -223,5 +229,13 @@ public class AsynCmdHistoryDO implements Serializable {
 
     public void setEnv(String env) {
         this.env = env;
+    }
+
+    public String getException() {
+        return exception;
+    }
+
+    public void setException(String exception) {
+        this.exception = exception;
     }
 }

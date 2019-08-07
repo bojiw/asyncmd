@@ -43,6 +43,7 @@ public class AsynCmdConvert {
         asynCmdDO.setUpdateIp(asynCmd.getUpdateIp());
         asynCmdDO.setSuccessExecuters(JSON.toJSONString(asynCmd.getSuccessExecuters()));
         asynCmdDO.setEnv(asynCmd.getEnv());
+        asynCmdDO.setException(asynCmd.getException());
         return asynCmdDO;
     }
     public static List<AsynCmd> toCmdList(List<AsynCmdDO> asynCmdDOs){
@@ -79,6 +80,7 @@ public class AsynCmdConvert {
             asynCmd.setContent(asynCmd.jsonToObject(asynCmdDO.getContent()));
             asynCmd.setSuccessExecuters(JSON.parseObject(asynCmdDO.getSuccessExecuters(),ArrayList.class));
             asynCmd.setEnv(asynCmdDO.getEnv());
+            asynCmd.setException(asynCmdDO.getException());
             return asynCmd;
         }catch (Exception e){
             throw new AsynException(AsynExCode.ILLEGAL);
@@ -102,6 +104,7 @@ public class AsynCmdConvert {
         asynCmdHistoryDO.setUpdateIp(asynCmd.getUpdateIp());
         asynCmdHistoryDO.setSuccessExecuters(JSON.toJSONString(asynCmd.getSuccessExecuters()));
         asynCmdHistoryDO.setEnv(asynCmd.getEnv());
+        asynCmdHistoryDO.setException(asynCmd.getException());
         return asynCmdHistoryDO;
 
     }
