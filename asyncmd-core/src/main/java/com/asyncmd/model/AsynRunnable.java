@@ -9,6 +9,7 @@ import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
 import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.utils.CountException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -56,9 +57,7 @@ public class AsynRunnable implements Runnable {
     public void run() {
 
         try {
-            if (!asynExecuterService.relyAsynCmdSuccess(asynCmd.getRelyBizId())){
-                throw new AsynException(AsynExCode.RELY_NO_EXECUTER);
-            }
+            valideRelyAsynCmdSuccess(asynCmd.getRelyBizId());
             for (AbstractAsynExecuter asynExecuter : asynExecuterList){
                 //如果已经成功执行可以不执行
                 if (isSuccess(asynExecuter,asynCmd)){
@@ -88,6 +87,25 @@ public class AsynRunnable implements Runnable {
         }
     }
 
+    /**
+     * 效验依赖异步命令对象是否执行成功
+     * @param relyBizId
+     */
+    private void valideRelyAsynCmdSuccess(String relyBizId){
+        if (StringUtils.isEmpty(relyBizId)){
+            return;
+        }
+        if (!asynExecuterService.relyAsynCmdSuccess(asynCmd.getRelyBizId())){
+            throw new AsynException(AsynExCode.RELY_NO_EXECUTER);
+        }
+    }
+
+
+    /**
+     * 获取堆栈信息
+     * @param e
+     * @return
+     */
     private String getException(Exception e){
 
         try {
