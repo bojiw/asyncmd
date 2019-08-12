@@ -2,6 +2,9 @@
 package com.asyncmd.model;
 
 import com.alibaba.fastjson.JSON;
+import com.asyncmd.callback.AbstractErrorCallBack;
+import com.asyncmd.callback.CallBack;
+import com.asyncmd.callback.CallBackQueue;
 import com.asyncmd.callback.ErrorCallBack;
 import com.asyncmd.config.AsynGroupConfig;
 import com.asyncmd.enums.AsynStatus;
@@ -16,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author wangwendi
@@ -79,7 +83,7 @@ public class AsynRunnable implements Runnable {
             if (countNotNull()){
                 countException.setException(new AsynException(AsynExCode.SYS_ERROR,e));
             }
-            callBack(asynStatus,e);
+            offerCallBackQueue(asynStatus,e);
         }finally {
             if (countNotNull()){
                 countException.countDown();
@@ -152,18 +156,22 @@ public class AsynRunnable implements Runnable {
     }
 
     /**
-     * 出现异常时回调
+     * 出现异常时入栈回调队列
      * @param status
      */
-    private void callBack(AsynStatus status,Exception e){
+    private void offerCallBackQueue(AsynStatus status,Exception e){
         try {
-            ErrorCallBack errorCallBack = asynGroupConfig.getErrorCallBack();
-            if (errorCallBack == null){
-                return;
-            }
-            errorCallBack.everyErrorCallBack(asynCmd,e);
-            if (status == AsynStatus.ERROR){
-                errorCallBack.errorCallBack(asynCmd,e);
+            CallBack callBack = new CallBack();
+            callBack.setAsynCmd(asynCmd);
+            callBack.setException(e);
+            callBack.setAsynStatus(status);
+            //入栈队列失败则直接执行
+            if (!CallBackQueue.offer(callBack)){
+                AbstractErrorCallBack abstractErrorCallBack = asynGroupConfig.getAsynConfig().getAbstractErrorCallBack();
+                if (Objects.isNull(abstractErrorCallBack)){
+                    return;
+                }
+                abstractErrorCallBack.callBack(callBack);
             }
 
         }catch (Exception ex){

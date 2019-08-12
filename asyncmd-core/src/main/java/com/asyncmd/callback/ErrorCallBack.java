@@ -1,8 +1,6 @@
 
 package com.asyncmd.callback;
 
-import com.asyncmd.model.AsynCmd;
-
 /**
  * 异常回调
  * @author wangwendi
@@ -10,16 +8,11 @@ import com.asyncmd.model.AsynCmd;
  */
 public interface ErrorCallBack {
 
-    /**
-     * 每次执行异常回调
-     * @param asynCmd
-     */
-    void everyErrorCallBack(AsynCmd asynCmd,Exception e);
 
 
     /**
-     * 异步命令状态为error时会回调
-     * @param asynCmd
+     * 异步命令执行异常回调
+     * @param callBack
      */
-    void errorCallBack(AsynCmd asynCmd,Exception e);
+    void callBack(CallBack callBack);
 }

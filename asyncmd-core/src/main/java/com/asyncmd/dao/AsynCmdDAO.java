@@ -20,7 +20,7 @@ public interface AsynCmdDAO {
 
     /**
      * 保存异步命令
-     * @param asynCmdDO
+     * @param asynCmdDO 异步命令对象
      * @return
      */
     long saveCmd(AsynCmdDO asynCmdDO);
@@ -30,14 +30,14 @@ public interface AsynCmdDAO {
     /**
      * 删除异步命令
      * @param bizId
-     * @return
+     * @return 是否成功
      */
     long delCmd(String bizId);
 
     /**
      * 批量删除异步命令
      * @param bizIds
-     * @return
+     * @return 是否成功
      */
     long batchDelCmd(Integer tableIndex,List<String> bizIds);
 
@@ -46,7 +46,7 @@ public interface AsynCmdDAO {
     /**
      * 分表根据业务id集合更新状态
      * @param asynUpdateParam
-     * @return
+     * @return 是否成功
      */
     long updateStatus(AsynUpdateParam asynUpdateParam);
 
@@ -54,7 +54,7 @@ public interface AsynCmdDAO {
     /**
      * 分表根据业务id集合批量更新状态
      * @param asynUpdateParam
-     * @return
+     * @return 是否成功
      */
     long batchUpdateStatus(Integer tableIndex,AsynUpdateParam asynUpdateParam);
 

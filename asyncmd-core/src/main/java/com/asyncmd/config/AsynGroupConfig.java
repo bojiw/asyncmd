@@ -1,6 +1,7 @@
 
 package com.asyncmd.config;
 
+import com.asyncmd.callback.AbstractErrorCallBack;
 import com.asyncmd.callback.ErrorCallBack;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
@@ -21,7 +22,7 @@ public class AsynGroupConfig {
 
     private AsynConfig asynConfig;
 
-    private ErrorCallBack errorCallBack;
+
 
 
     public AsynGroupConfig(){
@@ -112,11 +113,8 @@ public class AsynGroupConfig {
         asynConfig.setEnv(env);
     }
 
-    public void setErrorCallBack(ErrorCallBack errorCallBack) {
-        this.errorCallBack = errorCallBack;
-    }
 
-    public ErrorCallBack getErrorCallBack() {
-        return errorCallBack;
+    public void setAbstractErrorCallBack(AbstractErrorCallBack abstractErrorCallBack) {
+        asynConfig.setAbstractErrorCallBack(abstractErrorCallBack);
     }
 }

@@ -126,6 +126,7 @@
                     <encoding>UTF-8</encoding>
                     <doctitle>webporter 1.0</doctitle>
                     <locale>zh_CN</locale>
+                    <failOnError>false</failOnError>
                 </configuration>
                 <executions>
                     <execution>
