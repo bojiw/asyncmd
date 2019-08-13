@@ -5,7 +5,18 @@
 以前有幸看过网商银行的一个异步命令组件源码 感觉功能比较实用 可以在挺多场景上使用 尤其现在领域驱动设计目前比较火 配合这个组件可以对领域内事件更好的支持 因为看目前也没有对应的开源组件 所以准备自己开发一个异步命令组件
 **QQ交流群 709378280**
 ## 快速使用参考demo
+github
+spring
 https://github.com/bojiw/asyncmdDemo
+spring boot
+https://github.com/bojiw/asyn-springboot-demo
+
+码云 
+spring
+https://gitee.com/wangwendi/asyncmdDemo
+spring boot
+https://gitee.com/wangwendi/asyn-springboot-demo
+
 #### 异步命令组件功能
 - 把一些耗时比较高并且可以异步处理的同步请求转换为异步处理来提高并发,并且把命令内容保存到数据库表中来提高数据可靠性并且通过重试来保证数据的最终一致性
 - 领域驱动事件的通知封装 也可以只用组件保证事件的可靠性 用EventBus来进行事件通知
