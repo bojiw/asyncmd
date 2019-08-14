@@ -10,6 +10,7 @@
     <version>1.4</version>
     <modules>
         <module>asyncmd-core</module>
+        <module>asyncmd-spring-boot-starter-core</module>
     </modules>
     <name>asyncmd</name>
     <description>

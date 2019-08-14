@@ -1,0 +1,139 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.asyncmd.starter.properties.AsynCmdProperties",
+      "name": "asyn.core",
+      "sourceMethod": "getAsynCoreProperties()",
+      "type": "com.asyncmd.starter.properties.AsynCoreProperties"
+    },
+    {
+      "sourceType": "com.asyncmd.starter.properties.AsynCmdProperties",
+      "name": "asyn.poll",
+      "sourceMethod": "getAsynPollProperties()",
+      "type": "com.asyncmd.starter.properties.AsynPollProperties"
+    },
+    {
+      "sourceType": "com.asyncmd.starter.properties.AsynCmdProperties",
+      "name": "asyn.executerjob",
+      "sourceMethod": "getAsynExecuterJobProperties()",
+      "type": "com.asyncmd.starter.properties.AsynExecuterJobProperties"
+    },
+    {
+      "sourceType": "com.asyncmd.starter.properties.AsynCmdProperties",
+      "name": "asyn.restjob",
+      "sourceMethod": "getAsynRestjobProperties()",
+      "type": "com.asyncmd.starter.properties.AsynRestjobProperties"
+    },
+    {
+      "sourceType": "com.asyncmd.starter.properties.AsynCmdProperties",
+      "name": "asyn.backupjob",
+      "sourceMethod": "getAsynBackupJobProperties()",
+      "type": "com.asyncmd.starter.properties.AsynBackupJobProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "asyn.core.zookeeperUrl",
+      "type": "java.lang.String",
+      "sourceType": "com.asyncmd.starter.properties.AsynCoreProperties",
+      "description": "zookeeper地址"
+    },
+    {
+      "name": "asyn.core.jobName",
+      "type": "java.lang.String",
+      "sourceType": "com.asyncmd.starter.properties.AsynCoreProperties",
+      "description": "调度任务名称 不同应用需要不同"
+    },
+    {
+      "name": "asyn.core.env",
+      "type": "java.lang.String",
+      "sourceType": "com.asyncmd.starter.properties.AsynCoreProperties",
+      "description": "所在环境 会保证到表中 这样就可以解决预发环境的命令只会在预发环境上执行 做到不同环境之间哪怕用的数据库一样 也可以隔离"
+    },
+    {
+      "name": "asyn.core.tableNum",
+      "type": "java.lang.Integer",
+      "sourceType": "com.asyncmd.starter.properties.AsynCoreProperties",
+      "description": "所在环境 会保证到表中 这样就可以解决预发环境的命令只会在预发环境上执行 做到不同环境之间哪怕用的数据库一样 也可以隔离"
+    },
+    {
+      "name": "asyn.core.executerFrequencys",
+      "type": "java.lang.String",
+      "sourceType": "com.asyncmd.starter.properties.AsynCoreProperties",
+      "description": "重试执行频率 5s,10s,1m,1h 频率建议不要小于1秒"
+    },
+    {
+      "name": "asyn.pool.maxPoolSize",
+      "type": "java.lang.Integer",
+      "sourceType": "com.asyncmd.starter.properties.AsynPollProperties",
+      "description": "最大线程数 默认150"
+    },
+    {
+      "name": "asyn.pool.queueCapacity",
+      "type": "java.lang.Integer",
+      "sourceType": "com.asyncmd.starter.properties.AsynPollProperties",
+      "description": "缓存队列长度 默认300"
+    },
+    {
+      "name": "asyn.pool.corePoolSize",
+      "type": "java.lang.Integer",
+      "sourceType": "com.asyncmd.starter.properties.AsynPollProperties",
+      "description": "核心线程池 默认10"
+    },
+    {
+      "name": "asyn.executerjob.cron",
+      "type": "java.lang.String",
+      "sourceType": "com.asyncmd.starter.properties.AsynExecuterJobProperties",
+      "description": "从数据库捞取未执行的异步命令多久捞取一次 默认是1秒捞取一次  0/2 * * * * ?代表2秒捞取一次"
+    },
+    {
+      "name": "asyn.executerjob.desc",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.asyncmd.starter.properties.AsynExecuterJobProperties",
+      "description": "异步命令是否要先进后出 默认先进先出 true代表后进先出 注意这个只针对一张表的情况"
+    },
+    {
+      "name": "asyn.executerjob.limit",
+      "type": "java.lang.Integer",
+      "sourceType": "com.asyncmd.starter.properties.AsynExecuterJobProperties",
+      "description": "一次从一张表中捞取命令数量 默认20条数据 10代表捞取10条数据"
+    },
+    {
+      "name": "asyn.executerjob.retryNum",
+      "type": "java.lang.Integer",
+      "sourceType": "com.asyncmd.starter.properties.AsynExecuterJobProperties",
+      "description": "重试次数 默认重试12次 20代表重试20次"
+    },
+    {
+      "name": "asyn.restjob.restCron",
+      "type": "java.lang.String",
+      "sourceType": "com.asyncmd.starter.properties.AsynRestjobProperties",
+      "description": "重置状态任务执行频率 默认每隔60秒执行一次"
+    },
+    {
+      "name": "asyn.backupjob.backup",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.asyncmd.starter.properties.AsynBackupJobProperties",
+      "description": "是否开启自动备份异步命令表的功能 开启需要在数据库中创建异步命令历史表 "
+    },
+    {
+      "name": "asyn.backupjob.backupCron",
+      "type": "java.lang.String",
+      "sourceType": "com.asyncmd.starter.properties.AsynBackupJobProperties",
+      "description": "配置什么时候执行定时任务 默认每天凌晨2点"
+    },
+    {
+      "name": "asyn.backupjob.beforeDate",
+      "type": "java.lang.Integer",
+      "sourceType": "com.asyncmd.starter.properties.AsynBackupJobProperties",
+      "description": "配置备份多久以前的数据 20代表把20天以前的异步命令表数据都清理 备份到异步命令历史表中"
+    },
+    {
+      "name": "asyn.backupjob.maxNo",
+      "type": "java.lang.Integer",
+      "sourceType": "com.asyncmd.starter.properties.AsynBackupJobProperties",
+      "description": "配置备份任务一次最多每张表处理多少条数据 默认是10w条数据 10代表处理1w条数据"
+    }
+  ]
+}

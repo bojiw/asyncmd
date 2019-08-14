@@ -89,7 +89,7 @@ public class AsynConfig {
         SubTableUtil.init(tableNum);
         LocalHostUtil.init();
         ThreadPoolTaskExecutorUtil.newInstance().init();
-        if(!Objects.isNull(abstractErrorCallBack)){
+        if(abstractErrorCallBack != null){
             asynCallBackRunnable = new AsynCallBackRunnable(abstractErrorCallBack);
             Thread thread = new Thread(asynCallBackRunnable);
             thread.setDaemon(true);

@@ -168,7 +168,7 @@ public class AsynRunnable implements Runnable {
             //入栈队列失败则直接执行
             if (!CallBackQueue.offer(callBack)){
                 AbstractErrorCallBack abstractErrorCallBack = asynGroupConfig.getAsynConfig().getAbstractErrorCallBack();
-                if (Objects.isNull(abstractErrorCallBack)){
+                if (abstractErrorCallBack == null){
                     return;
                 }
                 abstractErrorCallBack.callBack(callBack);

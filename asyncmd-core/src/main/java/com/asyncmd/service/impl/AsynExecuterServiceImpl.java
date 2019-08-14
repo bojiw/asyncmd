@@ -163,7 +163,7 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
     @Override
     public Boolean relyAsynCmdSuccess(String bizId) {
         AsynCmdDO asynCmdDO = asynCmdDAO.getAsynCmdByBizId(bizId);
-        if (Objects.isNull(asynCmdDO)){
+        if (asynCmdDO == null){
             return false;
         }
         //如果依赖的异步命令未执行成功则返回失败

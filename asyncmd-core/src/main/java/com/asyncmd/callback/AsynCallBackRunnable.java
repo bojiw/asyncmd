@@ -22,7 +22,7 @@ public class AsynCallBackRunnable implements Runnable{
 
     @Override
     public void run() {
-        if (Objects.isNull(abstractErrorCallBack)){
+        if (abstractErrorCallBack == null){
             return;
         }
         while (true){
