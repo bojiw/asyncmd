@@ -272,19 +272,19 @@ public abstract class AsynCmd<E extends AsynBizObject> implements Serializable{
         this.env = env;
     }
 
-    public String getException() {
+    final public String getException() {
         return exception;
     }
 
-    public void setException(String exception) {
+    final public void setException(String exception) {
         this.exception = exception;
     }
 
-    public String getRelyBizId() {
+    final public String getRelyBizId() {
         return relyBizId;
     }
 
-    public void setRelyBizId(String relyBizId) {
+    final public void setRelyBizId(String relyBizId) {
         this.relyBizId = relyBizId;
     }
 }
