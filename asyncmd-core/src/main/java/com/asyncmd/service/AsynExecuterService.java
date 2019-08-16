@@ -59,5 +59,12 @@ public interface AsynExecuterService {
      */
     AsynCmd getAsynCmdByBizId(String bizId,Class<? extends AsynCmd>asynCmdClass);
 
+    /**
+     * 依赖异步命令执行成功
+     * @param bizId
+     * @return
+     */
+    Boolean relyAsynCmdSuccess(String bizId);
+
 
 }

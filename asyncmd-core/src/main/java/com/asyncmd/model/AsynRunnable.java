@@ -2,6 +2,9 @@
 package com.asyncmd.model;
 
 import com.alibaba.fastjson.JSON;
+import com.asyncmd.callback.AbstractErrorCallBack;
+import com.asyncmd.callback.CallBack;
+import com.asyncmd.callback.CallBackQueue;
 import com.asyncmd.callback.ErrorCallBack;
 import com.asyncmd.config.AsynGroupConfig;
 import com.asyncmd.enums.AsynStatus;
@@ -9,10 +12,14 @@ import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
 import com.asyncmd.service.AsynExecuterService;
 import com.asyncmd.utils.CountException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author wangwendi
@@ -54,6 +61,7 @@ public class AsynRunnable implements Runnable {
     public void run() {
 
         try {
+            valideRelyAsynCmdSuccess(asynCmd.getRelyBizId());
             for (AbstractAsynExecuter asynExecuter : asynExecuterList){
                 //如果已经成功执行可以不执行
                 if (isSuccess(asynExecuter,asynCmd)){
@@ -71,11 +79,11 @@ public class AsynRunnable implements Runnable {
             asynExecuterService.updateStatus(param);
         }catch (Exception e){
             //失败更新状态为初始化或错误 初始化状态则由调度中心调度
-            AsynStatus asynStatus = updateStatus();
+            AsynStatus asynStatus = updateStatus(e);
             if (countNotNull()){
                 countException.setException(new AsynException(AsynExCode.SYS_ERROR,e));
             }
-            callBack(asynStatus,e);
+            offerCallBackQueue(asynStatus,e);
         }finally {
             if (countNotNull()){
                 countException.countDown();
@@ -83,7 +91,49 @@ public class AsynRunnable implements Runnable {
         }
     }
 
-    private AsynStatus updateStatus(){
+    /**
+     * 效验依赖异步命令对象是否执行成功
+     * @param relyBizId
+     */
+    private void valideRelyAsynCmdSuccess(String relyBizId){
+        if (StringUtils.isEmpty(relyBizId)){
+            return;
+        }
+        if (!asynExecuterService.relyAsynCmdSuccess(asynCmd.getRelyBizId())){
+            throw new AsynException(AsynExCode.RELY_NO_EXECUTER);
+        }
+    }
+
+
+    /**
+     * 获取堆栈信息
+     * @param e
+     * @return
+     */
+    private String getException(Exception e){
+
+        try {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String s = sw.toString();
+            sw.close();
+            pw.close();
+            if (s.length() > AsynCmd.EXCEPTION){
+                return s.substring(0, AsynCmd.EXCEPTION);
+            }
+            return s;
+        } catch (Exception ex) {
+            return "组件内部异常,获得Exception信息的工具类异常";
+        }
+    }
+
+    /**
+     * 更新状态为初始化或者失败
+     * @param e
+     * @return
+     */
+    private AsynStatus updateStatus(Exception e){
         AsynUpdateParam asynUpdateParam = new AsynUpdateParam();
         AsynStatus asynStatus;
         if (asynCmd.getExecuteNum() >= asynGroupConfig.getAsynConfig().getRetryNum()){
@@ -100,24 +150,28 @@ public class AsynRunnable implements Runnable {
         asynUpdateParam.setBizId(asynCmd.getBizId());
         asynUpdateParam.setWhereAsynStatus(AsynStatus.EXECUTE.getStatus());
         asynUpdateParam.setSuccessExecutes(JSON.toJSONString(asynCmd.getSuccessExecuters()));
-
+        asynUpdateParam.setException(getException(e));
         asynExecuterService.updateStatus(asynUpdateParam);
         return asynStatus;
     }
 
     /**
-     * 出现异常时回调
+     * 出现异常时入栈回调队列
      * @param status
      */
-    private void callBack(AsynStatus status,Exception e){
+    private void offerCallBackQueue(AsynStatus status,Exception e){
         try {
-            ErrorCallBack errorCallBack = asynGroupConfig.getErrorCallBack();
-            if (errorCallBack == null){
-                return;
-            }
-            errorCallBack.everyErrorCallBack(asynCmd,e);
-            if (status == AsynStatus.ERROR){
-                errorCallBack.errorCallBack(asynCmd,e);
+            CallBack callBack = new CallBack();
+            callBack.setAsynCmd(asynCmd);
+            callBack.setException(e);
+            callBack.setAsynStatus(status);
+            //入栈队列失败则直接执行
+            if (!CallBackQueue.offer(callBack)){
+                AbstractErrorCallBack abstractErrorCallBack = asynGroupConfig.getAsynConfig().getAbstractErrorCallBack();
+                if (abstractErrorCallBack == null){
+                    return;
+                }
+                abstractErrorCallBack.callBack(callBack);
             }
 
         }catch (Exception ex){

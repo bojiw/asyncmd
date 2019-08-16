@@ -19,6 +19,7 @@ public enum AsynExCode {
     ZOOKEEPER_NULL(2005,"zookeeper地址不能为空"),
     ENV_NULL(2006,"env环境参数不能为空"),
     JOB_NAME_NULL(2007,"jobName不能为空"),
+    RELY_NO_EXECUTER(3001,"依赖的异步命令未成功执行"),
     ;
 
     private Integer code;

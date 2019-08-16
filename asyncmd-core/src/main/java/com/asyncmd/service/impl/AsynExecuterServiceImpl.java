@@ -30,6 +30,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -156,5 +157,19 @@ public class AsynExecuterServiceImpl  implements AsynExecuterService {
     private void buildUpdateParam(AsynUpdateParam param){
         param.setUpdateIp(LocalHostUtil.getIp());
         param.setUpdateHostName(LocalHostUtil.getHostName());
+    }
+
+
+    @Override
+    public Boolean relyAsynCmdSuccess(String bizId) {
+        AsynCmdDO asynCmdDO = asynCmdDAO.getAsynCmdByBizId(bizId);
+        if (asynCmdDO == null){
+            return false;
+        }
+        //如果依赖的异步命令未执行成功则返回失败
+        if (!AsynStatus.SUCCESS.getStatus().equals(asynCmdDO.getStatus())){
+            return false;
+        }
+        return true;
     }
 }

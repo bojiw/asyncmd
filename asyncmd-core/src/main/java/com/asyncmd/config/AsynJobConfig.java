@@ -44,9 +44,9 @@ public class AsynJobConfig {
     private String cron = "0/1 * * * * ?";
 
     /**
-     * 重置状态任务执行频率 默认每隔60秒执行一次
+     * 重置状态任务执行频率 默认每隔1分钟执行一次
      */
-    private String restCron = "0/60 * * * * ?";
+    private String restCron = "0 0/1 * * * ?";
 
     private AsynBackupConfig asynBackupConfig = new AsynBackupConfig();
 

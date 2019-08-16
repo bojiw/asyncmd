@@ -69,6 +69,7 @@ public class AsynExecuterJobManagerImpl implements AsynExecuterJobManager {
         }
         //更新状态为执行中
         final Boolean updateSuccess = TransactionTemplateUtil.newInstance().getTemplate().execute(new TransactionCallback<Boolean>() {
+            @Override
             public Boolean doInTransaction(TransactionStatus status) {
                 AsynUpdateParam param = new AsynUpdateParam();
                 param.setBizIds(bizIds);

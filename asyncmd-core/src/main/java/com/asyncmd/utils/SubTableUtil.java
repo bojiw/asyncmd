@@ -35,7 +35,7 @@ public class SubTableUtil {
      */
     private static String getSubTableIndex(Integer tableIndex,String bizId){
         if (tableIndex == null){
-            return getTableIndex(getIndex(bizId));
+            return getTableIndex(getIndex(tableNum,bizId));
         }
         return getTableIndex(tableIndex);
     }
@@ -47,12 +47,14 @@ public class SubTableUtil {
         return String.valueOf(tableIndex);
     }
 
+
     /**
      * 根据业务id计算分配到哪个表中
-     * @param bizId
+     * @param tableNum 分表数量
+     * @param bizId 业务id
      * @return
      */
-    private static int getIndex(String bizId){
+    public static int getIndex(Integer tableNum,String bizId){
         return (tableNum - 1) & hash(bizId);
     }
 

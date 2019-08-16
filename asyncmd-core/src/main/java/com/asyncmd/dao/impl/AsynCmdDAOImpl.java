@@ -11,6 +11,7 @@ import com.asyncmd.utils.SubTableUtil;
 import com.google.common.collect.Lists;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -29,11 +30,11 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
     public long saveCmd(AsynCmdDO asynCmdDO) {
         String tableName = SubTableUtil.getTableName(null, asynCmdDO.getBizId(), AsynCmdDO.TABLE_NAME);
 
-        String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,env,gmt_create,gmt_modify) " +
-                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO " + tableName + " (cmd_type, content,biz_id, create_host_name, create_ip, create_name,execute_num,next_time,status,update_host_name,update_ip,success_executers,env,exception,rely_biz_id,gmt_create,gmt_modify) " +
+                " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         return JdbcTemplateUtil.newInstance().update(sql,new Object[]{asynCmdDO.getCmdType(),asynCmdDO.getContent(),asynCmdDO.getBizId(),asynCmdDO.getCreateHostName(),
                 asynCmdDO.getCreateIp(),asynCmdDO.getCreateName(),asynCmdDO.getExecuteNum(),asynCmdDO.getNextTime(),asynCmdDO.getStatus(),
-                asynCmdDO.getUpdateHostName(),asynCmdDO.getUpdateIp(),asynCmdDO.getSuccessExecuters(),asynCmdDO.getEnv(),new Date(),new Date()});
+                asynCmdDO.getUpdateHostName(),asynCmdDO.getUpdateIp(),asynCmdDO.getSuccessExecuters(),asynCmdDO.getEnv(),asynCmdDO.getException(),asynCmdDO.getRelyBizId(),new Date(),new Date()});
     }
     @Override
     public long delCmd(String bizId) {
@@ -109,6 +110,10 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
             sql.append(",next_time = ?");
             param.add(asynUpdateParam.getNextTime());
         }
+        if (asynUpdateParam.getException() != null){
+            sql.append(",exception = ?");
+            param.add(asynUpdateParam.getException());
+        }
         sql.append(" where status = ? and biz_id = ?  ");
         param.add(asynUpdateParam.getWhereAsynStatus());
         return sql.toString();
@@ -160,14 +165,18 @@ public class AsynCmdDAOImpl implements AsynCmdDAO {
         StringBuffer sql = new StringBuffer();
         sql.append("select cmd_id,cmd_type,content,biz_id,create_host_name,create_ip,create_name,")
                 .append("execute_num,gmt_create,gmt_modify,next_time,status,update_host_name,update_ip,")
-                .append("success_executers,env from ").append(tableName);
+                .append("success_executers,env,exception,rely_biz_id from ").append(tableName);
         return sql;
     }
     @Override
     public AsynCmdDO getAsynCmdByBizId(String bizId) {
         String tableName = SubTableUtil.getTableName(null,bizId, AsynCmdDO.TABLE_NAME);
         StringBuffer sql = getSelectBase(tableName);
-        sql.append("where biz_id=?");
-        return (AsynCmdDO)JdbcTemplateUtil.newInstance().queryForObject(sql.toString(),new Object[]{bizId},new AsynCmdRowMapper());
+        sql.append(" where biz_id=?");
+        List<AsynCmdDO> query = JdbcTemplateUtil.newInstance().query(sql.toString(), new Object[]{bizId}, new AsynCmdRowMapper());
+        if (CollectionUtils.isEmpty(query)){
+            return null;
+        }
+        return query.get(0);
     }
 }

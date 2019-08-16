@@ -60,6 +60,12 @@ public class AsynUpdateParam {
      */
     private String updateIp;
 
+    /**
+     * 异常信息
+     */
+    private String exception;
+
+
     public List<String> getBizIds() {
         return bizIds;
     }
@@ -138,5 +144,13 @@ public class AsynUpdateParam {
 
     public void setUpdateIp(String updateIp) {
         this.updateIp = updateIp;
+    }
+
+    public String getException() {
+        return exception;
+    }
+
+    public void setException(String exception) {
+        this.exception = exception;
     }
 }

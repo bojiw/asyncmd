@@ -1,6 +1,8 @@
 
 package com.asyncmd.config;
 
+import com.asyncmd.callback.AbstractErrorCallBack;
+import com.asyncmd.callback.AsynCallBackRunnable;
 import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
 import com.asyncmd.model.Frequency;
@@ -13,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author wangwendi
@@ -58,6 +61,12 @@ public class AsynConfig {
 
     private AsynJobConfig asynJobConfig = new AsynJobConfig();
 
+    private AsynCallBackRunnable asynCallBackRunnable;
+    /**
+     * 异步命令执行失败回调
+     */
+    private AbstractErrorCallBack abstractErrorCallBack;
+
 
 
     public void initConfig(){
@@ -80,6 +89,13 @@ public class AsynConfig {
         SubTableUtil.init(tableNum);
         LocalHostUtil.init();
         ThreadPoolTaskExecutorUtil.newInstance().init();
+        if(abstractErrorCallBack != null){
+            asynCallBackRunnable = new AsynCallBackRunnable(abstractErrorCallBack);
+            Thread thread = new Thread(asynCallBackRunnable);
+            thread.setDaemon(true);
+            thread.start();
+        }
+
     }
 
     public List<Frequency> getExecuterFrequency() {
@@ -128,5 +144,13 @@ public class AsynConfig {
 
     public void setEnv(String env) {
         this.env = env;
+    }
+
+    public AbstractErrorCallBack getAbstractErrorCallBack() {
+        return abstractErrorCallBack;
+    }
+
+    public void setAbstractErrorCallBack(AbstractErrorCallBack abstractErrorCallBack) {
+        this.abstractErrorCallBack = abstractErrorCallBack;
     }
 }
