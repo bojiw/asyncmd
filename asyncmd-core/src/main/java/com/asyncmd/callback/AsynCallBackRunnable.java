@@ -38,12 +38,15 @@ public class AsynCallBackRunnable implements Runnable{
 
     private void callBack(){
         while (!CallBackQueue.isEmpty()){
-            CallBack poll = CallBackQueue.poll();
+            CallBack callBack = CallBackQueue.take();
             try {
-                abstractErrorCallBack.callBack(poll);
+                if (callBack == null){
+                    return;
+                }
+                abstractErrorCallBack.callBack(callBack);
 
             }catch (Exception ex){
-                log.error("调用异常回调接口异常,bizId=" + poll.getAsynCmd().getBizId(),ex);
+                log.error("调用异常回调接口异常,bizId=" + callBack.getAsynCmd().getBizId(),ex);
             }
 
         }

@@ -25,8 +25,12 @@ public class CallBackQueue {
      * 出栈
      * @return
      */
-    public static CallBack poll(){
-        return linkedBlockingQueue.poll();
+    public static CallBack take(){
+        try {
+            return linkedBlockingQueue.take();
+        }catch (Exception e){
+            return null;
+        }
     }
 
     public static boolean isEmpty(){
