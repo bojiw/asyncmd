@@ -14,7 +14,7 @@
     <version>1.8</version>
     <name>asyncmd-core</name>
     <properties>
-        <spring.version>4.3.8.RELEASE</spring.version>
+        <spring.version>5.2.0.RELEASE</spring.version>
     </properties>
     <description>
         异步命令组件,同步转异步的同时保证数据的可靠性
