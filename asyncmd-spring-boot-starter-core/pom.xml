@@ -12,7 +12,6 @@
     <artifactId>asyncmd-spring-boot-starter-core</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
