@@ -1,6 +1,7 @@
 
 package com.asyncmd.utils;
 
+import com.asyncmd.exception.AsynExCode;
 import com.asyncmd.exception.AsynException;
 
 /**
@@ -17,7 +18,9 @@ public class LocalExceptionUtil {
 
 
     public static AsynException get() {
-        localException.get();
-        return localException.get();
+        AsynException asynException = localException.get();
+        localException.remove();
+        return asynException;
     }
+
 }

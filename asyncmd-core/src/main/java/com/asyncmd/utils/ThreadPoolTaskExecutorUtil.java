@@ -34,6 +34,10 @@ public class ThreadPoolTaskExecutorUtil {
         poolTaskExecutor.setQueueCapacity(300);
         //如果线程池满 则抛异常
         poolTaskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
+        //应用关闭时等待所有线程执行完
+        poolTaskExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        //超过10秒则强制停止
+        poolTaskExecutor.setAwaitTerminationSeconds(10);
     }
     public void init(){
         poolTaskExecutor.initialize();

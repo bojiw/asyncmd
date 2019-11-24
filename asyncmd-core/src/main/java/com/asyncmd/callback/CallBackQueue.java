@@ -13,7 +13,7 @@ public class CallBackQueue {
 
 
     /**
-     * 入栈
+     * 入栈 如果队列满了 则返回false
      * @param callBack
      * @return 入栈成功返回true
      */
@@ -22,7 +22,7 @@ public class CallBackQueue {
     }
 
     /**
-     * 出栈
+     * 出栈 如果队列为空则阻塞
      * @return
      */
     public static CallBack take(){
