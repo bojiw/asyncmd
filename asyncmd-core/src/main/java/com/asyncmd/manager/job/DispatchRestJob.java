@@ -13,6 +13,7 @@ import com.dangdang.ddframe.job.api.simple.SimpleJob;
  */
 public class DispatchRestJob implements SimpleJob {
 
+    @Override
     public void execute(ShardingContext shardingContext) {
         AsynRestJobManager asynRestJobManager = AsynSpringUtil.getBean(AsynRestJobManager.class);
         asynRestJobManager.rest(shardingContext.getShardingItem());

@@ -12,7 +12,7 @@ import com.dangdang.ddframe.job.api.simple.SimpleJob;
  * @version $Id: DispatchExecuterJob.java, v 0.1 2019年07月16日 上午9:49 wangwendi Exp $
  */
 public class DispatchExecuterJob implements SimpleJob {
-
+    @Override
     public void execute(ShardingContext shardingContext) {
         AsynExecuterJobManager asynExecuterJobManager = AsynSpringUtil.getBean(AsynExecuterJobManager.class);
         asynExecuterJobManager.executer(shardingContext.getShardingItem());

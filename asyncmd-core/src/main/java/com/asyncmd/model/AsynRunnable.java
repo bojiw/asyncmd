@@ -78,12 +78,17 @@ public class AsynRunnable implements Runnable {
             param.setSuccessExecutes(JSON.toJSONString(asynCmd.getSuccessExecuters()));
             asynExecuterService.updateStatus(param);
         }catch (Exception e){
-            //失败更新状态为初始化或错误 初始化状态则由调度中心调度
-            AsynStatus asynStatus = updateStatus(e);
             if (countNotNull()){
                 countException.setException(new AsynException(AsynExCode.SYS_ERROR,e));
             }
-            offerCallBackQueue(asynStatus,e);
+            try {
+                //失败更新状态为初始化或错误 初始化状态则由调度中心调度
+                AsynStatus asynStatus = updateStatus(e);
+                offerCallBackQueue(asynStatus,e);
+            }catch (Exception e1){
+                log.error("执行异步命令处理异常信息出问题,bizId=" + asynCmd.getBizId(),e);
+            }
+
         }finally {
             if (countNotNull()){
                 countException.countDown();

@@ -98,7 +98,6 @@ public abstract class AbstractDispatchService implements DispatchService {
             param.setReset(true);
             asynExecuterService.updateStatus(param);
             log.warn("asyn线程池异常",e);
-            LocalExceptionUtil.set(new AsynException(AsynExCode.THREAD_POLL_ERROR));
             return false;
         }
         return true;
