@@ -24,8 +24,7 @@ https://gitee.com/wangwendi/asyn-springboot-demo
 - 实现延迟队列 比如下订单成功以后需要30分钟内付款 没有付款则取消订单 这个可以在下订单以后创建一个异步命令执行
 - 实现MQ重试次数和间隔 目前除了rocketmq 其他mq都是采用死信队列之类的来做 比较麻烦
 
-
-![add image](http://qiniu.bojiw.com/20197/201972920313image.png)
+![image](http://qiniu.bojiw.com/20197/201972920313image.png)
 
 
 **注意：这个目前只是一个组件 只需要引入jar包 并且在自己的应用库中创建异步命令表 指定zookeeper地址就可以使用 并不是集中式单独部署一台应用进行使用 这样可以保证一个应用的异步命令积压或者使用有问题 不会影响到其他应用 也变相的把压力分摊到不同的应用中**
